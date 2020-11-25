@@ -1,0 +1,19 @@
+{
+  "name": "sukuan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://lu7766lu7766@bitbucket.org/lu7766lu7766/aurora02.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/lu7766lu7766/aurora02#readme",
+  "dependencies": {
+    "php-server": "^0.2.1"
+  }
+}
