@@ -1,19 +1,35 @@
 {
-  "name": "sukuan",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://lu7766lu7766@bitbucket.org/lu7766lu7766/aurora02.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/lu7766lu7766/aurora02#readme",
-  "dependencies": {
-    "php-server": "^0.2.1"
-  }
+	"name": "sukuan",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+		"build": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lu7766lu7766/SuKuan.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"homepage": "https://github.com/lu7766lu7766/SuKuan.git#readme",
+	"dependencies": {
+		"jactools": "^3.5.3",
+		"lodash": "^4.17.20",
+		"moment": "^2.29.1",
+		"vue": "^2.6.12",
+		"vue-bus": "^1.2.1"
+	},
+	"devDependencies": {
+		"@babel/plugin-proposal-class-properties": "^7.12.1",
+		"@babel/plugin-proposal-optional-chaining": "^7.12.7",
+		"@babel/plugin-transform-runtime": "^7.12.1",
+		"cross-env": "^7.0.2",
+		"laravel-mix": "^5.0.9",
+		"rimraf": "^3.0.2",
+		"stylus": "^0.54.8",
+		"stylus-loader": "^4.3.0",
+		"vue-template-compiler": "^2.6.12"
+	}
 }
