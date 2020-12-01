@@ -151,6 +151,7 @@ $swop->$action();
 //}
 //
 //
+//
 function GUID()
 {
     if (function_exists('com_create_guid') === true) {
