@@ -1,3 +1,3 @@
-composer intall
+composer install
 yarn
 yarn build
