@@ -10,10 +10,11 @@ class UserController extends JController
         $get = $req["get"];
         $user = $get["user"];
         $password = \lib\Hash::encode($get["password"]);
+
         ReturnMessage::success([
             "user" => $user,
             "password" => $password
-        ]);
+        ], JSON_UNESCAPED_SLASHES);
         // ReturnMessage::success(DB::table('SysUser')->limit(1)->get());
     }
 }
