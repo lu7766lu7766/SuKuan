@@ -3,6 +3,7 @@
 namespace comm;
 
 use setting\Config;
+use Exception;
 
 /**
  * Class Route
