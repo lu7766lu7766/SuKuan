@@ -18,7 +18,7 @@ class Menu2
                 "name" => "用戶列表",
                 "url" => "userInfo/userList",
                 "user" => "root",
-                "sub_url"=>array("userInfo/userModify", "userInfo/userAdd"),
+                "sub_url" => array("userInfo/userModify", "userInfo/userAdd"),
                 "user_must" => ["root"]
             ),
             "add_retes" => array(
@@ -28,7 +28,7 @@ class Menu2
             "all_rates" => array(
                 "name" => "所有費率",
                 "url" => "userInfo/allRates",
-                "sub_url"=>array("userInfo/userRatesModify")
+                "sub_url" => array("userInfo/userRatesModify")
             ),
             "user_route" => array(
                 "name" => "自動撥號路由",
@@ -58,12 +58,12 @@ class Menu2
             "extension_manage" => array(
                 "name" => "分機管理",
                 "url" => "extensionInfo/extensionManage",
-                "sub_url"=>array("extensionInfo/extensionModify")
+                "sub_url" => array("extensionInfo/extensionModify")
             ),
-//            "seat_tactics" => array(
-//                "name" => "座席策略",
-//                "url" => "extensionInfo/seatTactics"
-//            )
+            //            "seat_tactics" => array(
+            //                "name" => "座席策略",
+            //                "url" => "extensionInfo/seatTactics"
+            //            )
         ),
         "communication_history" => array(
             "name" => "通聯紀錄",
@@ -97,7 +97,7 @@ class Menu2
             "group_call_schedule" => array(
                 "name" => "新增群呼",
                 "url" => "groupCallSetting/groupCallSchedule",
-                "sub_url"=>array("groupCallSetting/groupCallScheduleModify")
+                "sub_url" => array("groupCallSetting/groupCallScheduleModify")
             ),
             "effective_number" => array(
                 "name" => "有效號新增群呼",
@@ -125,7 +125,7 @@ class Menu2
             "add_sweep" => array(
                 "name" => "新增掃號",
                 "url" => "sweepSetting/addSweep",
-                "sub_url"=>array("sweepSetting/addSweepModify")
+                "sub_url" => array("sweepSetting/addSweepModify")
             ),
             "sweep_status" => array(
                 "name" => "掃號狀態",
@@ -159,73 +159,72 @@ class Menu2
                 "url" => "memberInfo/memberList",
                 "sub_url" => ["memberInfo/memberModify", "memberInfo/memberAdd"]
             ]
+        ],
+        "system" => [
+            "name" => "系統設定",
+            "bulletin_board" => [
+                "name" => "佈告欄管理",
+                "url" => "system/bulletin_board",
+            ],
+            "pwssword_check" => [
+                "url" => "system/passwork_check",
+                "hide" => true
+            ]
         ]
     );
 
-    public function CreateMenuManage($parentMenuList,$menuList,$userID)//checkbox清單
+    public function CreateMenuManage($parentMenuList, $menuList, $userID) //checkbox清單
     {
-        $this->menuList = explode(",",$menuList);
-        $this->parentMenuList = explode(",",$parentMenuList);
-        return "<ul style='display: inline-block;'>".$this->getSubMenuList($this->menus,$userID)."</ul>";
+        $this->menuList = explode(",", $menuList);
+        $this->parentMenuList = explode(",", $parentMenuList);
+        return "<ul style='display: inline-block;'>" . $this->getSubMenuList($this->menus, $userID) . "</ul>";
     }
 
-    private function getSubMenuList($menus,$userID)
+    private function getSubMenuList($menus, $userID)
     {
         $html = "";
-        if(is_array($menus))
-        foreach($menus as $key=>$val)
-        {
-            if(is_array($val) && !array_key_exists("url",$val))
-            {
-                $tmp_html = $this->getSubMenuList($val,$userID);
+        if (is_array($menus))
+            foreach ($menus as $key => $val) {
+                if (is_array($val) && !array_key_exists("url", $val)) {
+                    $tmp_html = $this->getSubMenuList($val, $userID);
+                } else if (isset($val["name"])) {
+                    //不在user_only的要過濾掉
 
+                    if (isset($val["user_only"]) && !in_array($userID, $val["user_only"]))
+                        continue;
+                    if (!in_array($key, $this->parentMenuList) && $userID != "root")
+                        continue;
+
+                    $tmp_html = "<li style='float:left;margin:5px 15px 5px 10px;'><label><input type='checkbox' name='menuList[]' value='$key' " .
+                        (in_array($key, $this->menuList) ? "checked" : "") .
+                        " />" . $val["name"] . "</label></li>";
+                }
+
+                $html .= $tmp_html;
             }
-            else if(isset($val["name"]))
-            {
-                //不在user_only的要過濾掉
-
-                if(isset($val["user_only"]) && !in_array($userID,$val["user_only"]))
-                    continue;
-                if(!in_array($key,$this->parentMenuList) && $userID!="root")
-                    continue;
-
-                $tmp_html = "<li style='float:left;margin:5px 15px 5px 10px;'><label><input type='checkbox' name='menuList[]' value='$key' ".
-                    (in_array($key,$this->menuList)?"checked":"").
-                    " />".$val["name"]."</label></li>";
-            }
-
-            $html .= $tmp_html;
-        }
         return $html;
     }
 
-    public function CreateMenu($permission,$userID)
+    public function CreateMenu($permission, $userID)
     {
-        $menus = $this->delete_menus($this->menus,explode(",",stripslashes($permission)),$userID);
-//        print_r($menus);
+        $menus = $this->delete_menus($this->menus, explode(",", stripslashes($permission)), $userID);
+        //        print_r($menus);
         return $this->getSubMenu($menus);
     }
 
     //刪除不再permission清單中的menu
-    private function delete_menus($menus,$menu_list,$userID)
+    private function delete_menus($menus, $menu_list, $userID)
     {
-        foreach($menus as $key=>$val)
-        {
-            if(is_array($val) && !array_key_exists("url",$val))
-            {
-                $menus[$key] = $this->delete_menus($val,$menu_list,$userID);
-            }
-            else
-            {
-                if(!isset($val["user_must"]) || !in_array($userID,$val["user_must"]))
-                {
-                    if(!in_array($key,$menu_list) && $key!="name")
-                    {
+        foreach ($menus as $key => $val) {
+            if (is_array($val) && !array_key_exists("url", $val)) {
+                $menus[$key] = $this->delete_menus($val, $menu_list, $userID);
+            } else {
+                if (!isset($val["user_must"]) || !in_array($userID, $val["user_must"])) {
+                    if (!in_array($key, $menu_list) && $key != "name") {
                         unset($menus[$key]);
                     }
                     //不在user_only的要過濾掉
-                    if(isset($val["user_only"]) &&  !in_array($userID,$val["user_only"]))
-                    {
+                    if (isset($val["user_only"]) &&  !in_array($userID, $val["user_only"])) {
                         unset($menus[$key]);
                     }
                 }
@@ -234,11 +233,10 @@ class Menu2
         return $menus;
     }
 
-    private function getSubMenu($subMenu,$floor=0)
+    private function getSubMenu($subMenu, $floor = 0)
     {
 
-        switch($floor)
-        {
+        switch ($floor) {
             case 0:
                 $class = "mainmenu sidebar-nav";
                 $space_li = "<li style='list-style-type: none;visibility: hidden;height:20px;'>a</li>";
@@ -251,22 +249,20 @@ class Menu2
                 break;
         }
         $body = "";
-        foreach($subMenu as $key=>$val){
-            if($key=="name")
+        foreach ($subMenu as $key => $val) {
+            if ($key == "name" || $val["hide"]) {
                 continue;
+            }
 
-            if(isset($val["url"]))
-            {
+            if (isset($val["url"])) {
                 $tmp_class = "";
-                if(strpos($_SERVER['REQUEST_URI'],$this->base["folder"].$val["url"])!==false)
-                {
+                if (strpos($_SERVER['REQUEST_URI'], $this->base["folder"] . $val["url"]) !== false) {
                     $this->currentName = $val["name"];
                     $tmp_class = "slideactive";
                 }
-                if(is_array($val["sub_url"]) && empty($tmp_class))
-                {
-                    foreach($val["sub_url"] as $sub_url){
-                        if(strpos($_SERVER['REQUEST_URI'],$this->base["folder"].$sub_url)!==false){
+                if (is_array($val["sub_url"]) && empty($tmp_class)) {
+                    foreach ($val["sub_url"] as $sub_url) {
+                        if (strpos($_SERVER['REQUEST_URI'], $this->base["folder"] . $sub_url) !== false) {
                             $tmp_class = "slideactive";
                         }
                     }
@@ -274,16 +270,13 @@ class Menu2
 
                 $body .= "<li>";
                 $class = "lastmenu";
-                $body .= "<a class='$tmp_class' href='".$this->base["folder"].$val["url"]."'>".$val["name"]."</a>";
+                $body .= "<a class='$tmp_class' href='" . $this->base["folder"] . $val["url"] . "'>" . $val["name"] . "</a>";
                 $body .= "</li>";
-            }
-            else
-            {
+            } else {
                 $body .= "<li>";
-                $body .= "<a>".$val["name"]."</a>".$this->getSubMenu($val,$floor+1);
+                $body .= "<a>" . $val["name"] . "</a>" . $this->getSubMenu($val, $floor + 1);
                 $body .= "</li>";
             }
-
         }
 
         return "<ul class = '$class'>{$space_li}{$body}{$space_li}</ul>";
@@ -294,6 +287,3 @@ class Menu2
         $this->model = $model;
     }
 }
-
-
-?>
