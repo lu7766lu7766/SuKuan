@@ -92,55 +92,40 @@ export default {
     isRoot,
   }),
   methods: {
-    getList() {
-      $.post(
-        folder + "rate/list",
-        {},
-        (res) => {
-          this.rateGroup = res.data.map((x) => ((x.checked = false), x));
-        },
-        "json"
-      );
+    async getList() {
+      const res = await $.callApi.post("rate/list");
+      this.rateGroup = res.data.map((x) => ((x.checked = false), x));
     },
     toModify(id, name) {
       redirect(
         "userInfo/userRatesModify?rateGroupId=" + id + "&rateGroupName=" + name
       );
     },
-    doCreate() {
-      $.post(
-        folder + "rate/create",
-        {
-          RateGroupID: this.data.RateGroupID,
-          RateGroupName: this.data.RateGroupName,
-        },
-        () => {
-          alertify.alert("已成功新增!");
-          this.getList();
-        }
-      );
+    async doCreate() {
+      const res = await $.callApi.post("rate/create", {
+        RateGroupID: this.data.RateGroupID,
+        RateGroupName: this.data.RateGroupName,
+      });
+      alertify.alert("已成功新增!");
+      this.getList();
     },
-    doUpdate(RateGroupID, RateGroupName) {
-      $.post(
-        folder + "rate/update",
-        {
-          RateGroupID,
-          RateGroupName,
-        },
-        () => {
-          alertify.alert("已成功修改!");
-          this.getList();
-        }
-      );
+    async doUpdate(RateGroupID, RateGroupName) {
+      const res = await $.callApi.post("rate/update", {
+        RateGroupID,
+        RateGroupName,
+      });
+      alertify.alert("已成功修改!");
+      this.getList();
     },
-    doDelete() {
+    async doDelete() {
       const RateGroupIDs = this.rateGroup
         .filter((x) => x.checked)
         .map((x) => x.RateGroupID);
-      $.post(folder + "rate/delete", { RateGroupIDs }, () => {
-        alertify.alert("已成功刪除!");
-        this.getList();
+      const res = await $.callApi.post("rate/delete", {
+        RateGroupIDs,
       });
+      alertify.alert("已成功刪除!");
+      this.getList();
     },
   },
   mounted() {
