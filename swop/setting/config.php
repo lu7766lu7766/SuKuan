@@ -13,7 +13,7 @@ class Config
         $base["file"] = "file://";
         $base["http"] = "http://";
         $base["https"] = "https://";
-        $base["folder"] = "/ZHCC/"; //dirname(dirname(__DIR__)). "/"; // "/aurora02/"
+        $base["folder"] = getenv2("BASE_FOLDER"); //"/ZHCC/"; //dirname(dirname(__DIR__)). "/"; // "/aurora02/"
         $base["root_folder"] = dirname(dirname(__DIR__)) . "/";
         $base['url'] = $base["http"] . $_SERVER['HTTP_HOST'] . $base["folder"]; // $base['folder'];
         $base['swop'] = $base["root_folder"] . "swop/";
@@ -70,4 +70,3 @@ class Config
 //        setcookie('PHPSESSID', session_id(), time() + $expire);
 //    }
 //}
-?>

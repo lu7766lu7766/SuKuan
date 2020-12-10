@@ -21,13 +21,9 @@ class Menu2
                 "sub_url" => array("userInfo/userModify", "userInfo/userAdd"),
                 "user_must" => ["root"]
             ),
-            "add_retes" => array(
-                "name" => "新增費率",
-                "url" => "userInfo/addRates"
-            ),
-            "all_rates" => array(
-                "name" => "所有費率",
-                "url" => "userInfo/allRates",
+            "rage_manage" => array(
+                "name" => "費率管理",
+                "url" => "userInfo/rateManage",
                 "sub_url" => array("userInfo/userRatesModify")
             ),
             "user_route" => array(

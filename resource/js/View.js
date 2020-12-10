@@ -12,7 +12,8 @@ Vue.use(JacPlugin, {
 Vue.use(MyPlugin)
 
 new Vue({
-	componenst: {
-    Test: () => import("pages/Test")
-  }
+	components: {
+		// Test: () => import('pages/Test'),
+		RateManage: () => import('pages/RateManage'),
+	},
 }).$mount('#app')

@@ -1298,6 +1298,13 @@ axios@^0.19.0:
   dependencies:
     follow-redirects "1.5.10"
 
+axios@^0.21.0:
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.0.tgz#26df088803a2350dff2c27f96fef99fe49442aca"
+  integrity sha512-fmkJBknJKoZwem3/IKSSLpkdNXZeBu5Q7GA/aRsr2btgrptmSCxi2oFjZHqGdK9DoTil9PIHlPIZw2EcRJXRvw==
+  dependencies:
+    follow-redirects "^1.10.0"
+
 babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
@@ -2300,6 +2307,11 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
+dayjs@^1.9.7:
+  version "1.9.7"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.9.7.tgz#4b260bb17dceed2d5f29038dfee03c65a6786fc0"
+  integrity sha512-IC877KBdMhBrCfBfJXHQlo0G8keZ0Opy7YIIq5QKtUbCuHMzim8S4PyiVK4YmihI3iOF9lhfUBW4AQWHTR5WHA==
+
 de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
@@ -3039,7 +3051,7 @@ follow-redirects@1.5.10:
   dependencies:
     debug "=3.1.0"
 
-follow-redirects@^1.0.0:
+follow-redirects@^1.0.0, follow-redirects@^1.10.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
   integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==

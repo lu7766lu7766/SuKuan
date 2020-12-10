@@ -1,5 +1,7 @@
 <?php
 
+use setting\Config;
+
 class Bundle
 {
 
@@ -7,7 +9,6 @@ class Bundle
 
     public function __construct()
     {
-
     }
 
     static private $bundle = array(
@@ -35,9 +36,9 @@ class Bundle
             "~/public/css/jquery.datetimepicker.min.css"
         ),
         "reactjs" => array(
-            "~/public/js/react-with-addons-0.14.7.min.js",//"http://fb.me/react-with-addons-0.13.0.min.js",//
-            "~/public/js/react-dom-0.14.7.min.js",//"http://fb.me/react-0.13.0.min.js",//
-            "~/public/js/JSXTransformer-0.13.0.js"//"http://fb.me/JSXTransformer-0.13.0.js",//
+            "~/public/js/react-with-addons-0.14.7.min.js", //"http://fb.me/react-with-addons-0.13.0.min.js",//
+            "~/public/js/react-dom-0.14.7.min.js", //"http://fb.me/react-0.13.0.min.js",//
+            "~/public/js/JSXTransformer-0.13.0.js" //"http://fb.me/JSXTransformer-0.13.0.js",//
         ),
         "alertify" => array(
             "~/public/css/alertify.core.css",
@@ -66,39 +67,47 @@ class Bundle
         "bootstrap-datetime" => [
             "~/public/bootstrap/css/bootstrap-datetimepicker.min.css",
             "~/public/bootstrap/js/bootstrap-datetimepicker.min.js"
+        ],
+        "laravel-mix" => [
+            "~/public/vue/manifest.js",
+            "~/public/vue/vendor/vendor.js",
+            "~/public/vue/vendor/View.js",
         ]
     );
 
-    static public function addLink($linkKey)
+    static private function parseLink($linkKey)
     {
-        // 未來建議引入uglifyPHP ，可以直接壓縮發布，self::$allLink getter?
-        // https://github.com/smallhadroncollider-deprecated/uglify-php
-
-        global $config; //= new setting\Config();
+        $config = new Config();
 
         $result = "";
-        $ver = "?ver=".$config->base["version"];
+        $ver = "?ver=" . $config->base["version"];
 
-        foreach(self::$bundle[$linkKey] as $file)
-        {
-            $file = str_replace("~/", $config->base["folder"] ,$file);
+        foreach (self::$bundle[$linkKey] as $file) {
+            $file = str_replace("~/", $config->base["folder"], $file);
             $ext = end(explode('.', $file));
-            switch(strtolower($ext))
-            {
+            switch (strtolower($ext)) {
                 case "js":
-                    $result .= "<script src=\"". $file . $ver ."\"></script>\n";
+                    $result .= "<script src=\"" . $file . $ver . "\"></script>\n";
                     break;
                 case "jsx":
-                    $result .= "<script src=\"". $file ."\" type=\"text/jsx\"></script>\n";
+                    $result .= "<script src=\"" . $file . "\" type=\"text/jsx\"></script>\n";
                     break;
                 case "css":
-                    $result .= "<link rel='stylesheet' type='text/css' href='". $file . $ver ."'/>\n";
+                    $result .= "<link rel='stylesheet' type='text/css' href='" . $file . $ver . "'/>\n";
                     break;
             }
         }
-        self::$allLink .= $result;
-//        return $result;
+        return $result;
+    }
+
+    static public function echoLink($linkKey)
+    {
+        echo self::parseLink($linkKey);
+    }
+
+    static public function addLink($linkKey)
+    {
+        self::$allLink .= self::parseLink($linkKey);
+        //        return $result;
     }
 }
-
-?>

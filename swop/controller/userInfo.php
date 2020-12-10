@@ -17,37 +17,20 @@ class UserInfo_Controller extends JController
         $this->redirect("/userInfo/userList");
     }
 
-    public function addRates()
+    public function rateManage()
     {
-        $model = $this->model;
-        if ($model->submit)//更新
-        {
-            $result = $model->postRates();
-            if ($result) {
-                $this->redirect("userInfo/allRates");
-            }
-        }
-        return parent::render();
-    }
-
-    public function allRates()
-    {
-        if ($this->model->submit) {
-            $this->model->delRateGroup();
-        }
-        $this->model->rateGroup = $this->model->getRateGroup();
         return parent::render();
     }
 
     public function userRatesModify()
     {
         $model = $this->model;
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
             if ($model->status == "delete" && $model->PrefixCode != "") {
                 $model->deleteUserRates();
             } else {
-                if ($model->status == "deleteAll")//deleteAll
+                if ($model->status == "deleteAll") //deleteAll
                 {
                     $model->deleteAllUserRates();
                     $this->redirect("userInfo/allRates");
@@ -73,9 +56,9 @@ class UserInfo_Controller extends JController
     public function userRoute()
     {
         $model = $this->model;
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
-//            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
+            //            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
             if ($model->status == "delete") {
                 $model->deleteUserRoute();
             } else {
@@ -86,12 +69,16 @@ class UserInfo_Controller extends JController
                 }
             }
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]
+        );
         foreach ($model->empSelect2["option"] as $i => $option) {
-            if ($option["value"] != "" &&
+            if (
+                $option["value"] != "" &&
                 $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])) {
+                !in_array($option["value"], $model->session["current_sub_emp"])
+            ) {
                 unset($model->empSelect2["option"][$i]);
             }
         }
@@ -103,9 +90,9 @@ class UserInfo_Controller extends JController
     public function manualUserRoute()
     {
         $model = $this->model;
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
-//            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
+            //            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
             if ($model->status == "delete") {
                 $model->deleteManualUserRoute();
             } else {
@@ -116,12 +103,16 @@ class UserInfo_Controller extends JController
                 }
             }
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]
+        );
         foreach ($model->empSelect2["option"] as $i => $option) {
-            if ($option["value"] != "" &&
+            if (
+                $option["value"] != "" &&
                 $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])) {
+                !in_array($option["value"], $model->session["current_sub_emp"])
+            ) {
                 unset($model->empSelect2["option"][$i]);
             }
         }
@@ -133,9 +124,9 @@ class UserInfo_Controller extends JController
     public function searchRoute()
     {
         $model = $this->model;
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
-//            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
+            //            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
             if ($model->status == "delete") {
                 $model->deleteSearchRoute();
             } else {
@@ -146,12 +137,16 @@ class UserInfo_Controller extends JController
                 }
             }
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]
+        );
         foreach ($model->empSelect2["option"] as $i => $option) {
-            if ($option["value"] != "" &&
+            if (
+                $option["value"] != "" &&
                 $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])) {
+                !in_array($option["value"], $model->session["current_sub_emp"])
+            ) {
                 unset($model->empSelect2["option"][$i]);
             }
         }
@@ -228,12 +223,15 @@ class UserInfo_Controller extends JController
             ];
         }
         $model->empSelect2 = EmpHelper::KillValue(
-            EmpHelper::getEmpSelect($model->empSelect,
+            EmpHelper::getEmpSelect(
+                $model->empSelect,
                 [
                     "name" => "parentId",
                     //"option"=>array("value"=>"","name"=>"")
-                ]),
-            $model->userId);
+                ]
+            ),
+            $model->userId
+        );
     }
 
     /**
@@ -243,7 +241,7 @@ class UserInfo_Controller extends JController
     {
         $model = $this->model;
         $this->menu->currentName = "用戶修改";
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
             $result = $model->updateUserDetail();
             if ($result) {
@@ -258,24 +256,14 @@ class UserInfo_Controller extends JController
     public function routeSearch()
     {
         $model = $this->model;
-        if ($model->submit)//更新
+        if ($model->submit) //更新
         {
             $model->getRouteSearch();
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["selected" => $model->userId]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["selected" => $model->userId]
+        );
         return parent::render();
     }
-
-    public function getBalance()
-    {
-
-    }
-
-    public function ajax_setGroupName()
-    {
-        $this->model->setGroupName();
-    }
 }
-
-?>

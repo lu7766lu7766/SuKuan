@@ -69,37 +69,6 @@ class UserInfo_Model extends JModel
     }
 
     /**
-     * 取得費率群組
-     * @return $this
-     */
-    public function getRateGroup()
-    {
-        $dba = $this->dba;
-        $sql = "select RateGroupID,RateGroupName from RateGroup where UseState=?";
-        $rateGroup = $dba->getAll($sql, ["1"]);
-        uasort($rateGroup, function ($a, $b) {
-            return (int)$a["RateGroupID"] == (int)$b["RateGroupID"] ? 0 :
-                (int)$a["RateGroupID"] < (int)$b["RateGroupID"] ? -1 : 1;
-        });
-        return $rateGroup;
-    }
-
-    /**
-     * 刪除費率群組
-     * @return $this
-     */
-    public function delRateGroup()
-    {
-        $dba = $this->dba;
-        $sql = "delete from RateGroup where RateGroupID in(?);
-                delete from RateDetail where RateGroupID in(?)";
-        $reatGroupIDs = join(",", $this->delete);
-        $params = [$reatGroupIDs, $reatGroupIDs];
-        $dba->exec($sql, $params);
-        return $this;
-    }
-
-    /**
      * 取得費率群組詳細資料
      * @return $this
      */
@@ -111,23 +80,6 @@ class UserInfo_Model extends JModel
         $result = $dba->fetch_assoc($stmt);
         $result["RateGroupID"] = $rateGroupId;
         return $result;
-    }
-
-    /**
-     * 新增費率
-     * @return $this
-     */
-    public function postRates()
-    {
-        $dba = $this->dba;
-        $sql = "
-            insert into RateGroup (RateGroupID,RateGroupName) values(?,?)
-        ";
-        $rs = $dba->exec($sql, [
-            $this->rateGroupId,
-            $this->rateGroupName
-        ]);
-        return $rs;
     }
 
     /**
@@ -813,16 +765,6 @@ class UserInfo_Model extends JModel
             $balances[] = $val["Balance"];
         }
         echo json_encode($balances);
-    }
-
-    public function setGroupName()
-    {
-        DB::table('RateGroup')
-            ->update([
-                "RateGroupName" => $this->RateGroupName
-            ])
-            ->where("RateGroupID", $this->RateGroupID)
-            ->exec();
     }
 }
 
