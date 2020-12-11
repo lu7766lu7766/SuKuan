@@ -2,7 +2,9 @@
 
 use comm\Route;
 
-Route::get("/user/create", "UserController@create");
+Route::get("/user/echoPassword", "UserController@echoPassword");
+Route::post("/user/list", "UserController@list");
+Route::post("/user/delete", "UserController@delete");
 
 // rate manage
 Route::post("/rate/list", "RateController@list");

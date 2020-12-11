@@ -67,7 +67,7 @@
               sorting_asc: sort.key == 'UserID' && sort.type == 'asc',
               sorting_desc: sort.key == 'UserID' && sort.type == 'desc',
             }"
-            @click="switchSort('UserID')"
+            @click="changeSort('UserID')"
           >
             帳號
           </th>
@@ -77,7 +77,7 @@
               sorting_asc: sort.key == 'ExtensionNo' && sort.type == 'asc',
               sorting_desc: sort.key == 'ExtensionNo' && sort.type == 'desc',
             }"
-            @click="switchSort('ExtensionNo')"
+            @click="changeSort('ExtensionNo')"
             v-if="showExtensionNo"
           >
             分機號
@@ -88,7 +88,7 @@
               sorting_asc: sort.key == 'UserName' && sort.type == 'asc',
               sorting_desc: sort.key == 'UserName' && sort.type == 'desc',
             }"
-            @click="switchSort('UserName')"
+            @click="changeSort('UserName')"
           >
             用戶名稱
           </th>
@@ -98,7 +98,7 @@
               sorting_asc: sort.key == 'CallDuration' && sort.type == 'asc',
               sorting_desc: sort.key == 'CallDuration' && sort.type == 'desc',
             }"
-            @click="switchSort('CallDuration')"
+            @click="changeSort('CallDuration')"
           >
             時間
           </th>
@@ -108,7 +108,7 @@
               sorting_asc: sort.key == 'Count' && sort.type == 'asc',
               sorting_desc: sort.key == 'Count' && sort.type == 'desc',
             }"
-            @click="switchSort('Count')"
+            @click="changeSort('Count')"
           >
             通數
           </th>
@@ -118,7 +118,7 @@
               sorting_asc: sort.key == 'BillValue' && sort.type == 'asc',
               sorting_desc: sort.key == 'BillValue' && sort.type == 'desc',
             }"
-            @click="switchSort('BillValue')"
+            @click="changeSort('BillValue')"
           >
             費用
           </th>
@@ -128,7 +128,7 @@
               sorting_asc: sort.key == 'BillCost' && sort.type == 'asc',
               sorting_desc: sort.key == 'BillCost' && sort.type == 'desc',
             }"
-            @click="switchSort('BillCost')"
+            @click="changeSort('BillCost')"
             v-if="isRoot"
           >
             成本
@@ -161,8 +161,10 @@
 
 <script>
 import DateTimePicker from "../components/DateTimePicker.vue";
+import OrderByMixins from "mixins/OrderBy";
 
 export default {
+  mixins: [OrderByMixins],
   components: { DateTimePicker },
   data: () => ({
     choice,
@@ -178,10 +180,6 @@ export default {
     },
     display_mode: "",
     datas: [],
-    sort: {
-      key: "UserID",
-      type: "asc",
-    },
   }),
   methods: {
     async getOptions() {
@@ -193,21 +191,10 @@ export default {
       this.datas = res.data;
       this.display_mode = this.editData.display_mode;
     },
-    switchSort(key) {
-      if (key == this.sort.key) {
-        this.sort.type = this.sort.type == "asc" ? "desc" : "asc";
-      } else {
-        this.sort.key = key;
-        this.sort.type = "asc";
-      }
-    },
   },
   computed: {
     showExtensionNo() {
       return this.display_mode === "0";
-    },
-    proccessDatas() {
-      return _.orderBy(this.datas, this.sort.key, this.sort.type);
     },
   },
   mounted() {

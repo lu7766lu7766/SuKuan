@@ -6,17 +6,7 @@ class UserInfo_Controller extends JController
 {
     public function userList()
     {
-        $model = $this->model;
-        if (is_array($model->delete) && count($model->delete)) {
-            $post["delete"] = $model->delete;
-            $this->redirect("/userInfo/deleteUser", $post);
-        }
         return parent::render();
-    }
-
-    public function deleteUser()
-    {
-        $this->redirect("/userInfo/userList");
     }
 
     public function rateManage()
@@ -229,7 +219,6 @@ class UserInfo_Controller extends JController
                 $model->empSelect,
                 [
                     "name" => "parentId",
-                    //"option"=>array("value"=>"","name"=>"")
                 ]
             ),
             $model->userId

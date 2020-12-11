@@ -5,49 +5,6 @@ use comm\DB;
 class UserInfo_Model extends JModel
 {
     /**
-     * 使用者列表
-     * @return $this
-     */
-    public function userList()
-    {
-        $emps = [$this->session["choice"]];
-        $sub_emp = $this->getSubEmp($this->session["choice"]);
-        foreach ($sub_emp as $user) {
-            $emps[] = $user["UserID"];
-        }
-        $emps = join(",", array_map(function ($v) {
-            return "'" . $v . "'";
-        }, $emps));
-        $dba = $this->dba;
-        $sql = "select UserID,UseState,RateGroupID,Balance,UserName,Distributor,NoteText from SysUser where UserID in({$emps})";
-        $this->sysUser = $dba->getAll($sql);
-        foreach ($this->sysUser as $key => $user) {
-            $count = $dba->getAll("select count(*) as count from CustomerLists as a WITH (NOLOCK) where UserID=?;",
-                [$user["UserID"]])[0]["count"];
-            $this->sysUser[$key]["ExtensionCount"] = $count;
-        }
-        return $this;
-    }
-
-    /**
-     * 刪除使用者
-     * @return $this
-     */
-    public function deleteUser()
-    {
-        $dba = $this->dba;
-        $delete = "";
-        foreach ($this->delete as $val) {
-            $delete .= "?,";
-            $params[] = $val;
-        }
-        $delete = substr($delete, 0, -1);
-        $sql = "delete from SysUser where UserID in({$delete})";
-        $dba->exec($sql, $params);
-        return $this;
-    }
-
-    /**
      * 取得使用者單筆資訊
      * @return $this
      */
@@ -108,6 +65,22 @@ class UserInfo_Model extends JModel
         return $this;
     }
 
+    /**
+     * 取得費率群組
+     * @return $this
+     */
+    public function getRateGroup()
+    {
+        $dba = $this->dba;
+        $sql = "select RateGroupID,RateGroupName from RateGroup where UseState=?";
+        $rateGroup = $dba->getAll($sql, ["1"]);
+        uasort($rateGroup, function ($a, $b) {
+            return (int)$a["RateGroupID"] == (int)$b["RateGroupID"] ? 0 :
+                (int)$a["RateGroupID"] < (int)$b["RateGroupID"] ? -1 : 1;
+        });
+        return $rateGroup;
+    }
+    
     public function deleteAllUserRates()
     {
         $dba = $this->dba;
@@ -746,26 +719,4 @@ class UserInfo_Model extends JModel
             $this->trunkIp = $data["TrunkIP"];
         }
     }
-
-    public function getBalance()
-    {
-        $users = explode(",", $this->users);
-        if (!count($users)) {
-            return;
-        }
-        $where_sql = "";
-        foreach ($users as $user) {
-            $where_sql .= " UserID='{$user}' or ";
-        }
-        $where_sql = substr($where_sql, 0, -3);
-        $sql = "select Balance from SysUser WITH (NOLOCK) where $where_sql";
-        $result = $this->dba->getAll($sql);
-        $balances = [];
-        foreach ($result as $val) {
-            $balances[] = $val["Balance"];
-        }
-        echo json_encode($balances);
-    }
 }
-
-?>
