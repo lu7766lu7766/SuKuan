@@ -15,5 +15,6 @@ new Vue({
 	components: {
 		// Test: () => import('pages/Test'),
 		RateManage: () => import('pages/RateManage'),
+		TaskRanking: () => import('pages/TaskRanking'),
 	},
 }).$mount('#app')

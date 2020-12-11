@@ -2,6 +2,8 @@
 
 namespace lib;
 
+use Illuminate\Database\Capsule\Manager as DB;
+
 class ReturnMessage
 {
     static function success($data, $config = JSON_PRETTY_PRINT)
@@ -17,6 +19,7 @@ class ReturnMessage
     static function print($code, $data, $config)
     {
         echo json_encode([
+            "query" => getenv2("ENV") == "development" ? DB::getQueryLog() : null,
             "code" => $code,
             "data" => $data
         ], $config);

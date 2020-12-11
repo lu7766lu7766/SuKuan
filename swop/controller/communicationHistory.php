@@ -1,5 +1,8 @@
 <?php
 
+use lib\ReturnMessage;
+use Illuminate\Database\Capsule\Manager as DB;
+
 class CommunicationHistory_Controller extends JController
 {
     public function communicationSearch()
@@ -8,10 +11,13 @@ class CommunicationHistory_Controller extends JController
         if ($model->submit) {
             $model->getCommunicationSearch();
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]
+        );
         foreach ($model->empSelect2["option"] as $i => $option) {
-            if ($option["value"] != "" &&
+            if (
+                $option["value"] != "" &&
                 $option["value"] != $model->session["choice"] &&
                 !in_array($option["value"], $model->session["current_sub_emp"])
             ) {
@@ -94,21 +100,50 @@ class CommunicationHistory_Controller extends JController
         readfile($filePath);
     }
 
+    public function getTaskRankingList()
+    {
+        $selectRaw = DB::raw("
+            sum(cast(CallOutCDR.CallDuration as float)) as CallDuration,
+            COUNT(1) as Count,
+            sum(cast(BillValue as float)) as BillValue,
+            sum(cast(BillCost as float)) as BillCost");
+        $query = DB::table("CallOutCDR")
+            ->leftJoin("SysUser", "CallOutCDR.UserID", "=", "SysUser.UserID")
+            ->orderBy("CallOutCDR.UserID");
+        if (!empty($this->model->userID)) {
+            $query->where("CallOutCDR.UserID", $this->model->userID);
+        } else {
+            $query->whereIn("CallOutCDR.UserID", $this->model->session["current_sub_emp"]);
+        }
+        if (!empty($this->model->callStartBillingDate)) {
+            $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$this->model->callStopBillingDate . "  23:59:59"]);
+        }
+        if (!empty($this->model->callStopBillingDate)) {
+            $query->whereRaw("cast((CallOutCDR.CallStopBillingDate+' '+CallOutCDR.CallStopBillingTime) as datetime) > ?", [$this->model->callStartBillingDate . " 00:00:00"]);
+        }
+
+        switch ($this->model->display_mode) {
+            case "0":
+                ReturnMessage::success(
+                    $query
+                        ->select("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName", $selectRaw)
+                        ->groupBy("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName")
+                        ->get()
+                );
+                break;
+            case "1":
+                ReturnMessage::success(
+                    $query
+                        ->select("CallOutCDR.UserID", "SysUser.UserName", $selectRaw)
+                        ->groupBy("CallOutCDR.UserID", "SysUser.UserName")
+                        ->get()
+                );
+                break;
+        }
+    }
+
     public function taskRanking()
     {
-        $model = $this->model;
-        if ($model->submit) {
-            $model->getTaskRanking();
-        }
-//        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-//            array("selected"=>$model->userId,"option"=>array("value"=>"","name"=>"")) );
-        $model->empSelect2 = EmpHelper::getEmpSelect2($model->empSelect,
-            [
-                "selected"        => $model->userId,
-                "option"          => ["value" => "", "name" => ""],
-                "choice"          => $model->session["choice"],
-                "current_sub_emp" => $model->session["current_sub_emp"]
-            ]);
         return parent::render();
     }
 
@@ -119,8 +154,10 @@ class CommunicationHistory_Controller extends JController
             $model->getPointHistory();
             $model->pageSelect = PageHelper::getPageSelect($model->page, $model->last_page);
         }
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]);
+        $model->empSelect2 = EmpHelper::getEmpSelect(
+            $model->empSelect,
+            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]
+        );
         return parent::render();
     }
 
@@ -166,7 +203,6 @@ class CommunicationHistory_Controller extends JController
 
     public function checkCalledNumber()
     {
-
     }
 
     public function downloadBlackList()
@@ -193,5 +229,3 @@ class CommunicationHistory_Controller extends JController
         unlink($filePath);
     }
 }
-
-?>

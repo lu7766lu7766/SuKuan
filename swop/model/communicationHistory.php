@@ -257,62 +257,6 @@ class CommunicationHistory_Model extends JModel
         $this->delTreePrefix($this->base["communicationSearch"], $pastMonth);
     }
 
-    public function getTaskRanking()
-    {
-        $dba = $this->dba;
-        $this->display_mode = $this->display_mode ?? "0";
-        $select_sql = $where_sql = $group_sql = "";
-        switch ($this->display_mode) {
-            case "0":
-                $select_sql = "
-select
-a.UserID, a.ExtensionNo, b.UserName,
-sum(cast(a.CallDuration as float)) as CallDuration,
-COUNT(1) as Count,
-sum(cast(BillValue as float)) as BillValue,
-sum(cast(BillCost as float)) as BillCost
-from CallOutCDR as a with (nolock)
-left join SysUser as b  with (nolock) on a.UserID = b.UserID
-where";
-                $group_sql .= "group by a.UserID, a.ExtensionNo, b.UserName";
-                break;
-            case "1":
-                $select_sql = "
-select
-a.UserID, b.UserName,
-sum(cast(CallDuration as float)) as CallDuration,
-COUNT(1) as Count,
-sum(cast(BillValue as float)) as BillValue,
-sum(cast(BillCost as float)) as BillCost
-from CallOutCDR as a with (nolock)
-left join SysUser as b with (nolock) on a.UserID = b.UserID
-where";
-                $group_sql = "group by a.UserID, b.UserName";
-                break;
-        }
-        $params = [];
-        if (!empty($this->userId)) {
-            $where_sql .= " a.UserID = ?  and";
-            $params[] = $this->userId;
-        } else {
-            $where_sql .= " a.UserID in (" . join(",", array_map(function ($v) {
-                    return "'" . $v . "'";
-                }, $this->session["current_sub_emp"])) . ") and";
-        }
-        if (!empty($this->callStartBillingDate)) {
-            $where_sql .= " cast((a.CallStartBillingDate+' '+a.CallStartBillingTime) as datetime) < ?  and";
-            $params[] = $this->callStopBillingDate . " " . ($this->callStopBillingTime ?? "23:59:59");
-        }
-        if (!empty($this->callStopBillingDate)) {
-            $where_sql .= " cast((a.CallStopBillingDate+' '+a.CallStopBillingTime) as datetime) > ?  and";
-            $params[] = $this->callStartBillingDate . " " . ($this->callStartBillingTime ?? "00:00:00");
-        }
-        $where_sql = substr($where_sql, 0, -5);//and 前面兩個空白，防止沒有參數進來，清除where五個字
-        $sql = $select_sql . " " . $where_sql . " " . $group_sql . " order by UserID";
-        $this->data = $dba->getAll($sql, $params);
-        //echo $dba->mergeSQL($sql,$params)."^^";
-    }
-
     public function getPointHistory()
     {
         $dba = $this->dba;

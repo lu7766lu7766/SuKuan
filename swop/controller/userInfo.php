@@ -1,5 +1,7 @@
 <?php
 
+use \lib\ReturnMessage;
+
 class UserInfo_Controller extends JController
 {
     public function userList()
@@ -265,5 +267,17 @@ class UserInfo_Controller extends JController
             ["selected" => $model->userId]
         );
         return parent::render();
+    }
+
+    public function getSubEmpOption()
+    {
+        $model = $this->model;
+        ReturnMessage::success(EmpHelper::getEmpSelect2(
+            $model->empSelect,
+            [
+                "choice"          => $model->session["choice"],
+                "current_sub_emp" => $model->session["current_sub_emp"]
+            ]
+        ));
     }
 }

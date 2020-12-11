@@ -23,3 +23,5 @@ $capsule->setAsGlobal();
 
 // 启动Eloquent
 $capsule->bootEloquent();
+
+Capsule::connection()->enableQueryLog();
