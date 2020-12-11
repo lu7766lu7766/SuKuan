@@ -196,6 +196,7 @@ class Router
                 $data["layout"] = $action;
                 $data["bottom_layout"] = "shared/bottom.php";
                 $data["params"] = $req;
+                $data["session"] = $_SESSION[$this->config->base['folder']];
 
                 /** @var callback $func */
                 $func($data);

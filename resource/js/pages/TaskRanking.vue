@@ -61,15 +61,81 @@
       <tbody>
         <tr>
           <th>編號</th>
-          <th>帳號</th>
-          <th v-if="showExtensionNo">分機號</th>
-          <th>用戶名稱</th>
-          <th>時間</th>
-          <th>通數</th>
-          <th>費用</th>
-          <th v-if="isRoot">成本</th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'UserID' && sort.type == 'asc',
+              sorting_desc: sort.key == 'UserID' && sort.type == 'desc',
+            }"
+            @click="switchSort('UserID')"
+          >
+            帳號
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'ExtensionNo' && sort.type == 'asc',
+              sorting_desc: sort.key == 'ExtensionNo' && sort.type == 'desc',
+            }"
+            @click="switchSort('ExtensionNo')"
+            v-if="showExtensionNo"
+          >
+            分機號
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'UserName' && sort.type == 'asc',
+              sorting_desc: sort.key == 'UserName' && sort.type == 'desc',
+            }"
+            @click="switchSort('UserName')"
+          >
+            用戶名稱
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'CallDuration' && sort.type == 'asc',
+              sorting_desc: sort.key == 'CallDuration' && sort.type == 'desc',
+            }"
+            @click="switchSort('CallDuration')"
+          >
+            時間
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'Count' && sort.type == 'asc',
+              sorting_desc: sort.key == 'Count' && sort.type == 'desc',
+            }"
+            @click="switchSort('Count')"
+          >
+            通數
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'BillValue' && sort.type == 'asc',
+              sorting_desc: sort.key == 'BillValue' && sort.type == 'desc',
+            }"
+            @click="switchSort('BillValue')"
+          >
+            費用
+          </th>
+          <th
+            class="sorting"
+            :class="{
+              sorting_asc: sort.key == 'BillCost' && sort.type == 'asc',
+              sorting_desc: sort.key == 'BillCost' && sort.type == 'desc',
+            }"
+            @click="switchSort('BillCost')"
+            v-if="isRoot"
+          >
+            成本
+          </th>
         </tr>
-        <tr v-for="(data, index) in datas" :key="index">
+
+        <tr v-for="(data, index) in proccessDatas" :key="index">
           <td>{{ index + 1 }}</td>
           <td>{{ data.UserID }}</td>
           <td v-if="showExtensionNo">{{ data.ExtensionNo || "Wait" }}</td>
@@ -83,10 +149,10 @@
           <td colspan="2">合計</td>
           <td></td>
           <td v-if="showExtensionNo"></td>
-          <td>{{ _.jSumBy(datas, 'CallDuration') }}</td>
-          <td>{{ _.jSumBy(datas, 'Count') }}</td>
-          <td>{{ _.jSumBy(datas, 'BillValue') }}</td>
-          <td v-if="isRoot">{{ _.jSumBy(datas, 'BillCost') }}</td>
+          <td>{{ _.jSumBy(datas, "CallDuration") }}</td>
+          <td>{{ _.jSumBy(datas, "Count") }}</td>
+          <td>{{ _.jSumBy(datas, "BillValue") }}</td>
+          <td v-if="isRoot">{{ _.jSumBy(datas, "BillCost") }}</td>
         </tr>
       </tbody>
     </table>
@@ -112,6 +178,10 @@ export default {
     },
     display_mode: "",
     datas: [],
+    sort: {
+      key: "UserID",
+      type: "asc",
+    },
   }),
   methods: {
     async getOptions() {
@@ -119,17 +189,25 @@ export default {
       this.options.subEmps = res.data.option;
     },
     async getList() {
-      const res = await $.callApi.post(
-        "communicationHistory/getTaskRankingList",
-        this.editData
-      );
+      const res = await $.callApi.post("api/taskReanking/list", this.editData);
       this.datas = res.data;
       this.display_mode = this.editData.display_mode;
+    },
+    switchSort(key) {
+      if (key == this.sort.key) {
+        this.sort.type = this.sort.type == "asc" ? "desc" : "asc";
+      } else {
+        this.sort.key = key;
+        this.sort.type = "asc";
+      }
     },
   },
   computed: {
     showExtensionNo() {
       return this.display_mode === "0";
+    },
+    proccessDatas() {
+      return _.orderBy(this.datas, this.sort.key, this.sort.type);
     },
   },
   mounted() {
