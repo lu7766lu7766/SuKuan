@@ -325,8 +325,10 @@
 
 <script>
 import DateTimePicker from "../components/DateTimePicker";
+import CommonMixins from "mixins/Common";
 
 export default {
+  mixins: [CommonMixins],
   components: {
     DateTimePicker,
   },

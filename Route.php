@@ -16,3 +16,8 @@ Route::post("/rate/delete", "RateController@delete");
 
 //task ranking
 Route::post("/api/taskReanking/list", "APIController@getTaskRankingList");
+
+//communication
+Route::post("/api/communication/list", "CommunicationController@list");
+Route::post("/api/communication/common", "CommunicationController@common");
+Route::post("/api/communication/delete", "CommunicationController@delete");

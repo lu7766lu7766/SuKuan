@@ -40,43 +40,6 @@ class CommunicationHistory_Controller extends JController
         return parent::render();
     }
 
-    /**
-     * 取得除通聯紀錄列表
-     */
-    public function ajax_getCommunicationSearchCommonData()
-    {
-        $this->model->getCommunicationSearchCommonData();
-        echo json_encode([
-            "code" => 0,
-            "data" => [
-                "count"      => $this->model->rows,
-                "totalTime"  => $this->model->totalTime ?? 0,
-                "totalMoney" => $this->model->totalMoney ?? 0
-            ]
-        ]);
-    }
-
-    /**
-     * 軟刪除通聯紀錄
-     */
-    public function ajax_delCommunicationSearchCommonData()
-    {
-        $res = $this->model->delCommunicationSearchCommonData();
-        echo json_encode([
-            "code" => 0,
-            "data" => $res
-        ]);
-    }
-
-    public function ajax_getCommunicationSearchPageDatas()
-    {
-        $this->model->getCommunicationSearchPageDatas();
-        echo json_encode([
-            "code" => 0,
-            "data" => $this->model->data
-        ]);
-    }
-
     public function communicationSearchDownload()
     {
         $model = $this->model;

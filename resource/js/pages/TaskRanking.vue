@@ -162,13 +162,12 @@
 <script>
 import DateTimePicker from "../components/DateTimePicker.vue";
 import OrderByMixins from "mixins/OrderBy";
+import CommonMixins from "mixins/Common";
 
 export default {
-  mixins: [OrderByMixins],
+  mixins: [CommonMixins, OrderByMixins],
   components: { DateTimePicker },
   data: () => ({
-    choice,
-    isRoot,
     options: {
       subEmps: [],
     },

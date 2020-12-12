@@ -18,5 +18,6 @@ new Vue({
 		TaskRanking: () => import('pages/TaskRanking'),
 		UserList: () => import('pages/UserList'),
 		UserDetail: () => import('pages/UserDetail'),
+		CommunicationSearch: () => import('pages/CommunicationSearch'),
 	},
 }).$mount('#app')

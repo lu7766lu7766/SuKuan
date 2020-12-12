@@ -136,11 +136,10 @@
 </template>
 <script>
 import OrderByMixins from "mixins/OrderBy";
-
+import CommonMixins from "mixins/Common";
 export default {
-  mixins: [OrderByMixins],
+  mixins: [CommonMixins, OrderByMixins],
   data: () => ({
-    choice,
     datas: [],
   }),
   methods: {

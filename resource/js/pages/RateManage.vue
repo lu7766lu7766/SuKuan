@@ -85,11 +85,13 @@
 </template>
 
 <script>
+import CommonMixins from "mixins/Common";
+
 export default {
+  mixins: [CommonMixins, OrderByMixins],
   data: () => ({
     rateGroup: [],
     data: {},
-    isRoot,
   }),
   methods: {
     async getList() {
