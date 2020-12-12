@@ -15,6 +15,7 @@ function getenv2(...$args)
 }
 
 use setting\Config;
+use Tightenco\Collect\Support\Collection;
 
 function getApiUrl($uri)
 {
@@ -52,8 +53,7 @@ function GUID()
     );
 }
 
-function dd($val)
+function Collection($item)
 {
-    print_r($val);
-    exit();
+    return new Collection($item);
 }

@@ -17,5 +17,6 @@ new Vue({
 		RateManage: () => import('pages/RateManage'),
 		TaskRanking: () => import('pages/TaskRanking'),
 		UserList: () => import('pages/UserList'),
+		UserDetail: () => import('pages/UserDetail'),
 	},
 }).$mount('#app')

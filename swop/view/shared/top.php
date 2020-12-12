@@ -28,6 +28,7 @@
 		var action = "<?php echo $this->action ?>";
 		var choice = "<?php echo $choice_id ?>";
 		var isRoot = <?php echo $isRoot ? 'true' : 'false' ?>;
+		var permission = <?php echo $model->session["permission_control"] ?>;
 		var isLoginRoot = <?php echo $model->session['login']['UserID'] == 'root' ? 'true' : 'false' ?>;
 
 		// if (isLoginRoot) {

@@ -5,6 +5,8 @@ use comm\Route;
 Route::get("/user/echoPassword", "UserController@echoPassword");
 Route::post("/user/list", "UserController@list");
 Route::post("/user/delete", "UserController@delete");
+Route::post("/user/menus", "UserController@menus");
+Route::post("/user/detail", "UserController@detail");
 
 // rate manage
 Route::post("/rate/list", "RateController@list");

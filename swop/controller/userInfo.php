@@ -14,6 +14,19 @@ class UserInfo_Controller extends JController
         return parent::render();
     }
 
+    public function parentOptions()
+    {
+        ReturnMessage::success(EmpHelper::KillValue(
+            EmpHelper::getEmpSelect(
+                $this->model->empSelect,
+                [
+                    "name" => "parentId",
+                ]
+            ),
+            $this->model->userID
+        )["option"]);
+    }
+
     public function userRatesModify()
     {
         $model = $this->model;
@@ -167,82 +180,13 @@ class UserInfo_Controller extends JController
         return parent::render("searchRoute2");
     }
 
-    public function userAdd()
+    public function userDetail()
     {
-        $model = $this->model;
-        $this->menu->currentName = "用戶新增";
-        if ($model->submit) {
-            $result = $model->postUserDetail();
-            if ($result) {
-                $this->redirect("userInfo/userList");
-            }
-        }
-        $this->getDetailSelect();
-        return parent::render("userDetail");
+        $name = $this->model->userId ? '編輯' : '新增';
+        $this->menu->currentName = "用戶" . $name;
+        return parent::render();
     }
 
-    private function getDetailSelect()
-    {
-        $model = $this->model;
-        $model->user = $model->getUserDetail($this->model->userId);
-        $model->rateGroup = $model->getRateGroup();
-        $model->rateGroupID = [
-            "id"       => "rateGroupID",
-            "name"     => "rateGroupID",
-            "class"    => "form-control",
-            "option"   => [],
-            "selected" => $model->user["RateGroupID"]
-        ];
-        $model->rateGroupID["option"][] = ["value" => 0, "name" => ""];
-        foreach ($model->rateGroup as $val) {
-            $model->rateGroupID["option"][] = [
-                "value" => $val["RateGroupID"],
-                "name"  => $val["RateGroupID"] . " (" . $val["RateGroupName"] . ")"
-            ];
-        }
-        $model->concurrentCalls = [
-            "id"       => "concurrentCalls",
-            "name"     => "concurrentCalls",
-            "class"    => "form-control",
-            "option"   => [],
-            "selected" => $model->user["ConcurrentCalls"]
-        ];
-        $times = 10;
-        while ($times) {
-            $model->concurrentCalls["option"][] = [
-                "value" => $times,
-                "name"  => "每 1 秒 " . $times-- . " 通"
-            ];
-        }
-        $model->empSelect2 = EmpHelper::KillValue(
-            EmpHelper::getEmpSelect(
-                $model->empSelect,
-                [
-                    "name" => "parentId",
-                ]
-            ),
-            $model->userId
-        );
-    }
-
-    /**
-     * 用戶列表 > 用戶修改
-     */
-    public function userModify()
-    {
-        $model = $this->model;
-        $this->menu->currentName = "用戶修改";
-        if ($model->submit) //更新
-        {
-            $result = $model->updateUserDetail();
-            if ($result) {
-                $this->redirect("userInfo/userList");
-            }
-        }
-        $this->getDetailSelect();
-        $model->empSelect2["selected"] = $model->user["ParentID"];
-        return parent::render("userDetail");
-    }
 
     public function routeSearch()
     {

@@ -11,12 +11,15 @@
 	],
 	"require": {
 		"voku/anti-xss": "^4.1",
-		"illuminate/database": "^5.5"
+		"illuminate/database": "^5.5",
+		"tightenco/collect": "^8.18"
 	},
 	"autoload": {
 		"classmap": [
 			"swop/comm",
-			"swop/library"
+			"swop/library",
+			"swop/repostory/",
+			"swop/service/"
 		],
 		"files": [
 			"swop/setting/config.php",

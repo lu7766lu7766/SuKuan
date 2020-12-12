@@ -6,10 +6,7 @@
       value="Delete"
       @click="doDelete()"
     />
-    <a
-      href="javascript:redirect('userInfo/userAdd')"
-      class="btn btn-primary"
-      style="color: white"
+    <a class="btn btn-primary" style="color: white" @click="toDetail()"
       >新增
     </a>
     <table class="table table-h table-pointer table-striped table-hover">
@@ -95,7 +92,7 @@
             用戶名稱
           </th>
           <th>用戶備註</th>
-          <th width="100"></th>
+          <th width="100">操作</th>
         </tr>
         <tr v-for="(data, index) in sortDatas" :key="index">
           <td>
@@ -127,7 +124,7 @@
             <button
               type="button"
               class="btn btn-info"
-              @click="toEdit(data.UserID)"
+              @click="toDetail(data.UserID)"
             >
               編輯
             </button>
@@ -151,8 +148,8 @@ export default {
       const res = await $.callApi.post("user/list");
       this.datas = res.data.map((x) => ((x.checked = false), x));
     },
-    toEdit(UserID) {
-      redirect(`userInfo/userModify?userId=${UserID}`);
+    toDetail(UserID) {
+      redirect(`userInfo/userDetail${UserID ? "?userId=" + UserID : ""}`);
     },
     async doDelete() {
       await $.callApi.post("user/delete", {
