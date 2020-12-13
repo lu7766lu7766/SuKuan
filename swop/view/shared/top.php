@@ -30,7 +30,7 @@
 		var isRoot = <?php echo $isRoot ? 'true' : 'false' ?>;
 		var permission = <?php echo $model->session["permission_control"] ?>;
 		var isLoginRoot = <?php echo $model->session['login']['UserID'] == 'root' ? 'true' : 'false' ?>;
-
+		var current_sub_emp = <?php echo json_encode($model->session["current_sub_emp"]) ?>;
 		// if (isLoginRoot) {
 		//   apiUrl = '//125.227.84.247:8099/'
 		//   downloaderUrl = '//125.227.84.247:8099/'
@@ -47,6 +47,7 @@
 							if (status === "success" && res.code === 0) {
 								resolve(res)
 							} else {
+								res && res.data && alert(res.data)
 								reject(res)
 							}
 						},

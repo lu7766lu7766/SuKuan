@@ -14,19 +14,6 @@ class UserInfo_Controller extends JController
         return parent::render();
     }
 
-    public function parentOptions()
-    {
-        ReturnMessage::success(EmpHelper::KillValue(
-            EmpHelper::getEmpSelect(
-                $this->model->empSelect,
-                [
-                    "name" => "parentId",
-                ]
-            ),
-            $this->model->userID
-        )["option"]);
-    }
-
     public function userRatesModify()
     {
         $model = $this->model;
@@ -60,70 +47,12 @@ class UserInfo_Controller extends JController
 
     public function userRoute()
     {
-        $model = $this->model;
-        if ($model->submit) //更新
-        {
-            //            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
-            if ($model->status == "delete") {
-                $model->deleteUserRoute();
-            } else {
-                if ($model->status == "update") {
-                    $model->updateUserRoute();
-                } else {
-                    $model->postUserRoute();
-                }
-            }
-        }
-        $model->empSelect2 = EmpHelper::getEmpSelect(
-            $model->empSelect,
-            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]
-        );
-        foreach ($model->empSelect2["option"] as $i => $option) {
-            if (
-                $option["value"] != "" &&
-                $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])
-            ) {
-                unset($model->empSelect2["option"][$i]);
-            }
-        }
-        sort($model->empSelect2["option"]);
-        $model->getUserRoute();
-        return parent::render("userRoute2");
+        return parent::render("userRoute");
     }
 
     public function manualUserRoute()
     {
-        $model = $this->model;
-        if ($model->submit) //更新
-        {
-            //            if($model->status=="delete" && is_array($model->delete) && count($model->delete))
-            if ($model->status == "delete") {
-                $model->deleteManualUserRoute();
-            } else {
-                if ($model->status == "update") {
-                    $model->updateManualUserRoute();
-                } else {
-                    $model->postManualUserRoute();
-                }
-            }
-        }
-        $model->empSelect2 = EmpHelper::getEmpSelect(
-            $model->empSelect,
-            ["name" => "UserID", "attr" => ["type" => "select"], "option" => ["value" => "", "name" => ""]]
-        );
-        foreach ($model->empSelect2["option"] as $i => $option) {
-            if (
-                $option["value"] != "" &&
-                $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])
-            ) {
-                unset($model->empSelect2["option"][$i]);
-            }
-        }
-        sort($model->empSelect2["option"]);
-        $model->getManualUserRoute();
-        return parent::render("manualUserRoute2");
+        return parent::render("manualUserRoute");
     }
 
     public function searchRoute()

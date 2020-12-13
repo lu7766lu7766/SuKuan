@@ -19,5 +19,7 @@ new Vue({
 		UserList: () => import('pages/UserList'),
 		UserDetail: () => import('pages/UserDetail'),
 		CommunicationSearch: () => import('pages/CommunicationSearch'),
+		UserRoute: () => import('pages/UserRoute'),
+		ManualUserRoute: () => import('pages/ManualUserRoute'),
 	},
 }).$mount('#app')

@@ -381,7 +381,7 @@ export default {
   methods: {
     async getOptions() {
       const res = await Promise.all([
-        $.callApi.post("userInfo/parentOptions", {
+        $.callApi.post("oldApi/parentOptions", {
           userID: this.userID,
         }),
         $.callApi.post("rate/list"),

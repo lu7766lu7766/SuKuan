@@ -21,7 +21,8 @@
 		"lodash": "^4.17.20",
 		"moment": "^2.29.1",
 		"vue": "^2.6.12",
-		"vue-bus": "^1.2.1"
+		"vue-bus": "^1.2.1",
+		"vue-sweetalert2": "^4.1.1"
 	},
 	"devDependencies": {
 		"@babel/plugin-proposal-class-properties": "^7.12.1",

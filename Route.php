@@ -21,3 +21,14 @@ Route::post("/api/taskReanking/list", "APIController@getTaskRankingList");
 Route::post("/api/communication/list", "CommunicationController@list");
 Route::post("/api/communication/common", "CommunicationController@common");
 Route::post("/api/communication/delete", "CommunicationController@delete");
+
+// user route
+Route::post("/api/userRoute/list", "UserRouteController@list");
+Route::post("/api/userRoute/create", "UserRouteController@create");
+Route::post("/api/userRoute/update", "UserRouteController@update");
+Route::post("/api/userRoute/delete", "UserRouteController@delete");
+// 
+Route::post("/api/manualUserRoute/list", "ManualUserRouteController@list");
+Route::post("/api/manualUserRoute/create", "ManualUserRouteController@create");
+Route::post("/api/manualUserRoute/update", "ManualUserRouteController@update");
+Route::post("/api/manualUserRoute/delete", "ManualUserRouteController@delete");

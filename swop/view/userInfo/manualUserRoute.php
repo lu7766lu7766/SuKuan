@@ -4,7 +4,7 @@ $this->partialView($top_view_path);
 <h3 id="title"><?php echo $this->menu->currentName ?></h3>
 
 <div id="app">
-    <user-route />
+    <manual-user-route />
 </div>
 
 <?php
