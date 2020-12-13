@@ -196,7 +196,6 @@ export default {
   mixins: [CommonMixins, PaginateMixins, ListMixins, EmpMixins, OrderBy],
   components: {
     DateTimePicker,
-    DataTable,
   },
   data: () => ({
     allData: {
