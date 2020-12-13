@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive" v-cloak id="container">
+  <div class="table-responsive" >
     <table class="table table-v table-condensed">
       <tbody>
         <tr>
