@@ -21,5 +21,6 @@ new Vue({
 		CommunicationSearch: () => import('pages/CommunicationSearch'),
 		UserRoute: () => import('pages/UserRoute'),
 		ManualUserRoute: () => import('pages/ManualUserRoute'),
+		PointHistory: () => import('pages/PointHistory'),
 	},
 }).$mount('#app')

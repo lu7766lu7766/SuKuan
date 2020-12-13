@@ -29,7 +29,7 @@
         <input type="checkbox" class="checkAll" v-model="isAllChecked" />
       </template>
 
-      <template v-slot:checked="{data}">
+      <template v-slot:checked="{ data }">
         <input
           type="checkbox"
           v-model="data.checked"
@@ -65,13 +65,10 @@
 <script>
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
-import DataTable from "../components/DataTable.vue";
+import ListMixins from "mixins/List";
+
 export default {
-  components: { DataTable },
-  mixins: [CommonMixins, OrderByMixins],
-  data: () => ({
-    datas: [],
-  }),
+  mixins: [CommonMixins, OrderByMixins, ListMixins],
   methods: {
     async getList() {
       const res = await $.callApi.post("user/list");
@@ -89,14 +86,6 @@ export default {
     },
   },
   computed: {
-    isAllChecked: {
-      get() {
-        return this.datas.every((x) => x.checked);
-      },
-      set(val) {
-        this.datas.forEach((x) => (x.checked = val));
-      },
-    },
     deleteUserID() {
       return this.datas.filter((x) => x.checked).map((x) => x.UserID);
     },

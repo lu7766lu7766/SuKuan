@@ -191,7 +191,6 @@ import ListMixins from "mixins/List";
 import EmpMixins from "mixins/Emp";
 import OrderBy from "mixins/OrderBy";
 import DateTimePicker from "../components/DateTimePicker";
-import DataTable from "../components/DataTable.vue";
 
 export default {
   mixins: [CommonMixins, PaginateMixins, ListMixins, EmpMixins, OrderBy],

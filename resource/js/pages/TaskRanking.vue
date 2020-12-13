@@ -101,7 +101,7 @@
 import DateTimePicker from "../components/DateTimePicker.vue";
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
-import DataTable from "../components/DataTable";
+import ListMixins from "mixins/List";
 
 export default {
   mixins: [CommonMixins, OrderByMixins],
@@ -117,7 +117,6 @@ export default {
       display_mode: "0",
     },
     display_mode: "",
-    datas: [],
   }),
   methods: {
     async getOptions() {

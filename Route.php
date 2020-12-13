@@ -32,3 +32,7 @@ Route::post("/api/manualUserRoute/list", "ManualUserRouteController@list");
 Route::post("/api/manualUserRoute/create", "ManualUserRouteController@create");
 Route::post("/api/manualUserRoute/update", "ManualUserRouteController@update");
 Route::post("/api/manualUserRoute/delete", "ManualUserRouteController@delete");
+// point history
+Route::post("/api/point/history/list", "PointController@list");
+Route::post("/api/point/history/total", "PointController@total");
+Route::post("/api/point/history/update", "PointController@update");

@@ -60,8 +60,6 @@ class CommunicationHistory_Controller extends JController
         readfile($filePath);
     }
 
-    
-
     public function taskRanking()
     {
         return parent::render();
@@ -69,24 +67,7 @@ class CommunicationHistory_Controller extends JController
 
     public function pointHistory()
     {
-        $model = $this->model;
-        if ($model->submit) {
-            $model->getPointHistory();
-            $model->pageSelect = PageHelper::getPageSelect($model->page, $model->last_page);
-        }
-        $model->empSelect2 = EmpHelper::getEmpSelect(
-            $model->empSelect,
-            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]
-        );
         return parent::render();
-    }
-
-    /**
-     * edit pointHistory memo
-     */
-    public function ajaxEditRechargeLogMemo()
-    {
-        $this->model->editRechargeLogMemo();
     }
 
     public function recordDownload()

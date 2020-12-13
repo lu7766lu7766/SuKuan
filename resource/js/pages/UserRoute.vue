@@ -131,14 +131,10 @@
 </template>
 
 <script>
-import DataTable from "../components/DataTable";
 import ListMixins from "mixins/List";
 
 export default {
   mixins: [ListMixins],
-  components: {
-    DataTable,
-  },
   data: () => ({
     options: {
       subEmp: [],

@@ -149,75 +149,6 @@ class CommunicationHistory_Model extends JModel
         $this->delTreePrefix($this->base["communicationSearch"], $pastMonth);
     }
 
-    public function getPointHistory()
-    {
-        $dba = $this->dba;
-        $orderBy = " order by cast(AddTime as datetime) desc";//order by UserID asc
-        $sql = "select 1 from RechargeLog where";
-        $sql2 = "
-select ROW_NUMBER() over ($orderBy) rownum,
-LogID, UserID, AddValue, AddTime, SaveUserID, Memo
-from RechargeLog with (nolock)
-where";
-        if (!empty($this->userId)) {
-            $sql .= " UserID = ?  and";
-            $sql2 .= " UserID = ?  and";
-            $params[] = $this->userId;
-        } else {
-            $sql .= " UserID in (" . join(",", array_map(function ($v) {
-                    return "'" . $v . "'";
-                }, $this->session["current_sub_emp"])) . ") and";
-            $sql2 .= " UserID in (" . join(",", array_map(function ($v) {
-                    return "'" . $v . "'";
-                }, $this->session["current_sub_emp"])) . ") and";
-        }
-        if (!empty($this->startDate)) {
-            $sql .= " cast(AddTime as datetime) > ?  and";
-            $sql2 .= " cast(AddTime as datetime) > ?  and";
-            $params[] = $this->startDate . " " . "00:00:00";
-        }
-        if (!empty($this->endDate)) {
-            $sql .= " cast(AddTime as datetime) < ?  and";
-            $sql2 .= " cast(AddTime as datetime) < ?  and";
-            $params[] = $this->endDate . " " . "23:59:59";
-        }
-        if (!empty($this->memo)) {
-            $sql .= " Memo link '%?%'  and";
-            $sql2 .= "  Memo link '%?%'  and";
-            $params[] = $this->memo;
-        }
-        $sql = substr($sql, 0, -5);
-        $sql2 = substr($sql2, 0, -5);
-        $this->per_page = !empty($this->per_page) ? $this->per_page : 50;
-        $this->page = !empty($this->page) ? $this->page : 0;
-        $offset = $this->per_page * $this->page + 1;
-        $limit = $this->per_page;
-        $stmt = $dba->query($sql, $params);
-        $this->rows = $dba->num_rows($stmt);
-        $this->last_page = ceil($this->rows / $this->per_page);
-//print_r($params);
-        $this->data = $dba->getAllLimit($sql2, $params, $offset, $limit);
-    }
-
-    /**
-     * @throws Exception
-     * editRechargeLogMemo
-     */
-    public function editRechargeLogMemo()
-    {
-        $sql = "update RechargeLog set Memo=? where LogID=? ";
-        $params = [
-            $this->value,
-            $this->id
-        ];
-        $res = $this->dba->exec($sql, $params);
-        if ($res) {
-            echo json_encode(["code" => 0]);
-        } else {
-            echo json_encode(["code" => -1]);
-        }
-    }
-
     public function getRecordDownload()
     {
         $emps = [$this->session["choice"]];
@@ -486,4 +417,4 @@ where";
     }
 }
 
-?>﻿
+?>
