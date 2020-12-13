@@ -57,94 +57,32 @@
         </tr>
       </tbody>
     </table>
-    <table class="table table-h table-striped table-hover" v-if="display_mode">
-      <tbody>
-        <tr>
-          <th>編號</th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'UserID' && sort.type == 'asc',
-              sorting_desc: sort.key == 'UserID' && sort.type == 'desc',
-            }"
-            @click="changeSort('UserID')"
-          >
-            帳號
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'ExtensionNo' && sort.type == 'asc',
-              sorting_desc: sort.key == 'ExtensionNo' && sort.type == 'desc',
-            }"
-            @click="changeSort('ExtensionNo')"
-            v-if="showExtensionNo"
-          >
-            分機號
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'UserName' && sort.type == 'asc',
-              sorting_desc: sort.key == 'UserName' && sort.type == 'desc',
-            }"
-            @click="changeSort('UserName')"
-          >
-            用戶名稱
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'CallDuration' && sort.type == 'asc',
-              sorting_desc: sort.key == 'CallDuration' && sort.type == 'desc',
-            }"
-            @click="changeSort('CallDuration')"
-          >
-            時間
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'Count' && sort.type == 'asc',
-              sorting_desc: sort.key == 'Count' && sort.type == 'desc',
-            }"
-            @click="changeSort('Count')"
-          >
-            通數
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'BillValue' && sort.type == 'asc',
-              sorting_desc: sort.key == 'BillValue' && sort.type == 'desc',
-            }"
-            @click="changeSort('BillValue')"
-          >
-            費用
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'BillCost' && sort.type == 'asc',
-              sorting_desc: sort.key == 'BillCost' && sort.type == 'desc',
-            }"
-            @click="changeSort('BillCost')"
-            v-if="isRoot"
-          >
-            成本
-          </th>
-        </tr>
 
-        <tr v-for="(data, index) in proccessDatas" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ data.UserID }}</td>
-          <td v-if="showExtensionNo">{{ data.ExtensionNo || "Wait" }}</td>
-          <td>{{ data.UserName }}</td>
-          <td>{{ data.CallDuration }}</td>
-          <td>{{ data.Count }}</td>
-          <td>{{ data.BillValue }}</td>
-          <td v-if="isRoot">{{ data.BillCost }}</td>
-        </tr>
+    <data-table
+      v-if="display_mode"
+      :datas="sortDatas"
+      :startIndex="1"
+      :columns="[
+        { key: 'UserID', name: '帳號', sortable: true },
+        {
+          key: 'ExtensionNo',
+          name: '分機號',
+          sortable: true,
+          show: showExtensionNo,
+        },
+        { key: 'UserName', name: '用戶名稱', sortable: true },
+        { key: 'CallDuration', name: '時間', sortable: true },
+        { key: 'Count', name: '通數', sortable: true },
+        { key: 'BillValue', name: '費用', sortable: true },
+        { key: 'BillCost', name: '成本', sortable: true, show: isRoot },
+      ]"
+      :sort="sort"
+    >
+      <template v-slot:ExtensionNo="{ data }">
+        {{ data.ExtensionNo || "Wait" }}
+      </template>
+
+      <template v-slot:tfoot>
         <tr>
           <td colspan="2">合計</td>
           <td></td>
@@ -154,8 +92,8 @@
           <td>{{ _.jSumBy(datas, "BillValue") }}</td>
           <td v-if="isRoot">{{ _.jSumBy(datas, "BillCost") }}</td>
         </tr>
-      </tbody>
-    </table>
+      </template>
+    </data-table>
   </div>
 </template>
 
@@ -163,10 +101,11 @@
 import DateTimePicker from "../components/DateTimePicker.vue";
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
+import DataTable from "../components/DataTable";
 
 export default {
   mixins: [CommonMixins, OrderByMixins],
-  components: { DateTimePicker },
+  components: { DateTimePicker, DataTable },
   data: () => ({
     options: {
       subEmps: [],

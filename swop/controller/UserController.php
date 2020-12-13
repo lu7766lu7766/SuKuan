@@ -162,19 +162,25 @@ class UserController extends JController
 
 	public function menus($req)
 	{
-		$result = $req["session"]["choice"] == $req["session"]["login"]["UserID"]
-			? $req["session"]["login"]["MenuList"]
-			: EmpHelper::getMenuList($req["session"]["sub_emp"], $req["session"]["choice"]);
+		if ($req["session"]["isRoot"]) {
+			ReturnMessage::success(Menu2::getAllMenus());
+		} else if ($req["session"]["choice"] == $req["session"]["login"]["UserID"]) {
+			$result = $req["session"]["login"]["MenuList"];
+		} else {
+			$result = EmpHelper::getMenuList($req["session"]["sub_emp"], $req["session"]["choice"]);
+		}
 
 		ReturnMessage::success(
-			Collection(explode(",", $result))->map(function ($key) {
-				return [
-					"value" => $key,
-					"name" => Menu2::findNameByKey($key, Menu2::$menus)
-				];
-			})->filter(function ($x) {
-				return $x["name"];
-			})
+			Collection(explode(",", $result))
+				->map(function ($key) {
+					return [
+						"value" => $key,
+						"name" => Menu2::findNameByKey($key, Menu2::$menus)
+					];
+				})
+				->filter(function ($x) {
+					return $x["name"];
+				})
 		);
 	}
 }

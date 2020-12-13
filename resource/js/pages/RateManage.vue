@@ -44,51 +44,45 @@
       value="Delete"
       @click="doDelete()"
     />
-    <table class="table table-h table-pointer table-striped table-hover">
-      <tbody>
-        <tr>
-          <th v-if="isRoot">刪除</th>
-          <th>費率表代號</th>
-          <th>費率表名稱</th>
-          <th>操作</th>
-        </tr>
-        <tr v-for="(data, index) in rateGroup" :key="index">
-          <td v-if="isRoot">
-            <input type="checkbox" v-model="data.checked" />
-          </td>
-          <td>
-            {{ data.RateGroupID }}
-          </td>
-          <td>
-            <span v-if="isRoot">
-              <input
-                type="text"
-                class="form-control"
-                v-model="data.RateGroupName"
-                @change="doUpdate(data.RateGroupID, data.RateGroupName)"
-              />
-            </span>
-            <span v-else>{{ data.RateGroupName }}</span>
-          </td>
-          <td>
-            <input
-              type="button"
-              class="btn btn-info"
-              value="編輯"
-              @click="toModify(data.RateGroupID, data.RateGroupName)"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <data-table
+      allChecked
+      :datas="rateGroup"
+      :columns="[
+        { key: 'RateGroupID', name: '費率表代號', show: isRoot },
+        { key: 'RateGroupName', name: '費率表名稱' },
+        { key: 'action', name: '操作' },
+      ]"
+    >
+      <template v-slot:RateGroupName="{ data }">
+        <span v-if="isRoot">
+          <input
+            type="text"
+            class="form-control"
+            v-model="data.RateGroupName"
+            @change="doUpdate(data.RateGroupID, data.RateGroupName)"
+          />
+        </span>
+        <span v-else>{{ data.RateGroupName }}</span>
+      </template>
+      <template v-slot:action="{ data }">
+        <input
+          type="button"
+          class="btn btn-info"
+          value="編輯"
+          @click="toModify(data.RateGroupID, data.RateGroupName)"
+        />
+      </template>
+    </data-table>
   </div>
 </template>
 
 <script>
 import CommonMixins from "mixins/Common";
+import DataTable from "../components/DataTable";
 
 export default {
-  mixins: [CommonMixins, OrderByMixins],
+  components: { DataTable },
+  mixins: [CommonMixins],
   data: () => ({
     rateGroup: [],
     data: {},

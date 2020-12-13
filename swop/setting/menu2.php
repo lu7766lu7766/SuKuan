@@ -289,4 +289,20 @@ class Menu2
 			if (is_array($menu[$findKey])) return $menu[$findKey]["name"];
 		}
 	}
+
+	static public function getAllMenus()
+	{
+		$res = [];
+		foreach (Menu2::$menus as $firstMenu) {
+			foreach ($firstMenu as $key => $menu) {
+				if ($key != "name" && $menu["hide"] !== true) {
+					$res[] = [
+						"value" => $key,
+						"name" => $menu["name"]
+					];
+				}
+			}
+		}
+		return $res;
+	}
 }

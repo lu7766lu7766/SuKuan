@@ -333,8 +333,6 @@ export default {
     DateTimePicker,
   },
   data: () => ({
-    isRoot,
-    choice,
     data: {},
     options: {
       parents: [],
@@ -400,8 +398,14 @@ export default {
       });
       this.data = res.data;
     },
-    doCreate() {},
-    doUpdate() {},
+    async doCreate() {
+      await $.callApi.post("user/create", this.editData);
+      redirect("userInfo/userList");
+    },
+    async doUpdate() {
+      await $.callApi.post("user/update", this.editData);
+      redirect("userInfo/userList");
+    },
     callRuleAlert() {
       alert(
         "總路由線路數必須 >= 掃號路由線數 + 節費路由線數 +自動撥號路由線數"

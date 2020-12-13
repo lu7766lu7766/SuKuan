@@ -9,135 +9,65 @@
     <a class="btn btn-primary" style="color: white" @click="toDetail()"
       >新增
     </a>
-    <table class="table table-h table-pointer table-striped table-hover">
-      <tbody>
-        <tr>
-          <th>
-            <input type="checkbox" class="checkAll" v-model="isAllChecked" />
-          </th>
-          <th
-            width="160"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'UserID' && sort.type == 'asc',
-              sorting_desc: sort.key == 'UserID' && sort.type == 'desc',
-            }"
-            @click="changeSort('UserID')"
-          >
-            登入帳號(編輯)
-          </th>
-          <th
-            width="80"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'UseState' && sort.type == 'asc',
-              sorting_desc: sort.key == 'UseState' && sort.type == 'desc',
-            }"
-            @click="changeSort('UseState')"
-          >
-            狀態
-          </th>
-          <th
-            width="120"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'Distributor' && sort.type == 'asc',
-              sorting_desc: sort.key == 'Distributor' && sort.type == 'desc',
-            }"
-            @click="changeSort('Distributor')"
-          >
-            經銷商
-          </th>
-          <th
-            width="110"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'ExtensionCount' && sort.type == 'asc',
-              sorting_desc: sort.key == 'ExtensionCount' && sort.type == 'desc',
-            }"
-            @click="changeSort('ExtensionCount')"
-          >
-            分機數
-          </th>
-          <th
-            width="100"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'RateGroupID' && sort.type == 'asc',
-              sorting_desc: sort.key == 'RateGroupID' && sort.type == 'desc',
-            }"
-            @click="changeSort('RateGroupID')"
-          >
-            費率
-          </th>
-          <th
-            width="120"
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'Balance' && sort.type == 'asc',
-              sorting_desc: sort.key == 'Balance' && sort.type == 'desc',
-            }"
-            @click="changeSort('Balance')"
-          >
-            剩餘點數
-          </th>
-          <th
-            class="sorting"
-            :class="{
-              sorting_asc: sort.key == 'UserName' && sort.type == 'asc',
-              sorting_desc: sort.key == 'UserName' && sort.type == 'desc',
-            }"
-            @click="changeSort('UserName')"
-          >
-            用戶名稱
-          </th>
-          <th>用戶備註</th>
-          <th width="100">操作</th>
-        </tr>
-        <tr v-for="(data, index) in sortDatas" :key="index">
-          <td>
-            <input
-              type="checkbox"
-              v-model="data.checked"
-              v-if="choice != data.UserID"
-            />
-          </td>
-          <td>{{ data.UserID }}</td>
-          <td>
-            <label class="switch">
-              <input
-                id="switch"
-                disabled
-                type="checkbox"
-                :checked="data.UseState"
-              />
-              <div class="slider round"></div>
-            </label>
-          </td>
-          <td>{{ data.Distributor }}</td>
-          <td>{{ data.ExtensionCount }}</td>
-          <td>{{ data.RateGroupID }}</td>
-          <td>{{ parseFloat(data.Balance).toFixed(2) }}</td>
-          <td>{{ data.UserName }}</td>
-          <td>{{ data.NoteText }}</td>
-          <td>
-            <button
-              type="button"
-              class="btn btn-info"
-              @click="toDetail(data.UserID)"
-            >
-              編輯
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <data-table
+      allChecked
+      :datas="sortDatas"
+      :columns="[
+        { key: 'UserID', name: '登入帳號(編輯)', sortable: true, width: 160 },
+        { key: 'UseState', name: '狀態', sortable: true, width: 80 },
+        { key: 'Distributor', name: '經銷商', sortable: true, width: 120 },
+        { key: 'ExtensionCount', name: '分機數', sortable: true, width: 110 },
+        { key: 'RateGroupID', name: '費率', sortable: true, width: 100 },
+        { key: 'Balance', name: '剩餘點數', sortable: true, width: 120 },
+        { key: 'UserName', name: '用戶名稱', sortable: true },
+        { key: 'NoteText', name: '用戶備註' },
+        { key: 'action', name: '操作', width: 100 },
+      ]"
+      :sort="sort"
+    >
+      <template v-slot:allChecked>
+        <input type="checkbox" class="checkAll" v-model="isAllChecked" />
+      </template>
+
+      <template v-slot:checked="{data}">
+        <input
+          type="checkbox"
+          v-model="data.checked"
+          v-if="choice != data.UserID"
+        />
+      </template>
+      <template v-slot:UseState="{ data }">
+        <label class="switch">
+          <input
+            id="switch"
+            disabled
+            type="checkbox"
+            :checked="data.UseState"
+          />
+          <div class="slider round"></div>
+        </label>
+      </template>
+      <template v-slot:Balance="{ data }">
+        {{ parseFloat(data.Balance).toFixed(2) }}
+      </template>
+      <template v-slot:action="{ data }">
+        <button
+          type="button"
+          class="btn btn-info"
+          @click="toDetail(data.UserID)"
+        >
+          編輯
+        </button>
+      </template>
+    </data-table>
   </div>
 </template>
 <script>
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
+import DataTable from "../components/DataTable.vue";
 export default {
+  components: { DataTable },
   mixins: [CommonMixins, OrderByMixins],
   data: () => ({
     datas: [],

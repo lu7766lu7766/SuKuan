@@ -113,125 +113,53 @@
         :per_page="paginate.per_page"
         @change="(page) => pageChange(page)"
       />
-      <table class="table table-h table-striped table-hover">
-        <tbody>
-          <tr>
-            <th>
-              <input type="checkbox" v-model="isAllChecked" />
-            </th>
-            <th>編號</th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'UserID' && sort.type == 'asc',
-                sorting_desc: sort.key == 'UserID' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('UserID')"
-            >
-              用戶
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'ExtensionNo' && sort.type == 'asc',
-                sorting_desc: sort.key == 'ExtensionNo' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('ExtensionNo')"
-            >
-              分機
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'OrgCalledId' && sort.type == 'asc',
-                sorting_desc: sort.key == 'OrgCalledId' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('OrgCalledId')"
-            >
-              目的端號碼
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc:
-                  sort.key == 'CallStartBillingDate' && sort.type == 'asc',
-                sorting_desc:
-                  sort.key == 'CallStartBillingDate' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('CallStartBillingDate')"
-            >
-              開始時間
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'CallDuration' && sort.type == 'asc',
-                sorting_desc: sort.key == 'CallDuration' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('CallDuration')"
-            >
-              時間
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'BillValue' && sort.type == 'asc',
-                sorting_desc: sort.key == 'BillValue' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('BillValue')"
-            >
-              費用
-            </th>
-            <th
-              class="sorting"
-              :class="{
-                sorting_asc: sort.key == 'CustomerLevel' && sort.type == 'asc',
-                sorting_desc:
-                  sort.key == 'CustomerLevel' && sort.type == 'desc',
-              }"
-              @click="apiChangeSort('CustomerLevel')"
-            >
-              等級
-            </th>
-            <th>錄音下載</th>
-          </tr>
-          <tr
-            v-for="(data, index) in datas"
-            :key="index"
-            :style="{
-              'background-color': data.CallType == 0 ? '#dddddd' : '#ffbbbb',
-            }"
+      <data-table
+        allChecked
+        :startIndex="startIndex"
+        :datas="datas"
+        :columns="[
+          { key: 'UserID', name: '用戶', sortable: true },
+          { key: 'ExtensionNo', name: '分機', sortable: true },
+          { key: 'OrgCalledId', name: '目的端號碼', sortable: true },
+          { key: 'CallStartBillingDate', name: '開始時間', sortable: true },
+          { key: 'CallDuration', name: '時間', sortable: true },
+          { key: 'BillValue', name: '費用', sortable: true },
+          { key: 'CustomerLevel', name: '等級', sortable: true },
+          { key: 'RecordDownload', name: '錄音下載' },
+        ]"
+        :trStyle="
+          (data) => ({
+            'background-color': data.CallType == 0 ? '#dddddd' : '#ffbbbb',
+          })
+        "
+        :sort="sort"
+        @sortChange="(key) => apiChangeSort(key)"
+      >
+        <template v-slot:allChecked>
+          <input type="checkbox" v-model="isAllChecked" />
+        </template>
+        <template v-slot:checked="{ data }">
+          <input type="checkbox" v-model="data.checked" />
+        </template>
+        <template v-slot:CallStartBillingDate="{ data }">
+          {{ data.CallStartBillingDate + " " + data.CallStartBillingTime }}
+        </template>
+        <template v-slot:RecordDownload="{ data }">
+          <a
+            :href="getVoiceUrl(data)"
+            :target="data.RecordFile ? '_blank' : ''"
+            :class="[
+              'label',
+              {
+                [data.RecordFile ? 'label-info' : 'label-default']: true,
+              },
+            ]"
+            >下載</a
           >
-            <td>
-              <input type="checkbox" v-model="data.checked" />
-            </td>
-            <td>{{ startIndex + index }}</td>
-            <td>{{ data.UserID }}</td>
-            <td>{{ data.ExtensionNo }}</td>
-            <td>{{ data.OrgCalledId }}</td>
-            <td>
-              {{ data.CallStartBillingDate + " " + data.CallStartBillingTime }}
-            </td>
-            <td>{{ data.CallDuration }}</td>
-            <td>{{ data.BillValue }}</td>
-            <td>{{ data.CustomerLevel }}</td>
-            <td>
-              <a
-                :href="getVoiceUrl(data)"
-                :target="data.RecordFile ? '_blank' : ''"
-                :class="[
-                  'label',
-                  {
-                    [data.RecordFile ? 'label-info' : 'label-default']: true,
-                  },
-                ]"
-                >下載</a
-              >
-            </td>
-          </tr>
+        </template>
+        <template v-slot:tfoot>
           <tr>
             <td colspan="3">合計</td>
-            <!--                    <td></td>-->
             <td></td>
             <td></td>
             <td></td>
@@ -242,7 +170,6 @@
           </tr>
           <tr>
             <td colspan="3">總合計</td>
-            <!--                    <td></td>-->
             <td></td>
             <td></td>
             <td></td>
@@ -251,8 +178,8 @@
             <td></td>
             <td></td>
           </tr>
-        </tbody>
-      </table>
+        </template>
+      </data-table>
     </div>
   </div>
 </template>
@@ -264,11 +191,13 @@ import ListMixins from "mixins/List";
 import EmpMixins from "mixins/Emp";
 import OrderBy from "mixins/OrderBy";
 import DateTimePicker from "../components/DateTimePicker";
+import DataTable from "../components/DataTable.vue";
 
 export default {
   mixins: [CommonMixins, PaginateMixins, ListMixins, EmpMixins, OrderBy],
   components: {
     DateTimePicker,
+    DataTable,
   },
   data: () => ({
     allData: {

@@ -9,11 +9,13 @@ class ReturnMessage
     static function success($data, $config = JSON_PRETTY_PRINT)
     {
         self::print(0, $data, $config);
+        exit();
     }
 
     static function error($data, $config = JSON_PRETTY_PRINT)
     {
         self::print(-1, $data, $config);
+        exit();
     }
 
     static function print($code, $data, $config)
