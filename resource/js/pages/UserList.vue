@@ -9,6 +9,9 @@
     <a class="btn btn-primary" style="color: white" @click="toDetail()"
       >新增
     </a>
+    <a class="btn btn-success" style="color: white" @click="exportCSV()"
+      >下載
+    </a>
     <data-table
       allChecked
       :datas="sortDatas"
@@ -66,9 +69,10 @@
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
 import ListMixins from "mixins/List";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMixins, OrderByMixins, ListMixins],
+  mixins: [CommonMixins, OrderByMixins, ListMixins, LibraryMixins],
   methods: {
     async getList() {
       const res = await $.callApi.post("user/list");
@@ -83,6 +87,38 @@ export default {
       });
       alertify.alert("已成功刪除!");
       this.getList();
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        [
+          [
+            "帳號",
+            "狀態",
+            "經銷商",
+            "分機數",
+            "費率",
+            "剩餘點數",
+            "用戶名稱",
+            "用戶備註",
+          ].join(","),
+        ]
+          .concat(
+            this.sortDatas.map((x) =>
+              [
+                x.UserID,
+                x.UseState ? "開啟" : "關閉",
+                x.Distributor,
+                x.ExtensionCount,
+                x.RateGroupID,
+                parseFloat(x.Balance).toFixed(2),
+                x.UserName,
+                x.NoteText,
+              ].join(",")
+            )
+          )
+          .join("\r\n"),
+        "用戶列表.csv"
+      );
     },
   },
   computed: {

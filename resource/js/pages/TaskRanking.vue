@@ -58,6 +58,9 @@
       </tbody>
     </table>
 
+    <a class="btn btn-success" style="color: white" @click="exportCSV()"
+      >下載
+    </a>
     <data-table
       v-if="display_mode"
       :datas="sortDatas"
@@ -82,6 +85,14 @@
         {{ data.ExtensionNo || "Wait" }}
       </template>
 
+      <template v-slot:BillValue="{ data }">
+        {{ (+data.BillValue).toFixed(2) }}
+      </template>
+
+      <template v-slot:BillCost="{ data }">
+        {{ (+data.BillCost).toFixed(2) }}
+      </template>
+
       <template v-slot:tfoot>
         <tr>
           <td colspan="2">合計</td>
@@ -89,8 +100,8 @@
           <td v-if="showExtensionNo"></td>
           <td>{{ _.jSumBy(datas, "CallDuration") }}</td>
           <td>{{ _.jSumBy(datas, "Count") }}</td>
-          <td>{{ _.jSumBy(datas, "BillValue") }}</td>
-          <td v-if="isRoot">{{ _.jSumBy(datas, "BillCost") }}</td>
+          <td>{{ _.jSumBy(datas, "BillValue").toFixed(2) }}</td>
+          <td v-if="isRoot">{{ _.jSumBy(datas, "BillCost").toFixed(2) }}</td>
         </tr>
       </template>
     </data-table>
@@ -102,10 +113,11 @@ import DateTimePicker from "../components/DateTimePicker.vue";
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
 import ListMixins from "mixins/List";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMixins, OrderByMixins],
-  components: { DateTimePicker, DataTable },
+  mixins: [CommonMixins, OrderByMixins, ListMixins, LibraryMixins],
+  components: { DateTimePicker },
   data: () => ({
     options: {
       subEmps: [],
@@ -127,6 +139,30 @@ export default {
       const res = await $.callApi.post("api/taskReanking/list", this.editData);
       this.datas = res.data;
       this.display_mode = this.editData.display_mode;
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        [
+          ["帳號", "分機號", "用戶名稱", "時間", "通數", "費用", "成本"].join(
+            ","
+          ),
+        ]
+          .concat(
+            this.sortDatas.map((x) =>
+              [
+                x.UserID,
+                x.ExtensionNo || "Wait",
+                x.UserName,
+                x.CallDuration,
+                x.Count,
+                (+x.BillValue).toFixed(2),
+                (+x.BillCost).toFixed(2),
+              ].join(",")
+            )
+          )
+          .join("\r\n"),
+        "話務排行.csv"
+      );
     },
   },
   computed: {
