@@ -44,6 +44,9 @@
       value="Delete"
       @click="doDelete()"
     />
+    <a class="btn btn-success" style="color: white" @click="exportCSV()"
+      >下載
+    </a>
     <data-table
       allChecked
       :datas="rateGroup"
@@ -79,10 +82,11 @@
 <script>
 import CommonMixins from "mixins/Common";
 import DataTable from "../components/DataTable";
+import LibraryMixins from "mixins/Library";
 
 export default {
   components: { DataTable },
-  mixins: [CommonMixins],
+  mixins: [CommonMixins, LibraryMixins],
   data: () => ({
     rateGroup: [],
     data: {},
@@ -122,6 +126,18 @@ export default {
       });
       alertify.alert("已成功刪除!");
       this.getList();
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        [["費率表代號", "費率表名稱"].join(",")]
+          .concat(
+            this.rateGroup.map((x) =>
+              [x.RateGroupID, x.RateGroupName].join(",")
+            )
+          )
+          .join("\r\n"),
+        "費率表.csv"
+      );
     },
   },
   mounted() {
