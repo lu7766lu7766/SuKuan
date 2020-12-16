@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 use lib\ReturnMessage;
+use Tightenco\Collect\Support\Collection;
 
 class RateController extends JController
 {
@@ -16,6 +17,21 @@ class RateController extends JController
             "RateGroupID" => $req["post"]["RateGroupID"],
             "RateGroupName" => $req["post"]["RateGroupName"],
         ]));
+    }
+
+    public function createBatch($req)
+    {
+        ["post" => $post] = $req;
+        ReturnMessage::success(
+            DB::table("RateGroup")->insert(
+                Collection($post["datas"])->map(function ($x) {
+                    return [
+                        "RateGroupID" => $x["RateGroupID"],
+                        "RateGroupName" => $x["RateGroupName"],
+                    ];
+                })->toArray()
+            )
+        );
     }
 
     public function update($req)

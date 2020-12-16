@@ -4,6 +4,7 @@ use \lib\ReturnMessage;
 use Illuminate\Database\Capsule\Manager as DB;
 use repostory\UserRepostory;
 use setting\Menu2;
+use Tightenco\Collect\Support\Collection;
 
 class UserController extends JController
 {
@@ -71,7 +72,7 @@ class UserController extends JController
 		$repo = new UserRepostory();
 		$post = $req["post"];
 		$session = $req["session"];
-		if ($repo->checkExists($post["UserID"])) {
+		if ($repo->checkExists([$post["UserID"]])) {
 			ReturnMessage::error("登入帳號已存在，無法新增。");
 		} else {
 			DB::transaction(function () use ($repo, $post, $session) {
@@ -109,6 +110,43 @@ class UserController extends JController
 				}
 			});
 			ReturnMessage::success(true);
+		}
+	}
+
+	public function createBatch($req)
+	{
+		["post" => $post, "session" => $session] = $req;
+		$repo = new UserRepostory();
+		if ($repo->checkExists(array_column($post["datas"], "UserID"))) {
+			ReturnMessage::error("帳號有重複，無法新增。");
+		} else {
+			try {
+				DB::transaction(function () use ($post, $session) {
+					DB::table("SysUser")->insert(
+						Collection($post["datas"])->map(function ($x) {
+							return [
+								"UserID" => $x["UserID"],
+								"UserName" => $x["UserName"],
+								"UseState" => $x["UseState"],
+								"RateGroupID" => $x["RateGroupID"],
+								"Balance" => $x["Balance"],
+								"NoteText" => $x["NoteText"],
+							];
+						})->toArray()
+					);
+					DB::table("RechargeLog")->insert(Collection($post["datas"])->map(function ($x) use ($session) {
+						return [
+							"UserID" => $x["UserID"],
+							"AddValue" => $x["Balance"],
+							"AddTime" => date("Y-m-d H:i:s", time()),
+							"SaveUserID" => $session["choice"]
+						];
+					})->toArray());
+				});
+				ReturnMessage::success(true);
+			} catch (Exception $err) {
+				ReturnMessage::error($err->getMessage());
+			}
 		}
 	}
 

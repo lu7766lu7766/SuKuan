@@ -4,6 +4,9 @@ use comm\Route;
 
 Route::get("/user/echoPassword", "UserController@echoPassword");
 Route::post("/user/list", "UserController@list");
+Route::post("/user/create", "UserController@create");
+Route::post("/user/create/batch", "UserController@createCatch");
+Route::post("/user/update", "UserController@update");
 Route::post("/user/delete", "UserController@delete");
 Route::post("/user/menus", "UserController@menus");
 Route::post("/user/detail", "UserController@detail");
@@ -11,6 +14,7 @@ Route::post("/user/detail", "UserController@detail");
 // rate manage
 Route::post("/rate/list", "RateController@list");
 Route::post("/rate/create", "RateController@create");
+Route::post("/rate/create/batch", "RateController@createBatch");
 Route::post("/rate/update", "RateController@update");
 Route::post("/rate/delete", "RateController@delete");
 
@@ -25,11 +29,13 @@ Route::post("/api/communication/delete", "CommunicationController@delete");
 // user route
 Route::post("/api/userRoute/list", "UserRouteController@list");
 Route::post("/api/userRoute/create", "UserRouteController@create");
+Route::post("/api/userRoute/create/batch", "UserRouteController@createCatch");
 Route::post("/api/userRoute/update", "UserRouteController@update");
 Route::post("/api/userRoute/delete", "UserRouteController@delete");
 // 
 Route::post("/api/manualUserRoute/list", "ManualUserRouteController@list");
 Route::post("/api/manualUserRoute/create", "ManualUserRouteController@create");
+Route::post("/api/manualUserRoute/create/batch", "ManualUserRouteController@createBatch");
 Route::post("/api/manualUserRoute/update", "ManualUserRouteController@update");
 Route::post("/api/manualUserRoute/delete", "ManualUserRouteController@delete");
 // point history

@@ -1,86 +1,40 @@
 <?php
 
-use Illuminate\Database\Capsule\Manager as DB;
 use lib\ReturnMessage;
-use Rakit\Validation\Validator;
+use service\UserRouteService;
 
 class UserRouteController extends JController
 {
-	public function list($req)
+	function __construct()
 	{
-		$db = DB::table("AsRouting");
-		["session" => $session] = $req;
-		if (!$session["isRoot"]) {
-			$db->where("UserID", $session["choice"]);
-		}
-		ReturnMessage::success($db->get());
+		$this->service = new UserRouteService("AsRouting");
 	}
 
-	private function validate($post)
+	public function list($req)
 	{
-		$validator = new Validator();
-		$validation = $validator->validate($post, [
-			'UserID'                 => 'required',
-			'PrefixCode'             => 'required',
-			'TrunkPort'              => 'required|min:1|max:65535',
-		]);
-		if ($validation->fails()) {
-			ReturnMessage::error("驗證失敗，請確認欄位");
-		}
+		ReturnMessage::success($this->service->list($req));
 	}
 
 	public function create($req)
 	{
-		["post" => $post] = $req;
-		$this->validate($post);
-
-		if (
-			DB::table("AsRouting")->where("UserID", $post["UserID"])->where("PrefixCode", $post["PrefixCode"])->count()
-		) {
-			ReturnMessage::error("用戶與前置碼重複，無法新增。");
+		try {
+			ReturnMessage::success($this->service->create($req));
+		} catch (Exception $err) {
+			ReturnMessage::error($err->getMessage());
 		}
-		ReturnMessage::success(
-			DB::table("AsRouting")->insert([
-				"UserID" => $post["UserID"],
-				"PrefixCode" => $post["PrefixCode"],
-				"AddPrefix" => $post["AddPrefix"],
-				"RouteCLI" => $post["RouteCLI"],
-				"TrunkIP" => $post["TrunkIP"],
-				"TrunkPort" => $post["TrunkIP"],
-				"RouteName" => $post["RouteName"],
-				"SubNum" => $post["SubNum"]
-			])
-		);
 	}
 
 	public function update($req)
 	{
-		["post" => $post] = $req;
-		$this->validate($post);
-
-		ReturnMessage::success(
-			DB::table("AsRouting")
-				->where("UserID", $post["UserID"])
-				->where("PrefixCode", $post["PrefixCode"])
-				->update([
-					"AddPrefix" => $post["AddPrefix"],
-					"RouteCLI" => $post["RouteCLI"],
-					"TrunkIP" => $post["TrunkIP"],
-					"TrunkPort" => $post["TrunkIP"],
-					"RouteName" => $post["RouteName"],
-					"SubNum" => $post["SubNum"]
-				])
-		);
+		try {
+			ReturnMessage::success($this->service->update($req));
+		} catch (Exception $err) {
+			ReturnMessage::error($err->getMessage());
+		}
 	}
 
 	public function delete($req)
 	{
-		["post" => $post] = $req;
-		ReturnMessage::success(
-			DB::table("AsRouting")
-				->where("UserID", $post["UserID"])
-				->where("PrefixCode", $post["PrefixCode"])
-				->delete()
-		);
+		ReturnMessage::success($this->service->delete($req));
 	}
 }

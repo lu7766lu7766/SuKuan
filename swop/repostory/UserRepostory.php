@@ -14,9 +14,9 @@ class UserRepostory
     return DB::table("SysUser")->where("UserID", $userID)->first();
   }
 
-  public function checkExists($userID)
+  public function checkExists($userIDs)
   {
-    return DB::table("SysUser")->where("UserID", $userID)->count();
+    return DB::table("SysUser")->whereIn("UserID", $userIDs)->count();
   }
 
   public function create(

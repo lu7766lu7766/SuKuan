@@ -17,7 +17,7 @@ function getenv2(...$args)
 use setting\Config;
 use Tightenco\Collect\Support\Collection;
 
-function getApiUrl($uri)
+function getApiUrl($uri): String
 {
     $config = new Config();
     $currentHost = getenv2('API_HOST')
@@ -26,7 +26,7 @@ function getApiUrl($uri)
     return '//' . $currentHost . $uri;
 }
 
-function getDownloaderUrl($uri)
+function getDownloaderUrl($uri): String
 {
     $config = new Config();
     $currentHost = getenv2('DOWNLOAD_HOST')
@@ -35,7 +35,7 @@ function getDownloaderUrl($uri)
     return '//' . $currentHost . $uri;
 }
 
-function GUID()
+function GUID(): String
 {
     if (function_exists('com_create_guid') === true) {
         return trim(com_create_guid(), '{}');
@@ -53,7 +53,7 @@ function GUID()
     );
 }
 
-function Collection($item)
+function Collection($item): Collection
 {
     return new Collection($item);
 }
