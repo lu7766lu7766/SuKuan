@@ -91,6 +91,9 @@
       </tbody>
     </table>
     <div>
+      <a class="btn btn-success" style="color: white" @click="exportCSV()"
+        >下載
+      </a>
       用戶切換：
       <select v-model="keyword">
         <option value="">顯示全部</option>
@@ -114,7 +117,7 @@
         { key: 'TrunkIP', name: 'Trunk IP' },
         { key: 'TrunkPort', name: 'Trunk Port' },
         { key: 'RouteName', name: '路由名稱' },
-        { key: 'SubNum', name: '刪除幾碼' },
+        { key: 'SubNum', name: '刪除機碼' },
         { key: 'action', name: '操作' },
       ]"
     >
@@ -132,9 +135,10 @@
 
 <script>
 import ListMixins from "mixins/List";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [ListMixins],
+  mixins: [ListMixins, LibraryMixins],
   data: () => ({
     options: {
       subEmp: [],
@@ -176,6 +180,38 @@ export default {
         PrefixCode: data.PrefixCode,
       });
       this.getList();
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        [
+          [
+            "用戶",
+            "前置碼",
+            "新增前置碼",
+            "顯示號碼",
+            "Trunk IP",
+            "Trunk Port",
+            "路由名稱",
+            "刪除機碼",
+          ].join(","),
+        ]
+          .concat(
+            this.filterDatas.map((x) =>
+              [
+                x.UserID,
+                x.PrefixCode,
+                x.AddPrefix,
+                x.RouteCLI,
+                x.TrunkIP,
+                x.TrunkPort,
+                x.RouteName,
+                x.SubNum,
+              ].join(",")
+            )
+          )
+          .join("\r\n"),
+        "手動撥號路由.csv"
+      );
     },
   },
   computed: {
