@@ -57,6 +57,9 @@
         </tr>
       </tbody>
     </table>
+    <a class="btn btn-success" style="color: white" @click="exportCSV()"
+      >下載
+    </a>
     <data-table
       :startIndex="startIndex"
       :datas="datas"
@@ -86,9 +89,10 @@
 import CommonMiins from "mixins/Common";
 import PaginateMiins from "mixins/Paginate";
 import ListMiins from "mixins/List";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMiins, PaginateMiins, ListMiins],
+  mixins: [CommonMiins, PaginateMiins, ListMiins, LibraryMixins],
   data: () => ({
     options: {
       subEmp: [],
@@ -126,6 +130,18 @@ export default {
     async doUpdate(data) {
       await $.callApi.post("api/point/history/update", data);
       alertify.alert("更新成功");
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        [["儲值者", "儲值對象", "儲值金額", "儲值時間", "備註"].join(",")]
+          .concat(
+            this.datas.map((x) =>
+              [x.SaveUserID, x.UserID, x.AddValue, x.AddTime, x.Memo].join(",")
+            )
+          )
+          .join("\r\n"),
+        "儲值紀錄.csv"
+      );
     },
   },
   mounted() {
