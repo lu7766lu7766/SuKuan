@@ -13,7 +13,7 @@ class UserRouteService
 
   function __construct($tableName)
   {
-    $this->tableName;
+    $this->tableName = $tableName;
   }
 
   public function list($req)
