@@ -1,99 +1,110 @@
 <template>
   <div class="table-responsive">
-    <table class="table table-v table-condensed">
-      <tbody>
-        <tr>
-          <td>用戶:</td>
-          <td>
-            <select
-              class="form-control"
-              v-model="editData.UserID"
-              :disabled="isUpdate"
-            >
-              <option
-                v-for="(item, index) in options.subEmp"
-                :key="index"
-                :value="item.value"
-              >
-                {{ item.name }}
-              </option>
-            </select>
-          </td>
-          <td>顯示號碼:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              v-model="editData.RouteCLI"
-            />
-          </td>
-          <td>Trunk IP:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              v-model="editData.TrunkIP"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>前置碼:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              v-model="editData.PrefixCode"
-              :disabled="isUpdate"
-            />
-          </td>
-          <td>新增前置碼:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              v-model="editData.AddPrefix"
-            />
-          </td>
-          <td>*Trunk port:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              :class="{
-                'input-invalid': isTrunkPortEmpty || isTrunkPortError,
-              }"
-              value="5060"
-              placeholder="1~65535"
-              v-model="editData.TrunkPort"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td>路由名稱:</td>
-          <td>
-            <input
-              type="text"
-              class="form-control"
-              v-model="editData.RouteName"
-            />
-          </td>
-          <td></td>
-          <td colspan="3">
-            <input
-              type="button"
-              class="form-control btn btn-primary"
-              :disabled="hasInvalid"
-              :value="isUpdate ? '更新' : '新增'"
-              @click="isUpdate ? doUpdate() : doCreate()"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <validation v-slot="{ invalid }">
+      <table class="table table-v table-condensed">
+        <tbody>
+          <tr>
+            <td>*用戶:</td>
+            <td>
+              <validate rules="required">
+                <select
+                  class="form-control"
+                  v-model="editData.UserID"
+                  :disabled="isUpdate"
+                >
+                  <option
+                    v-for="(item, index) in options.subEmp"
+                    :key="index"
+                    :value="item.value"
+                  >
+                    {{ item.name }}
+                  </option>
+                </select>
+              </validate>
+            </td>
+            <td>顯示號碼:</td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                v-model="editData.RouteCLI"
+              />
+            </td>
+            <td>Trunk IP:</td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                v-model="editData.TrunkIP"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>*前置碼:</td>
+            <td>
+              <validate rules="required">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="editData.PrefixCode"
+                  :disabled="isUpdate"
+                />
+              </validate>
+            </td>
+            <td>新增前置碼:</td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                v-model="editData.AddPrefix"
+              />
+            </td>
+            <td>*Trunk port:</td>
+            <td>
+              <validate rules="required|min_value:1|max_value:65535">
+                <input
+                  type="text"
+                  class="form-control"
+                  value="5060"
+                  placeholder="1~65535"
+                  v-model.number="editData.TrunkPort"
+                />
+              </validate>
+            </td>
+          </tr>
+          <tr>
+            <td>路由名稱:</td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                v-model="editData.RouteName"
+              />
+            </td>
+            <td></td>
+            <td colspan="3">
+              <input
+                type="button"
+                class="form-control btn btn-primary"
+                :disabled="invalid"
+                :value="isUpdate ? '更新' : '新增'"
+                @click="isUpdate ? doUpdate() : doCreate()"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </validation>
+
     <div>
-      <a class="btn btn-success" style="color: white" @click="exportCSV()"
-        >下載
-      </a>
+      <button type="button" class="btn btn-success" @click="exportCSV()">
+        下載
+      </button>
+
+      <button type="button" class="btn btn-warning" @click="upload()">
+        上傳
+      </button>
+
       用戶切換：
       <select v-model="keyword">
         <option value="">顯示全部</option>
@@ -117,7 +128,7 @@
         { key: 'TrunkIP', name: 'Trunk IP' },
         { key: 'TrunkPort', name: 'Trunk Port' },
         { key: 'RouteName', name: '路由名稱' },
-        { key: 'SubNum', name: '刪除機碼' },
+        { key: 'SubNum', name: '刪除幾碼' },
         { key: 'action', name: '操作' },
       ]"
     >
@@ -213,21 +224,43 @@ export default {
         "手動撥號路由.csv"
       );
     },
+    async upload() {
+      const file = await this.$upload({
+        accept: ".csv",
+      });
+      const text = await this.fileFunc.toText(file);
+      const request = text.split("\r\n").map((line) => {
+        const {
+          0: UserID,
+          1: PrefixCode,
+          2: AddPrefix,
+          3: RouteCLI,
+          4: TrunkIP,
+          5: TrunkPort,
+          6: RouteName,
+          7: SubNum,
+        } = line.split(",").map((x) => x.trim());
+        return {
+          UserID,
+          PrefixCode,
+          AddPrefix,
+          RouteCLI,
+          TrunkIP,
+          TrunkPort,
+          RouteName,
+          SubNum,
+        };
+      });
+      await $.callApi.post("api/userRoute/createBatch", request);
+      this.$swal("新增成功");
+      this.getList();
+    },
   },
   computed: {
     filterDatas() {
       return this.keyword
         ? this.datas.filter((x) => x.UserID == this.keyword)
         : this.datas;
-    },
-    isTrunkPortEmpty() {
-      return !this.editData.TrunkPort;
-    },
-    isTrunkPortError() {
-      return this.editData.TrunkPort < 1 || this.editData.TrunkPort > 65535;
-    },
-    hasInvalid() {
-      return this.isTrunkPortEmpty || this.isTrunkPortError;
     },
   },
   mounted() {
