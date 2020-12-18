@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use lib\ReturnMessage;
 use Rakit\Validation\Validator;
 use Exception;
+use Tightenco\Collect\Support\Collection;
 
 class UserRouteService
 {
@@ -56,7 +57,7 @@ class UserRouteService
         "AddPrefix" => $post["AddPrefix"],
         "RouteCLI" => $post["RouteCLI"],
         "TrunkIP" => $post["TrunkIP"],
-        "TrunkPort" => $post["TrunkIP"],
+        "TrunkPort" => $post["TrunkPort"],
         "RouteName" => $post["RouteName"],
         "SubNum" => $post["SubNum"]
       ])
@@ -76,7 +77,7 @@ class UserRouteService
           "AddPrefix" => $post["AddPrefix"],
           "RouteCLI" => $post["RouteCLI"],
           "TrunkIP" => $post["TrunkIP"],
-          "TrunkPort" => $post["TrunkIP"],
+          "TrunkPort" => $post["TrunkPort"],
           "RouteName" => $post["RouteName"],
           "SubNum" => $post["SubNum"]
         ])
@@ -91,6 +92,27 @@ class UserRouteService
         ->where("UserID", $post["UserID"])
         ->where("PrefixCode", $post["PrefixCode"])
         ->delete()
+    );
+  }
+
+  public function createBatch($req)
+  {
+    ["post" => $post] = $req;
+    ReturnMessage::success(
+      DB::table($this->tableName)->insert(
+        Collection($post["datas"])->map(function ($x) {
+          return [
+            "UserID" => $x["UserID"],
+            "PrefixCode" => $x["PrefixCode"],
+            "AddPrefix" => $x["AddPrefix"],
+            "RouteCLI" => $x["RouteCLI"],
+            "TrunkIP" => $x["TrunkIP"],
+            "TrunkPort" => $x["TrunkPort"],
+            "RouteName" => $x["RouteName"],
+            "SubNum" => $x["SubNum"]
+          ];
+        })->toArray()
+      )
     );
   }
 }

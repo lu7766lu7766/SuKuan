@@ -34,11 +34,14 @@ class Index_Controller extends JController
         $this->model->choice = $this->model->choiceUser;
         $this->model->session["permission"] = $this->model->choicePermission;
         $this->model->permission = $this->model->choicePermission;
-        $this->model->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp($this->model->session["sub_emp"],
-            $this->model->session["choice"]);
+        $this->model->session["sub_emp"] = $this->model->getSubEmp($this->model->session["login"]["UserID"]);
+        $this->model->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp(
+            $this->model->session["sub_emp"],
+            $this->model->session["choice"]
+        );
         $this->model->session["permission_control"] =
             $this->model->session["choice"] == $this->model->session["login"]["UserID"] ? $this->model->session["login"]["PermissionControl"] :
-                EmpHelper::getPermissionControl($this->model->session["sub_emp"], $this->model->session["choice"]);
+            EmpHelper::getPermissionControl($this->model->session["sub_emp"], $this->model->session["choice"]);
         //echo $this->menu->CreateMenu($this->model->permission);
     }
 
@@ -73,9 +76,7 @@ class Index_Controller extends JController
 
     public function test()
     {
-//        echo "<pre>";
-//        print_r($this->model->data);
+        //        echo "<pre>";
+        //        print_r($this->model->data);
     }
 }
-
-?>

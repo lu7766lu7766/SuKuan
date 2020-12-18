@@ -43,7 +43,7 @@ export default {
 						cancelButtonColor: '#d33',
 						confirmButtonText: '確定',
 						cancelButtonText: '取消',
-						reverseButtons: true,
+						// reverseButtons: true,
 					})
 					.then((result) => {
 						if (result.isConfirmed) {

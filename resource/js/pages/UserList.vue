@@ -9,9 +9,19 @@
     <a class="btn btn-primary" style="color: white" @click="toDetail()"
       >新增
     </a>
-    <a class="btn btn-success" style="color: white" @click="exportCSV()"
-      >下載
-    </a>
+    <button type="button" class="btn btn-success" @click="exportCSV()">
+      下載
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-warning"
+      v-if="isRoot"
+      @click="upload()"
+    >
+      上傳
+    </button>
+
     <data-table
       allChecked
       :datas="sortDatas"
@@ -76,7 +86,13 @@ export default {
   methods: {
     async getList() {
       const res = await $.callApi.post("user/list");
-      this.datas = res.data.map((x) => ((x.checked = false), x));
+      const checkedUserID = this.datas
+        .filter((x) => x.checked)
+        .map((x) => x.UserID);
+      this.datas = res.data.map((x) => {
+        x.checked = checkedUserID.includes(x.UserID);
+        return x;
+      });
     },
     toDetail(UserID) {
       redirect(`userInfo/userDetail${UserID ? "?userId=" + UserID : ""}`);
@@ -119,6 +135,37 @@ export default {
           .join("\r\n"),
         "用戶列表.csv"
       );
+    },
+    async upload() {
+      const file = await this.$upload({
+        accept: ".csv",
+      });
+      const text = await this.fileFunc.toText(file);
+      const datas = text.split("\r\n").map((line) => {
+        const {
+          0: UserID,
+          1: UseState,
+          2: Distributor,
+          3: ExtensionCount,
+          4: RateGroupID,
+          5: Balance,
+          6: UserName,
+          7: NoteText,
+        } = line.split(",").map((x) => x.trim());
+        return {
+          UserID,
+          UseState,
+          Distributor,
+          ExtensionCount,
+          RateGroupID,
+          Balance,
+          UserName,
+          NoteText,
+        };
+      });
+      await $.callApi.post("user/create/batch", { datas });
+      alertify.alert("已成功新增!");
+      $.updateSession()
     },
   },
   computed: {

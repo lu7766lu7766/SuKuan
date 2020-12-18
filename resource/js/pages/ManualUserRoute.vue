@@ -229,7 +229,7 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const request = text.split("\r\n").map((line) => {
+      const datas = text.split("\r\n").map((line) => {
         const {
           0: UserID,
           1: PrefixCode,
@@ -251,7 +251,7 @@ export default {
           SubNum,
         };
       });
-      await $.callApi.post("api/userRoute/createBatch", request);
+      await $.callApi.post("api/manualUserRoute/create/batch", { datas });
       this.$swal("新增成功");
       this.getList();
     },

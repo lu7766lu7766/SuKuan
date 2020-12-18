@@ -9,7 +9,7 @@
               <input
                 type="text"
                 class="form-control"
-                v-model="data.RateGroupID"
+                v-model="editData.RateGroupID"
               />
               <span class="input-group-addon">( 1 ~ 99999 )</span>
             </div>
@@ -21,7 +21,7 @@
             <input
               type="text"
               class="form-control"
-              v-model="data.RateGroupName"
+              v-model="editData.RateGroupName"
             />
           </td>
         </tr>
@@ -44,18 +44,36 @@
       value="Delete"
       @click="doDelete()"
     />
-    <a class="btn btn-success" style="color: white" @click="exportCSV()"
-      >下載
-    </a>
+
+    <button type="button" class="btn btn-success" @click="exportCSV()">
+      下載
+    </button>
+
+    <button type="button" class="btn btn-warning" @click="upload()">
+      上傳
+    </button>
+
     <data-table
       allChecked
-      :datas="rateGroup"
+      :datas="datas"
       :columns="[
         { key: 'RateGroupID', name: '費率表代號', show: isRoot },
         { key: 'RateGroupName', name: '費率表名稱' },
         { key: 'action', name: '操作' },
       ]"
     >
+      <template v-slot:allChecked>
+        <input type="checkbox" class="checkAll" v-model="isAllChecked" />
+      </template>
+
+      <template v-slot:checked="{ data }">
+        <input
+          type="checkbox"
+          v-model="data.checked"
+          v-if="choice != data.UserID"
+        />
+      </template>
+
       <template v-slot:RateGroupName="{ data }">
         <span v-if="isRoot">
           <input
@@ -82,19 +100,16 @@
 <script>
 import CommonMixins from "mixins/Common";
 import DataTable from "../components/DataTable";
+import ListMixins from "mixins/List";
 import LibraryMixins from "mixins/Library";
 
 export default {
   components: { DataTable },
-  mixins: [CommonMixins, LibraryMixins],
-  data: () => ({
-    rateGroup: [],
-    data: {},
-  }),
+  mixins: [CommonMixins, ListMixins, LibraryMixins],
   methods: {
     async getList() {
       const res = await $.callApi.post("rate/list");
-      this.rateGroup = res.data.map((x) => ((x.checked = false), x));
+      this.datas = res.data.map((x) => ((x.checked = false), x));
     },
     toModify(id, name) {
       redirect(
@@ -103,8 +118,8 @@ export default {
     },
     async doCreate() {
       const res = await $.callApi.post("rate/create", {
-        RateGroupID: this.data.RateGroupID,
-        RateGroupName: this.data.RateGroupName,
+        RateGroupID: this.editData.RateGroupID,
+        RateGroupName: this.editData.RateGroupName,
       });
       alertify.alert("已成功新增!");
       this.getList();
@@ -118,7 +133,7 @@ export default {
       this.getList();
     },
     async doDelete() {
-      const RateGroupIDs = this.rateGroup
+      const RateGroupIDs = this.datas
         .filter((x) => x.checked)
         .map((x) => x.RateGroupID);
       const res = await $.callApi.post("rate/delete", {
@@ -131,13 +146,31 @@ export default {
       this.fileFunc.exportCSV(
         [["費率表代號", "費率表名稱"].join(",")]
           .concat(
-            this.rateGroup.map((x) =>
+            this.datas.map((x) =>
               [x.RateGroupID, x.RateGroupName].join(",")
             )
           )
           .join("\r\n"),
         "費率表.csv"
       );
+    },
+    async upload() {
+      const file = await this.$upload({
+        accept: ".csv",
+      });
+      const text = await this.fileFunc.toText(file);
+      const datas = text.split("\r\n").map((line) => {
+        const { 0: RateGroupID, 1: RateGroupName } = line
+          .split(",")
+          .map((x) => x.trim());
+        return {
+          RateGroupID,
+          RateGroupName,
+        };
+      });
+      await $.callApi.post("rate/create/batch", { datas });
+      alertify.alert("已成功新增!");
+      this.getList();
     },
   },
   mounted() {

@@ -37,4 +37,13 @@ class UserRouteController extends JController
 	{
 		ReturnMessage::success($this->service->delete($req));
 	}
+
+	public function createBatch($req)
+	{
+		try {
+			ReturnMessage::success($this->service->createBatch($req));
+		} catch (Exception $err) {
+			ReturnMessage::error($err->getMessage());
+		}
+	}
 }

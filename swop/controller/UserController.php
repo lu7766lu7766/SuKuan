@@ -123,7 +123,7 @@ class UserController extends JController
 			try {
 				DB::transaction(function () use ($post, $session) {
 					DB::table("SysUser")->insert(
-						Collection($post["datas"])->map(function ($x) {
+						Collection($post["datas"])->map(function ($x) use ($session) {
 							return [
 								"UserID" => $x["UserID"],
 								"UserName" => $x["UserName"],
@@ -131,6 +131,7 @@ class UserController extends JController
 								"RateGroupID" => $x["RateGroupID"],
 								"Balance" => $x["Balance"],
 								"NoteText" => $x["NoteText"],
+								"ParentID" => $session["choice"]
 							];
 						})->toArray()
 					);

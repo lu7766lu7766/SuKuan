@@ -65,6 +65,17 @@
 			}
 		}
 		$.callApi = new callApi()
+		$.updateSession = function() {
+			var $userSelect = $("#userSelet")
+			var choiceUser = $userSelect.val();
+			var choicePermission = $userSelect.find(":selected").attr("permission");
+			$.post(folder + "index/chgUser", {
+				choiceUser,
+				choicePermission
+			}, function(data) {
+				location.reload();
+			});
+		}
 
 		$(document).ready(function() {
 

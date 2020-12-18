@@ -5,7 +5,7 @@ use comm\Route;
 Route::get("/user/echoPassword", "UserController@echoPassword");
 Route::post("/user/list", "UserController@list");
 Route::post("/user/create", "UserController@create");
-Route::post("/user/create/batch", "UserController@createCatch");
+Route::post("/user/create/batch", "UserController@createBatch");
 Route::post("/user/update", "UserController@update");
 Route::post("/user/delete", "UserController@delete");
 Route::post("/user/menus", "UserController@menus");
@@ -29,7 +29,7 @@ Route::post("/api/communication/delete", "CommunicationController@delete");
 // user route
 Route::post("/api/userRoute/list", "UserRouteController@list");
 Route::post("/api/userRoute/create", "UserRouteController@create");
-Route::post("/api/userRoute/create/batch", "UserRouteController@createCatch");
+Route::post("/api/userRoute/create/batch", "UserRouteController@createBatch");
 Route::post("/api/userRoute/update", "UserRouteController@update");
 Route::post("/api/userRoute/delete", "UserRouteController@delete");
 // 
