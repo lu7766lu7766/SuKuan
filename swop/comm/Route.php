@@ -108,16 +108,18 @@ class Router
         $this->config = new Config();
     }
 
+    private $_isMatched = false;
+
     public function isMatched()
     {
         // TODO: Implement __destruct() method.
         $air = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
-        $isMatched = false;
+        
         // print_r($air);
         // die();
         /** 開始mapping */
         foreach ($this->map as $path => $args) {
-            if ($isMatched) {
+            if ($this->_isMatched) {
                 break;
             }
             // print_r([$air, count(explode('/', $air)), count(explode('/', $path))]);
@@ -200,12 +202,12 @@ class Router
 
                 /** @var callback $func */
                 $func($data);
-                $isMatched = true;
+                $this->_isMatched = true;
                 break;
             }
         }
         // return true;
-        return $isMatched;
+        return $this->_isMatched;
     }
 
     public function __destruct()
