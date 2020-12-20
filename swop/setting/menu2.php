@@ -104,8 +104,8 @@ class Menu2
 			"name" => "系統監視",
 			"call_status" => array(
 				"name" => "呼叫狀態",
-				//"url" => "sysLookout/callStatus"
-				"url" => "sysLookout/callStatus_vue"
+				"url" => "sysLookout/callStatus"
+				// "url" => "sysLookout/callStatus_vue"
 			),
 			"key_method" => array(
 				"name" => "按鍵功能",

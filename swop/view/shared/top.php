@@ -36,10 +36,11 @@
 		//   downloaderUrl = '//125.227.84.247:8099/'
 		// }
 		function callApi() {
-			const request = function(method, uri, data = {}) {
+
+			const request = function(method, url, data = {}) {
 				return new Promise(function(resolve, reject) {
 					$.ajax({
-						url: folder + uri,
+						url,
 						type: method,
 						data,
 						dataType: "json",
@@ -57,11 +58,38 @@
 					})
 				})
 			}
-			this.post = function(uri, data) {
-				return request('POST', uri, data)
+
+			const requestWithoutCode = function(method, url, data = {}) {
+				return new Promise(function(resolve, reject) {
+					$.ajax({
+						url,
+						type: method,
+						data,
+						dataType: "json",
+						success(res, status) {
+							if (status === "success") {
+								resolve(res)
+							} else {
+								reject(res)
+							}
+						},
+						error(xhr, errorType, error) {
+							reject(error)
+						}
+					})
+				})
 			}
-			this.get = function() {
-				return request('GET', uri, data)
+
+			this.post = function(uri, data) {
+				return request('POST', folder + uri, data)
+			}
+
+			this.get = function(uri, data) {
+				return request('GET', folder + uri, data)
+			}
+
+			this.go = function(uri, data) {
+				return requestWithoutCode('POST', apiUrl + uri, data)
 			}
 		}
 		$.callApi = new callApi()

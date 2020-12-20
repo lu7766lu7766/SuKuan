@@ -7,6 +7,7 @@ export default {
 	install: (Vue) => {
 		Vue.use(VueBus)
 		Vue.use(VueSweetalert2)
+		Vue.prototype._ = _
 		Vue.prototype.$upload = async function(options) {
 			return new Promise((resolve) => {
 				const a = document.createElement('input')
@@ -33,7 +34,7 @@ export default {
 		Vue.component('Validation', ValidationObserver)
 		Vue.component('Validate', require('@/Validate').default)
 		Vue.prototype.$confirm = function(title = '你確定要刪除嗎？') {
-			return new Promise((resolve) => {
+			return new Promise((resolve, reject) => {
 				this.$swal
 					.fire({
 						title,
@@ -49,7 +50,9 @@ export default {
 						if (result.isConfirmed) {
 							resolve()
 						}
+						reject()
 					})
+					.catch(() => reject())
 			})
 		}
 	},

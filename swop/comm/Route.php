@@ -114,7 +114,7 @@ class Router
     {
         // TODO: Implement __destruct() method.
         $air = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
-        
+
         // print_r($air);
         // die();
         /** 開始mapping */
@@ -316,7 +316,7 @@ class Router
                     };
                 }
             }
-            throw new Exception('don\'t find the controller!!');
+            throw new Exception("didn't find the controller: {$file_path}");
         }
     }
 

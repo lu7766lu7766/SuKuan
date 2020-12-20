@@ -42,3 +42,15 @@ Route::post("/api/manualUserRoute/delete", "ManualUserRouteController@delete");
 Route::post("/api/point/history/list", "PointController@list");
 Route::post("/api/point/history/total", "PointController@total");
 Route::post("/api/point/history/update", "PointController@update");
+//call status
+Route::post("/api/call-status/base", "CallStatusController@base");
+Route::post("/api/call-status/modify/concurrentCalls", "CallStatusController@concurrentCalls");
+Route::post("/api/call-status/modify/calloutGroupID", "CallStatusController@calloutGroupID");
+Route::post("/api/call-status/modify/useState", "CallStatusController@useState");
+Route::post("/api/call-status/delete/callPlan", "CallStatusController@deleteCallPlan");
+Route::post("/api/call-status/update/suspend", "CallStatusController@switchSuspend");
+Route::post("/api/call-status/update/maxRoutingCalls", "CallStatusController@updateMaxRoutingCalls");
+Route::post("/api/call-status/update/maxCalls", "CallStatusController@updateMaxCalls");
+Route::post("/api/call-status/update/callWaitingTime", "CallStatusController@updateCallWaitingTime");
+Route::post("/api/call-status/update/planDistribution", "CallStatusController@updatePlanDistribution");
+Route::post("/api/call-status/callRelease", "CallStatusController@callRelease");
