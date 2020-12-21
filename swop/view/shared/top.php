@@ -94,15 +94,15 @@
 		}
 		$.callApi = new callApi()
 		$.updateSession = function() {
-			var $userSelect = $("#userSelet")
-			var choiceUser = $userSelect.val();
-			var choicePermission = $userSelect.find(":selected").attr("permission");
-			$.post(folder + "index/chgUser", {
-				choiceUser,
-				choicePermission
-			}, function(data) {
-				location.reload();
-			});
+			return new Promise(resolve => {
+				var $userSelect = $("#userSelet")
+				var choice = $userSelect.val();
+				$.post(folder + "index/changeUser", {
+					choice,
+				}, function(data) {
+					resolve()
+				});
+			})
 		}
 
 		$(document).ready(function() {

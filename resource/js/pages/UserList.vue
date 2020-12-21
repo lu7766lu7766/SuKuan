@@ -165,7 +165,8 @@ export default {
       });
       await $.callApi.post("user/create/batch", { datas });
       alertify.alert("已成功新增!");
-      $.updateSession()
+      await $.updateSession()
+      location.reload()
     },
   },
   computed: {

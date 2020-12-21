@@ -198,47 +198,80 @@
             <!--號碼區段-->
             <td>
               <a
-                target="_blank"
-                :href="data.downloadCalledCount"
-                v-text="data.CalledCount"
-              ></a>
+                href="javascript:;"
+                @click="
+                  downloadNumberList(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
+                >{{ data.CalledCount }}</a
+              >
             </td>
             <!--筆數-->
             <td>
               <a
-                target="_blank"
-                :href="data.downloadWaitCall"
-                v-text="data.WaitCall"
-              ></a>
+                href="javascript:;"
+                @click="
+                  downloadWaitCall(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
+                >{{ data.WaitCall }}</a
+              >
             </td>
             <!--待發-->
             <td>
               <a
-                target="_blank"
-                :href="data.downloadCalloutCount"
-                v-text="data.CalloutCount"
-              ></a>
+                href="javascript:;"
+                @click="
+                  downloadCallOut(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
+                >{{ data.CalloutCount }}</a
+              >
             </td>
             <!--執行-->
             <td>
               <a
-                target="_blank"
-                :href="data.downloadCallConCount"
-                v-text="data.CallConCount"
-              ></a>
+                href="javascript:;"
+                @click="
+                  downloadCallCon(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
+                >{{ data.CallConCount }}</a
+              >
             </td>
             <!--接聽數-->
-            <td v-text="data.CallConCount_txt"></td>
+            <td>{{ data.CallConCount_txt }}</td>
             <!--接通率-->
             <td>
-              <a target="_blank" :href="data.downloadFaild" class="btn btn-info"
+              <a
+                href="javascript:;"
+                @click="
+                  downloadCallFaild(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
+                class="btn btn-info"
                 >下載</a
               >
             </td>
             <td>
               <a
-                target="_blank"
-                :href="data.downloadMissed"
+                href="javascript:;"
+                @click="
+                  downloadCallMissed(
+                    { CallOutID: data.CallOutID },
+                    data.StartCalledNumber
+                  )
+                "
                 class="btn btn-info"
                 >未接</a
               >
@@ -298,9 +331,10 @@
 
 <script>
 import CommonMixins from "mixins/Common";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMixins],
+  mixins: [CommonMixins, LibraryMixins],
   components: {
     ConcurrentCallsSelect: require("@/ConcurrentCallsSelect").default,
   },
@@ -313,7 +347,7 @@ export default {
   }),
   methods: {
     async getBaseData() {
-      const res = await $.callApi.post("api/call-status/base");
+      const res = await $.callApi.post("api/callStatus/base");
       this.user = res.data;
     },
     setTmpValue(e) {
@@ -327,7 +361,7 @@ export default {
         this.maxCallsLimit = this.tmp;
         alert(this.alert_txt);
       } else {
-        await $.callApi.post("api/call-status/update/maxRoutingCalls", {
+        await $.callApi.post("api/callStatus/update/maxRoutingCalls", {
           MaxRoutingCalls: e.target.value,
         });
         this.updateSuccess();
@@ -338,33 +372,33 @@ export default {
         this.user.MaxCalls = this.tmp;
         alert(this.alert_txt);
       } else {
-        await $.callApi.post("api/call-status/update/maxCalls", {
+        await $.callApi.post("api/callStatus/update/maxCalls", {
           MaxCalls: e.target.value,
         });
         this.updateSuccess();
       }
     },
     async changeCallWaitingTime(e) {
-      await $.callApi.post("api/call-status/update/callWaitingTime", {
+      await $.callApi.post("api/callStatus/update/callWaitingTime", {
         CallWaitingTime: e.target.value,
       });
       this.updateSuccess();
     },
     async changePlanDistribution(e) {
-      await $.callApi.post("api/call-status/update/planDistribution", {
+      await $.callApi.post("api/callStatus/update/planDistribution", {
         PlanDistribution: e.target.value,
       });
       this.updateSuccess();
     },
     async changeConcurrentCalls(value, CallOutID) {
-      await $.callApi.post("api/call-status/modify/concurrentCalls", {
+      await $.callApi.post("api/callStatus/modify/concurrentCalls", {
         ConcurrentCalls: value,
         CallOutID,
       });
       this.updateSuccess();
     },
     async changeCalloutGroupID(value, CallOutID) {
-      await $.callApi.post("api/call-status/modify/calloutGroupID", {
+      await $.callApi.post("api/callStatus/modify/calloutGroupID", {
         CalloutGroupID: value,
         CallOutID,
       });
@@ -372,7 +406,7 @@ export default {
     },
     async changeSuspend(e) {
       await this.$confirm("確定要變更狀態?");
-      await $.callApi.post("api/call-status/update/suspend", {
+      await $.callApi.post("api/callStatus/update/suspend", {
         userId: this.choice,
       });
       this.user.isSuspend = !this.user.isSuspend;
@@ -380,7 +414,7 @@ export default {
     async changeUseState(item) {
       this.stopUpdate();
       try {
-        await $.callApi.post("api/call-status/modify/useState", {
+        await $.callApi.post("api/callStatus/modify/useState", {
           CallOutID: item.CallOutID,
           UseState: item.UseState,
         });
@@ -395,7 +429,7 @@ export default {
       try {
         const item = datas[index];
         await this.$confirm("刪除掛斷");
-        await $.callApi.post("api/call-status/callRelease", {
+        await $.callApi.post("api/callStatus/callRelease", {
           Seat: item.Seat,
           CalledID: item.CalledId,
         });
@@ -410,7 +444,7 @@ export default {
       var item = this.subData.data3[index];
       try {
         await this.$confirm("刪除確認");
-        await $.callApi.post("api/call-status/delete/callPlan", {
+        await $.callApi.post("api/callStatus/delete/callPlan", {
           CallOutID: item.CallOutID,
         });
         this.subData.data3.splice(index, 1);
@@ -460,15 +494,6 @@ export default {
           }
         }
 
-        x.d_params = `?callOutId=${x.CallOutID}&startCalledNumber=${x.StartCalledNumber}`;
-
-        x.downloadCalledCount = `${ctrl_uri}downloadCalledCount${x.d_params}`;
-        x.downloadWaitCall = `${ctrl_uri}downloadWaitCall${x.d_params}`;
-        x.downloadCalloutCount = `${ctrl_uri}downloadCalloutCount${x.d_params}`;
-        x.downloadCallConCount = `${ctrl_uri}downloadCallConCount${x.d_params}`;
-        x.downloadFaild = `${ctrl_uri}downloadFaild${x.d_params}`;
-        x.downloadMissed = `${ctrl_uri}downloadMissed${x.d_params}`;
-
         x.CallConCount_txt =
           x.CallConCount == 0
             ? "0%"
@@ -492,6 +517,33 @@ export default {
         $("html,body").scrollTop(st);
         delCookie("scrollTop");
       }
+    },
+    async downloadNumberList(CallOutID, suffix) {
+      this.download("api/callStatus/numberList", CallOutID, suffix);
+    },
+    async downloadWaitCall(CallOutID, suffix) {
+      this.download("api/callStatus/waitCall", CallOutID, suffix);
+    },
+    async downloadCallOut(CallOutID, suffix) {
+      this.download("api/callStatus/callOut", CallOutID, suffix);
+    },
+    async downloadCallCon(CallOutID, suffix) {
+      this.download("api/callStatus/callCon", CallOutID, suffix);
+    },
+    async downloadCallFaild(CallOutID, suffix) {
+      this.download("api/callStatus/callFaild", CallOutID, suffix);
+    },
+    async downloadCallMissed(CallOutID, suffix) {
+      this.download("api/callStatus/callMissed", CallOutID, suffix);
+    },
+    async download(apiUrl, CallOutID, suffix) {
+      const res = await $.callApi.post(apiUrl, {
+        CallOutID,
+      });
+      this.fileFunc.exportTxt(
+        res.data.join("\r\n"),
+        moment().getDateTime() + `_${choice}_${suffix}.txt`
+      );
     },
   },
   computed: {
@@ -519,6 +571,7 @@ export default {
   },
   mounted() {
     this.getBaseData();
+    this.update();
     this.startUpdate();
   },
 };

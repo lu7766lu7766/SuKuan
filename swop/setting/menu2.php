@@ -114,7 +114,11 @@ class Menu2
 			"net_state" => array(
 				"name" => "網路狀態",
 				"url" => "sysLookout/ping"
-			)
+			),
+			"call_statistics" => [
+				"name" => "使用線數統計",
+				"url" => "sysLookout/callStatistics"
+			]
 		),
 		"sys_sweep" => array(
 			"name" => "掃號系統",

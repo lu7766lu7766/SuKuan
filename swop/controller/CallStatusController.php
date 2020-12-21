@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 use lib\ReturnMessage;
+use Tightenco\Collect\Support\Collection;
 
 class CallStatusController extends JController
 {
@@ -125,5 +126,92 @@ class CallStatusController extends JController
     $url = "http://127.0.0.1:60/CallRelease.atp?Seat=" . $post["Seat"] . "&CalledID=" . $post["CalledID"];
     comm\Http::get($url);
     ReturnMessage::success(true);
+  }
+
+  public function buildNumberListWhere($CallOutID)
+  {
+    return DB::table("NumberList")->select("CalledNumber")->where("CallOutID", $CallOutID);
+  }
+
+  public function numberList($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection($this->buildNumberListWhere($post["CallOutID"])->get())->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
+  }
+
+  public function waitCall($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection(
+          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 0)->get()
+        )->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
+  }
+
+  public function callOut($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection(
+          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", "<>", 0)->get()
+        )->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
+  }
+
+  public function callCon($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection(
+          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 3)->get()
+        )->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
+  }
+
+  public function callFaild($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection(
+          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 1)->get()
+        )->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
+  }
+
+  public function callMissed($req)
+  {
+    ["post" => $post] = $req;
+    try {
+      ReturnMessage::success(
+        Collection(
+          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 2)->get()
+        )->pluck("CalledNumber")->toArray()
+      );
+    } catch (Exception $err) {
+      ReturnMessage::error($err->getMessage());
+    }
   }
 }

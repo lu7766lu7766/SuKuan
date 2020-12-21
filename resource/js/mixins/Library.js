@@ -67,6 +67,7 @@ export default {
 		fileFunc() {
 			return {
 				exportCSV,
+				exportTxt,
 				toText: convertToText,
 				toDataUrl: convertToDataUrl,
 				download,
@@ -170,6 +171,13 @@ function download(href, fileName) {
 	link.href = href
 	link.download = fileName
 	link.click()
+}
+
+const exportTxt = (content, fileName) => {
+	const blob = new Blob([content], {
+		type: 'application/octet-stream;charset=utf-8',
+	})
+	download(getURL(blob), fileName)
 }
 
 const exportCSV = (content, fileName) => {

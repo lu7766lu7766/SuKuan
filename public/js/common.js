@@ -99,12 +99,9 @@ $(document).ready(function () {
 
     $("#userSelet").change(function () {
         var $this = $(this);
-        var permission = $this.find(":selected").attr("permission");
-        $.post(folder + "index/chgUser", {
-            choiceUser: $this.val(),
-            choicePermission: permission
+        $.post(folder + "index/changeUser", {
+            choice: $this.val()
         }, function (data) {
-            console.log(data)
             location.reload();
             //$("#sidebar-wrapper").html(data);
             //menuInit();

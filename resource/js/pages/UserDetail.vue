@@ -8,7 +8,7 @@
           <input
             type="text"
             v-else
-            v-model="data.UserID"
+            v-model="editData.UserID"
             class="form-control"
           />
         </td>
@@ -20,7 +20,7 @@
             type="text"
             name="userID2"
             class="form-control"
-            v-model="data.UserID2"
+            v-model="editData.UserID2"
             placeholder="僅登入使用"
           />
         </td>
@@ -28,14 +28,14 @@
       <tr>
         <td>密碼</td>
         <td>
-          {{ data.UserPassword }}
+          {{ editData.UserPassword }}
         </td>
       </tr>
       <tr>
         <td>帳號狀態</td>
         <td>
           <label class="switch">
-            <input type="checkbox" v-model="data.UseState" />
+            <input type="checkbox" v-model="editData.UseState" />
             <div class="slider round"></div>
           </label>
         </td>
@@ -47,7 +47,7 @@
             type="text"
             name="userName"
             class="form-control"
-            v-model="data.UserName"
+            v-model="editData.UserName"
           />
         </td>
       </tr>
@@ -58,7 +58,7 @@
             type="text"
             name="noteText"
             class="form-control"
-            v-model="data.NoteText"
+            v-model="editData.NoteText"
           />
         </td>
       </tr>
@@ -69,7 +69,7 @@
             type="text"
             name="userInfo"
             class="form-control"
-            v-model="data.UserInfo"
+            v-model="editData.UserInfo"
           />
         </td>
       </tr>
@@ -80,7 +80,7 @@
             type="text"
             name="distributor"
             class="form-control"
-            v-model="data.Distributor"
+            v-model="editData.Distributor"
           />
         </td>
       </tr>
@@ -91,15 +91,15 @@
             type="text"
             name="overdraft"
             class="form-control"
-            v-model="data.Overdraft"
+            v-model="editData.Overdraft"
           />
         </td>
       </tr>
       <tr>
         <td>費率表</td>
         <td>
-          <span v-if="!isRoot">{{ data.RateGroupID }}</span>
-          <select v-else class="form-control" v-model="data.RateGroupID">
+          <span v-if="!isRoot">{{ editData.RateGroupID }}</span>
+          <select v-else class="form-control" v-model="editData.RateGroupID">
             <option :value="0"></option>
             <option
               v-for="(item, index) in options.rateGroups"
@@ -116,7 +116,7 @@
         <td>
           <div class="form-inline">
             <div class="form-group">
-              <span>現有</span><span>{{ data.Balance || 0 }}</span
+              <span>現有</span><span>{{ editData.Balance || 0 }}</span
               ><span>點</span>
             </div>
           </div>
@@ -126,7 +126,7 @@
               type="text"
               name="balance"
               class="form-control num-only"
-              v-model="data.AddBalance"
+              v-model="editData.AddBalance"
             />
             <span class="input-group-addon">點</span>
           </div>
@@ -135,13 +135,16 @@
       <tr>
         <td>*每日可使用時間</td>
         <td>
-          <date-time-picker type="timepicker" :time.sync="data.StartTime" />
+          <date-time-picker type="timepicker" :time.sync="editData.StartTime" />
         </td>
       </tr>
       <tr>
         <td>*每日自動啟用使用時間</td>
         <td>
-          <date-time-picker type="timepicker" :time.sync="data.AutoStartTime" />
+          <date-time-picker
+            type="timepicker"
+            :time.sync="editData.AutoStartTime"
+          />
         </td>
       </tr>
       <tr>
@@ -149,14 +152,14 @@
         <td>
           <date-time-picker
             type="timepicker"
-            :time.sync="data.StoAutoStopTimepTime"
+            :time.sync="editData.StoAutoStopTimepTime"
           />
         </td>
       </tr>
       <tr>
         <td>*每日結束時間</td>
         <td>
-          <date-time-picker type="timepicker" :time.sync="data.StopTime" />
+          <date-time-picker type="timepicker" :time.sync="editData.StopTime" />
         </td>
       </tr>
       <tr>
@@ -167,7 +170,7 @@
               type="text"
               name="callWaitingTime"
               class="form-control num-only"
-              v-model="data.CallWaitingTime"
+              v-model="editData.CallWaitingTime"
             />
             <span>(0 ~ 300) 秒，自動撥號在一段座席滿線後的暫停秒數</span>
           </div>
@@ -178,7 +181,7 @@
         <td>
           <date-time-picker
             type="timepicker"
-            :time.sync="data.SearchStartTime"
+            :time.sync="editData.SearchStartTime"
           />
         </td>
       </tr>
@@ -187,7 +190,7 @@
         <td>
           <date-time-picker
             type="timepicker"
-            :time.sync="data.SearchAutoStartTime"
+            :time.sync="editData.SearchAutoStartTime"
           />
         </td>
       </tr>
@@ -196,7 +199,7 @@
         <td>
           <date-time-picker
             type="timepicker"
-            :time.sync="data.SearchAutoStopTime"
+            :time.sync="editData.SearchAutoStopTime"
           />
         </td>
       </tr>
@@ -205,7 +208,7 @@
         <td>
           <date-time-picker
             type="timepicker"
-            :time.sync="data.SearchStopTime"
+            :time.sync="editData.SearchStopTime"
           />
         </td>
       </tr>
@@ -215,7 +218,7 @@
           <input
             type="text"
             class="form-control"
-            v-model.lazy="data.MaxRoutingCalls"
+            v-model.lazy="editData.MaxRoutingCalls"
           />
         </td>
       </tr>
@@ -225,7 +228,7 @@
           <input
             type="text"
             class="form-control"
-            v-model.lazy="data.MaxSearchCalls"
+            v-model.lazy="editData.MaxSearchCalls"
           />
         </td>
       </tr>
@@ -235,7 +238,7 @@
           <input
             type="text"
             class="form-control"
-            v-model.lazy="data.MaxRegularCalls"
+            v-model.lazy="editData.MaxRegularCalls"
           />
         </td>
       </tr>
@@ -245,14 +248,14 @@
           <input
             type="text"
             class="form-control"
-            v-model.lazy="data.MaxCalls"
+            v-model.lazy="editData.MaxCalls"
           />
         </td>
       </tr>
       <tr>
         <td>直屬上司</td>
         <td>
-          <select class="form-control" v-model="data.ParentID">
+          <select class="form-control" v-model="editData.ParentID">
             <option
               v-for="(item, index) in options.parents"
               :key="index"
@@ -268,7 +271,7 @@
         <td>分機管理權限</td>
         <td>
           <label class="switch">
-            <input type="checkbox" v-model="data.CanSwitchExtension" />
+            <input type="checkbox" v-model="editData.CanSwitchExtension" />
             <div class="slider round"></div>
           </label>
         </td>
@@ -278,7 +281,7 @@
         <td>權限設定</td>
         <td>
           <label class="switch">
-            <input type="checkbox" v-model="data.PermissionControl" />
+            <input type="checkbox" v-model="editData.PermissionControl" />
             <div class="slider round"></div>
           </label>
         </td>
@@ -298,7 +301,7 @@
                   type="checkbox"
                   style="margin-right: 0.3rem"
                   :value="item.value"
-                  v-model="data.MenuList"
+                  v-model="editData.MenuList"
                 />{{ item.name }}
               </label>
             </li>
@@ -333,7 +336,7 @@ export default {
     DateTimePicker,
   },
   data: () => ({
-    data: {},
+    editData: {},
     options: {
       parents: [],
       rateGroups: [],
@@ -344,36 +347,36 @@ export default {
     isAutoStartError(val) {
       if (val) {
         alertify.alert("自動啟動時間不得早於可用時間");
-        this.data.AutoStartTime = this.data.StartTime;
+        this.editData.AutoStartTime = this.editData.StartTime;
       }
     },
     isAutoStopError(val) {
       if (val) {
         alertify.alert("自動停止時間不得晚於停用時間");
-        this.data.AutoStopTime = this.data.StopTime;
+        this.editData.AutoStopTime = this.editData.StopTime;
       }
     },
-    "data.MaxRoutingCalls"(newVal, oldVal) {
+    "editData.MaxRoutingCalls"(newVal, oldVal) {
       if (this.isCallsRuleError) {
-        this.data.MaxRoutingCalls = oldVal;
+        this.editData.MaxRoutingCalls = oldVal;
         this.callRuleAlert();
       }
     },
-    "data.MaxSearchCalls"(newVal, oldVal) {
+    "editData.MaxSearchCalls"(newVal, oldVal) {
       if (this.isCallsRuleError) {
-        this.data.MaxSearchCalls = oldVal;
+        this.editData.MaxSearchCalls = oldVal;
         this.callRuleAlert();
       }
     },
-    "data.MaxRegularCalls"(newVal, oldVal) {
+    "editData.MaxRegularCalls"(newVal, oldVal) {
       if (this.isCallsRuleError) {
-        this.data.MaxRegularCalls = oldVal;
+        this.editData.MaxRegularCalls = oldVal;
         this.callRuleAlert();
       }
     },
-    "data.MaxCalls"(newVal, oldVal) {
+    "editData.MaxCalls"(newVal, oldVal) {
       if (this.isCallsRuleError) {
-        this.data.MaxCalls = oldVal;
+        this.editData.MaxCalls = oldVal;
         this.callRuleAlert();
       }
     },
@@ -396,7 +399,7 @@ export default {
       const res = await $.callApi.post("user/detail", {
         userID: this.userID,
       });
-      this.data = res.data;
+      this.editData = res.data;
     },
     async doCreate() {
       await $.callApi.post("user/create", this.editData);
@@ -404,6 +407,7 @@ export default {
     },
     async doUpdate() {
       await $.callApi.post("user/update", this.editData);
+      await $.updateSession();
       redirect("userInfo/userList");
     },
     callRuleAlert() {
@@ -431,22 +435,24 @@ export default {
     },
     isAutoStartError() {
       return (
-        this.data.AutoStartTime &&
-        this.data.StartTime &&
-        this.data.AutoStartTime > this.data.StartTime
+        this.editData.AutoStartTime &&
+        this.editData.StartTime &&
+        this.editData.AutoStartTime > this.editData.StartTime
       );
     },
     isAutoStopError() {
       return (
-        this.data.AutoStopTime &&
-        this.data.StopTime &&
-        this.data.AutoStopTime < this.data.StopTime
+        this.editData.AutoStopTime &&
+        this.editData.StopTime &&
+        this.editData.AutoStopTime < this.editData.StopTime
       );
     },
     isCallsRuleError() {
       return (
-        this.data.MaxRoutingCalls <
-        this.data.MaxSearchCalls + this.data.MaxRegularCalls + this.MaxCalls
+        this.editData.MaxRoutingCalls <
+        this.editData.MaxSearchCalls +
+          this.editData.MaxRegularCalls +
+          this.MaxCalls
       );
     },
   },

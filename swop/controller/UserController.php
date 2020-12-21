@@ -190,8 +190,6 @@ class UserController extends JController
 				if ($post["AddBalance"] && $post["AddBalance"] != 0) {
 					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), $session["choice"]);
 				}
-				$userInfoModel = new UserInfo_Model($this->base);
-				$userInfoModel->setUpdatePermission($post["UserID"], join(",", $post["MenuList"]), $post["PermissionControl"] ? 1 : 0);
 			});
 		} else {
 			$repo->updateMenuList($post["UserID"], join(",", $post["MenuList"]));

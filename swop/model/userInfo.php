@@ -221,27 +221,6 @@ class UserInfo_Model extends JModel
         $dba->exec($sql, $params);
         return $this;
     }
-    //////////////////////////////////////////////////////////////// userRoute end
-
-    public function setUpdatePermission($userId, $permission, $permission_control)
-    {
-        if ($this->session["choice"] == $userId) {
-            $this->session["permission"] = $permission;
-            $this->session["permission_control"] = $permission_control;
-        }
-        if ($this->session["login"]["UserID"] == $userId) {
-            $this->session["login"]["MenuList"] = $permission;
-            $this->session["login"]["PermissionControl"] = $permission_control;
-            return;
-        }
-        foreach ($this->session["sub_emp"] as $key => $sub_emp) {
-            if ($sub_emp["UserID"] == $userId) {
-                $this->session["sub_emp"][$key]["MenuList"] = $permission;
-                $this->session["sub_emp"][$key]["PermissionControl"] = $permission_control;
-                return;
-            }
-        }
-    }
 
     /**
      * 取得路由查詢

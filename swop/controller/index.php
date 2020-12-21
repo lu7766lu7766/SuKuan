@@ -1,6 +1,6 @@
 <?php
 
-use comm\DB;
+use Illuminate\Database\Capsule\Manager as DB;
 
 class Index_Controller extends JController
 {
@@ -25,15 +25,13 @@ class Index_Controller extends JController
         return parent::redirect();
     }
 
-    public function chgUser()
+    public function changeUser()
     {
-        $user = DB::table("SysUser")->select("*")->where("UserID", $this->model->choiceUser)->get()[0];
+        $user = DB::table("SysUser")->where("UserID", $this->model->choice)->first();
         $this->model->session["choicer"] = $user;
-        $this->model->session["choice"] = $this->model->choiceUser;
+        $this->model->session["choice"] = $this->model->choice;
         $this->model->session["isRoot"] = $this->model->session["choice"] == "root";
-        $this->model->choice = $this->model->choiceUser;
-        $this->model->session["permission"] = $this->model->choicePermission;
-        $this->model->permission = $this->model->choicePermission;
+        $this->model->session["permission"] = $user->MenuList;
         $this->model->session["sub_emp"] = $this->model->getSubEmp($this->model->session["login"]["UserID"]);
         $this->model->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp(
             $this->model->session["sub_emp"],
@@ -42,7 +40,6 @@ class Index_Controller extends JController
         $this->model->session["permission_control"] =
             $this->model->session["choice"] == $this->model->session["login"]["UserID"] ? $this->model->session["login"]["PermissionControl"] :
             EmpHelper::getPermissionControl($this->model->session["sub_emp"], $this->model->session["choice"]);
-        //echo $this->menu->CreateMenu($this->model->permission);
     }
 
     public function update_pwd()
