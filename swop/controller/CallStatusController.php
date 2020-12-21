@@ -90,12 +90,12 @@ class CallStatusController extends JController
     );
   }
 
-  public function updateMaxCalls($req)
+  public function updateConcurrentCallsAmp($req)
   {
     ["post" => $post, "session" => $session] = $req;
     ReturnMessage::success(
       $this->buildUserWhere($session["choice"])->update([
-        "MaxCalls" => $post["MaxCalls"]
+        "ConcurrentCallsAmp" => $post["ConcurrentCallsAmp"]
       ])
     );
   }

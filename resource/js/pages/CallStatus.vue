@@ -13,15 +13,16 @@
         />
       </div>
       <div class="form-group">
-        <label>自動撥號當前線數:</label>
-        <input
-          type="text"
-          size="5"
-          class="form-control num-only"
-          v-model="user.MaxCalls"
-          @focus="setTmpValue"
-          @change="(e) => changeMaxCalls(e)"
-        />
+        <label>自動撥號速度:</label>
+        <select
+          class="form-control"
+          v-model="user.ConcurrentCallsAmp"
+          @change="(e) => changeConcurrentCallsAmp(e)"
+        >
+          <option v-for="item in _.range(1, 6)" :key="item" :value="item">
+            {{ item }}
+          </option>
+        </select>
       </div>
       <div class="form-group">
         <label>自動停止秒數:</label>
@@ -77,7 +78,7 @@
     </div>
     <br />
 
-    <div class="col-md-4 col-xs-12">
+    <div class="col-md-12 col-xs-12">
       <div class="panel panel-info">
         <div class="panel-heading text-center">
           執行中(<span v-text="subData.data1.length"></span>)
@@ -89,11 +90,12 @@
                 <th>號</th>
                 <th>目的端號碼</th>
                 <th>掛</th>
+                <th>狀態</th>
               </tr>
               <tr v-for="(data, index) in subData.data1" :key="index">
                 <td>{{ index }}</td>
                 <td>
-                  <span v-text="data.CalledId"></span>
+                  <span>{{ data.CalledId }}</span>
                   <span v-if="data.NormalCall" class="label label-danger"
                     >節費</span
                   >
@@ -106,55 +108,16 @@
                     @click="(e) => doHangUp(subData.data1, index, e)"
                   />
                 </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-8 col-xs-12">
-      <div class="panel panel-info">
-        <div class="panel-heading text-center">
-          等待分機(<span
-            id="waitExtensionNoCount"
-            v-text="subData.waitExtensionNoCount"
-          ></span
-          >) 分機(<span
-            id="extensionNoCount"
-            v-text="subData.extensionNoCount"
-          ></span
-          >)
-        </div>
-        <div style="height: 300px; overflow: auto">
-          <table class="table table-h table-striped panel-footer">
-            <tbody>
-              <tr>
-                <th>號</th>
-                <th>分機</th>
-                <th>目的端號碼</th>
-                <th>座</th>
-                <th>時間</th>
-                <th>Ping</th>
-                <th>掛</th>
+                <td>撥號中</td>
               </tr>
               <tr v-for="(data, index) in subData.data2" :key="index">
-                <td>{{ index + 1 }}</td>
+                <td>{{ subData.data1.length + index }}</td>
                 <td>
-                  <span v-text="data.ExtensionNo"></span>
-                  <span v-if="data.NormalCall" class="label label-danger"
-                    >節費</span
-                  >
-                </td>
-                <td>
-                  <span v-text="data.CalledId"></span>
+                  <span>{{ data.CalledId }}</span>
                   <span v-if="data.OnMonitor" class="label label-danger"
                     >監聽</span
                   >
                 </td>
-                <td v-text="data.CalloutGroupID"></td>
-                <td v-text="data.CallDuration"></td>
-                <td v-text="data.PingTime"></td>
                 <td>
                   <input
                     type="button"
@@ -163,6 +126,7 @@
                     @click="(e) => doHangUp(subData.data2, index, e)"
                   />
                 </td>
+                <td>通話中</td>
               </tr>
             </tbody>
           </table>
@@ -182,9 +146,7 @@
             <th>執行</th>
             <th>接聽數</th>
             <th>接通率</th>
-            <th>失敗下載</th>
             <th>未接</th>
-            <th>撥號速度</th>
             <th>座席</th>
             <th style="width: 80px">開關</th>
             <th>刪除</th>
@@ -254,19 +216,6 @@
               <a
                 href="javascript:;"
                 @click="
-                  downloadCallFaild(
-                    { CallOutID: data.CallOutID },
-                    data.StartCalledNumber
-                  )
-                "
-                class="btn btn-info"
-                >下載</a
-              >
-            </td>
-            <td>
-              <a
-                href="javascript:;"
-                @click="
                   downloadCallMissed(
                     { CallOutID: data.CallOutID },
                     data.StartCalledNumber
@@ -275,16 +224,6 @@
                 class="btn btn-info"
                 >未接</a
               >
-            </td>
-            <td>
-              <concurrent-calls-select
-                v-model="data.ConcurrentCalls"
-                @change="
-                  changeConcurrentCalls(data.ConcurrentCalls, data.CallOutID)
-                "
-                @focus="stopUpdate"
-                @blur="startUpdate"
-              />
             </td>
             <td>
               <select
@@ -335,9 +274,6 @@ import LibraryMixins from "mixins/Library";
 
 export default {
   mixins: [CommonMixins, LibraryMixins],
-  components: {
-    ConcurrentCallsSelect: require("@/ConcurrentCallsSelect").default,
-  },
   data: () => ({
     timer: null,
     user: {},
@@ -367,16 +303,11 @@ export default {
         this.updateSuccess();
       }
     },
-    async changeMaxCalls(e) {
-      if (!this.countCondition) {
-        this.user.MaxCalls = this.tmp;
-        alert(this.alert_txt);
-      } else {
-        await $.callApi.post("api/callStatus/update/maxCalls", {
-          MaxCalls: e.target.value,
-        });
-        this.updateSuccess();
-      }
+    async changeConcurrentCallsAmp(e) {
+      await $.callApi.post("api/callStatus/update/concurrentCallsAmp", {
+        ConcurrentCallsAmp: e.target.value,
+      });
+      this.updateSuccess();
     },
     async changeCallWaitingTime(e) {
       await $.callApi.post("api/callStatus/update/callWaitingTime", {
@@ -529,9 +460,6 @@ export default {
     },
     async downloadCallCon(CallOutID, suffix) {
       this.download("api/callStatus/callCon", CallOutID, suffix);
-    },
-    async downloadCallFaild(CallOutID, suffix) {
-      this.download("api/callStatus/callFaild", CallOutID, suffix);
     },
     async downloadCallMissed(CallOutID, suffix) {
       this.download("api/callStatus/callMissed", CallOutID, suffix);
