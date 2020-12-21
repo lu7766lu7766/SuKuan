@@ -23,5 +23,6 @@ new Vue({
 		ManualUserRoute: () => import('pages/ManualUserRoute'),
 		PointHistory: () => import('pages/PointHistory'),
 		CallStatus: () => import('pages/CallStatus'),
+		CallStatistics: () => import('pages/CallStatistics'),
 	},
 }).$mount('#app')

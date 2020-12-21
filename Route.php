@@ -60,3 +60,4 @@ Route::post("/api/callStatus/callOut", "CallStatusController@callOut");
 Route::post("/api/callStatus/callCon", "CallStatusController@callCon");
 Route::post("/api/callStatus/callFaild", "CallStatusController@callFaild");
 Route::post("/api/callStatus/callMissed", "CallStatusController@callMissed");
+Route::post("/api/callStatus/callStatistics", "CallStatusController@callStatistics");

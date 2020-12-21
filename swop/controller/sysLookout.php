@@ -23,4 +23,9 @@ class SysLookout_Controller extends JController
     {
         $this->model->getPing();
     }
+
+    public function callStatistics()
+    {
+        parent::render();
+    }
 }

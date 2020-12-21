@@ -214,4 +214,11 @@ class CallStatusController extends JController
       ReturnMessage::error($err->getMessage());
     }
   }
+
+  public function callStatistics()
+  {
+    ReturnMessage::success(
+      DB::table("CallState")->select(DB::raw("UserID, count(1) as Count"))->groupBy("UserID")->get()
+    );
+  }
 }
