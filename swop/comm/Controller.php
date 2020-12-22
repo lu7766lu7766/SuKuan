@@ -69,7 +69,7 @@ class Controller
             $url = $this->defaultUrl;
         }
         $url = trim($url, "/");
-        $url = $this->base["url"] . $url;
+        $url = $this->base["folder"] . $url;
         header("location:" . $url);
     }
 
@@ -116,5 +116,3 @@ class Controller
         return $this;
     }
 }
-
-?>

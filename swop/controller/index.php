@@ -22,7 +22,7 @@ class Index_Controller extends JController
     public function logout()
     {
         $this->model->session = null;
-        return parent::redirect();
+        $this->redirect("main/main");
     }
 
     public function changeUser()

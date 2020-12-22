@@ -19,7 +19,6 @@
 	?>
 
 	<script>
-		var base_url = "<?php echo $base["url"] ?>";
 		var folder = "<?php echo $base["folder"] ?>";
 		var apiUrl = "<?php echo getApiUrl('') ?>";
 		var downloaderUrl = "<?php echo getDownloaderUrl('') ?>";
@@ -135,7 +134,7 @@
 			$(".reboot_btn").confirm({
 				text: "確定要重啟?",
 				confirm: function(button) {
-					location.href = base_url + 'index/reboot'
+					location.href = folder + 'index/reboot'
 				},
 				post: true,
 				confirmButton: "確定",
@@ -147,7 +146,7 @@
 			$(".shotdown_btn").confirm({
 				text: "確定要關機?",
 				confirm: function(button) {
-					location.href = base_url + 'index/shotdown'
+					location.href = folder + 'index/shotdown'
 				},
 				post: true,
 				confirmButton: "確定",
@@ -185,15 +184,15 @@
 						?>
 					</div>
 					<ul class="nav navbar-nav navbar-left">
-						<li><a href="<?php echo $base["url"] . "index/index" ?>">首頁</a></li>
-						<!--<li><a href="<?php echo $base["url"] . "index/service" ?>">服務</a></li>-->
+						<li><a href="<?php echo $base["folder"] . "index/index" ?>">首頁</a></li>
+						<!--<li><a href="<?php echo $base["folder"] . "index/service" ?>">服務</a></li>-->
 						<?php if ($isRoot) { ?>
 							<li><a class="shotdown_btn" href="javascript:;">關機</a><?php } ?>
 							<!-- -->
 							<?php if ($isRoot) { ?>
 							<li><a class="reboot_btn" href="javascript:;">重啟</a><?php } ?>
-							<li><a href="<?php echo $base["url"] . "index/password" ?>">密碼</a></li>
-							<li><a href="<?php echo $base["url"] . "index/logout" ?>">登出</a></li>
+							<li><a href="<?php echo $base["folder"] . "index/password" ?>">密碼</a></li>
+							<li><a href="<?php echo $base["folder"] . "index/logout" ?>">登出</a></li>
 					</ul>
 				</div>
 

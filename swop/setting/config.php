@@ -1,4 +1,5 @@
 <?php
+
 namespace setting;
 
 class Config
@@ -15,7 +16,6 @@ class Config
         $base["https"] = "https://";
         $base["folder"] = getenv2("BASE_FOLDER"); //"/ZHCC/"; //dirname(dirname(__DIR__)). "/"; // "/aurora02/"
         $base["root_folder"] = dirname(dirname(__DIR__)) . "/";
-        $base['url'] = $base["http"] . $_SERVER['HTTP_HOST'] . $base["folder"]; // $base['folder'];
         $base['swop'] = $base["root_folder"] . "swop/";
         $base['swop_uri'] = "swop/";
         $base['model_dir'] = $base['swop'] . "model/";
