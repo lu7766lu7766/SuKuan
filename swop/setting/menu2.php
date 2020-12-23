@@ -56,10 +56,6 @@ class Menu2
 				"url" => "extensionInfo/extensionManage",
 				"sub_url" => array("extensionInfo/extensionModify")
 			),
-			//            "seat_tactics" => array(
-			//                "name" => "座席策略",
-			//                "url" => "extensionInfo/seatTactics"
-			//            )
 		),
 		"communication_history" => array(
 			"name" => "通聯紀錄",

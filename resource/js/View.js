@@ -24,5 +24,7 @@ new Vue({
 		PointHistory: () => import('pages/PointHistory'),
 		CallStatus: () => import('pages/CallStatus'),
 		CallStatistics: () => import('pages/CallStatistics'),
+		GroupCallScheduleList: () => import('pages/GroupCallScheduleList'),
+		GroupCallScheduleDetail: () => import('pages/GroupCallScheduleDetail'),
 	},
 }).$mount('#app')

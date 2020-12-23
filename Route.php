@@ -60,3 +60,9 @@ Route::post("/api/callStatus/callOut", "CallStatusController@callOut");
 Route::post("/api/callStatus/callCon", "CallStatusController@callCon");
 Route::post("/api/callStatus/callMissed", "CallStatusController@callMissed");
 Route::post("/api/callStatus/callStatistics", "CallStatusController@callStatistics");
+// group call schedule
+Route::post("/api/groupCallSchedule/list", "GroupCallScheduleController@list");
+Route::post("/api/groupCallSchedule/detail", "GroupCallScheduleController@detail");
+Route::post("/api/groupCallSchedule/create", "GroupCallScheduleController@create");
+Route::post("/api/groupCallSchedule/update", "GroupCallScheduleController@update");
+Route::post("/api/groupCallSchedule/delete", "GroupCallScheduleController@delete");

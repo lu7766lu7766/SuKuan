@@ -36,9 +36,9 @@
 		// }
 		function callApi() {
 
-			const request = function(method, url, data = {}) {
+			const request = function(method, url, data = {}, option = {}) {
 				return new Promise(function(resolve, reject) {
-					$.ajax({
+					const defaultOption = {
 						url,
 						type: method,
 						data,
@@ -54,7 +54,13 @@
 						error(xhr, errorType, error) {
 							reject(error)
 						}
-					})
+					}
+					if (option.formData) {
+						defaultOption["contentType"] = false
+						defaultOption["processData"] = false
+						defaultOption["cache"] = false
+					}
+					$.ajax(defaultOption)
 				})
 			}
 
@@ -79,8 +85,8 @@
 				})
 			}
 
-			this.post = function(uri, data) {
-				return request('POST', folder + uri, data)
+			this.post = function(uri, data, option) {
+				return request('POST', folder + uri, data, option)
 			}
 
 			this.get = function(uri, data) {
