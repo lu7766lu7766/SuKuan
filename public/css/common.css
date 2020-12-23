@@ -92,7 +92,7 @@ table {
 	/*width: 400px;*/
 	/*margin: 7% auto;*/
 	padding: 20px;
-	background-color: #f3f3f3;
+	background-color: #befcf8;
 }
 .center {
 	display: table;
@@ -322,3 +322,25 @@ input:not(:checked) + .slider:before {
 	border-radius: 30%;
 }
 /* switch end*/
+
+/* new theme*/
+.navbar-inverse {
+	background-color: rgb(34, 42, 41);
+	border-color: rgb(22, 27, 26);
+}
+#sidebar-wrapper {
+	background-color: rgb(47, 49, 67);
+}
+#sidebar-wrapper .lastmenu li {
+	line-height: 35px;
+}
+#sidebar-wrapper .lastmenu {
+	padding-left: 0px;
+}
+#sidebar-wrapper .lastmenu a {
+	padding-left: 20px;
+}
+#sidebar-wrapper .slideactive {
+	background-color: #62b6ba;
+	color: #eee;
+}

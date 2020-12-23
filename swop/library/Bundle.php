@@ -21,7 +21,7 @@ class Bundle
         ),
         "bootstrap" => array(
             "~/public/bootstrap/css/bootstrap.min.css",
-            "~/public/bootstrap/css/bootstrap-theme.min.css",
+            // "~/public/bootstrap/css/bootstrap-theme.min.css",
             "~/public/bootstrap/js/bootstrap.min.js",
             "~/public/bootstrap/css/bootstrap-switch.min.css",
             "~/public/bootstrap/js/bootstrap-switch.min.js",
