@@ -38,7 +38,7 @@ $this->partialView($top_view_path);
 
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="col-xs-offset-5 col-xs-2">
+						<div class="col-md-offset-5 col-md-2 col-xs-offset-4 col-xs-4">
 							<input type="submit" class="btn btn-primary btn-block" value="登入">
 						</div>
 					</div>
@@ -56,7 +56,7 @@ $this->partialView($top_view_path);
 				<div class="text-left <?php echo $model->bulletinBoard->Status == "0" ? 'hide' : '' ?>">
 					<hr style="height:1px;border-width:0;color:gray;background-color:gray">
 					<div class="h3">公告</div>
-					<div class="h4"><?php echo $model->bulletinBoard->Content ?></div>
+					<div class="h4"><?php echo nl2br($model->bulletinBoard->Content) ?></div>
 				</div>
 
 			</div>
