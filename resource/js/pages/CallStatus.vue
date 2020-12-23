@@ -89,44 +89,44 @@
               <tr>
                 <th>號</th>
                 <th>目的端號碼</th>
-                <th>掛</th>
                 <th>狀態</th>
+                <th>分機</th>
+                <th>座</th>
+                <th>時間</th>
+                <th>Ping</th>
+                <th>掛</th>
               </tr>
-              <tr v-for="(data, index) in subData.data1" :key="index">
+              <tr
+                v-for="(data, index) in subData.data1.concat(subData.data2)"
+                :key="index"
+              >
                 <td>{{ index }}</td>
                 <td>
                   <span>{{ data.CalledId }}</span>
-                  <span v-if="data.NormalCall" class="label label-danger"
-                    >節費</span
-                  >
+                  <span v-if="data.NormalCall" class="label label-danger">
+                    節費
+                  </span>
                 </td>
+                <td>{{ data.status == 0 ? "撥號中" : "通話中" }}</td>
+                <td>{{ data.ExtensionNo }}</td>
+                <td>{{ data.CalloutGroupID }}</td>
+                <td>{{ data.CallDuration }}</td>
+                <td>{{ data.PingTime }}</td>
                 <td>
                   <input
                     type="button"
                     value="掛"
                     class="btn btn-info"
-                    @click="(e) => doHangUp(subData.data1, index, e)"
+                    @click="
+                      (e) =>
+                        doHangUp(
+                          data.status ? subData.data1 : subData.data2,
+                          index,
+                          e
+                        )
+                    "
                   />
                 </td>
-                <td>撥號中</td>
-              </tr>
-              <tr v-for="(data, index) in subData.data2" :key="index">
-                <td>{{ subData.data1.length + index }}</td>
-                <td>
-                  <span>{{ data.CalledId }}</span>
-                  <span v-if="data.OnMonitor" class="label label-danger"
-                    >監聽</span
-                  >
-                </td>
-                <td>
-                  <input
-                    type="button"
-                    value="掛"
-                    class="btn btn-info"
-                    @click="(e) => doHangUp(subData.data2, index, e)"
-                  />
-                </td>
-                <td>通話中</td>
               </tr>
             </tbody>
           </table>
@@ -403,7 +403,8 @@ export default {
       const res = await $.callApi.go("sysLookout/ajaxCallStatusContent2", {
         userId: this.choice,
       });
-
+      res.data1 = res.data1.map((x) => ({ ...x, status: 0 }));
+      res.data2 = res.data2.map((x) => ({ ...x, status: 1 }));
       res.data3.forEach(function (x) {
         var WaitCall = x.CalledCount - x.CalloutCount;
         x.WaitCall = WaitCall > 0 ? WaitCall : 0;
