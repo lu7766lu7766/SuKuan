@@ -175,7 +175,8 @@ li > a {
 
 .table-v td:not(.non):nth-child(odd) {
 	color: white;
-	background: transparent url('../img/template/bg.gif');
+	/* background: transparent url('../img/template/bg.gif'); */
+	background-color: rgb(34, 42, 41) !important;
 	text-align: right;
 	font-weight: bold;
 }
@@ -187,7 +188,8 @@ li > a {
 
 .table-h tr:first-child {
 	color: white;
-	background: transparent url('../img/template/bg.gif');
+	/* background: transparent url('../img/template/bg.gif'); */
+	background-color: rgb(34, 42, 41) !important;
 	font-weight: bold;
 }
 
