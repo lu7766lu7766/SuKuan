@@ -160,7 +160,7 @@ class Menu2
 			"name" => "系統設定",
 			"bulletin_board" => [
 				"name" => "佈告欄管理",
-				"url" => "system/bulletin_board",
+				"url" => "system/bulletinBoard",
 			],
 			"pwssword_check" => [
 				"url" => "system/passwork_check",

@@ -153,16 +153,6 @@ class GroupCallSetting_Model extends JModel
             ? $this->postEffectiveGroupCall($result)
             : $this;
     }
-
-    private function getEffectiveNumberByGroupCall($number, $count) {
-        $dba2 = new DBA();
-        $dba2->dbHost = "125.227.84.248";
-        $dba2->dbName = "AcCdrSvr";
-        $dba2->connect();
-        $result = $dba2->getAll("select DISTINCT top $count OrgCalledId as number from AllCdrList with (nolock) where OrgCalledId >= ? order by OrgCalledId;",
-            [$number]);
-        return $result;
-    }
 }
 
 ?>

@@ -66,3 +66,6 @@ Route::post("/api/groupCallSchedule/detail", "GroupCallScheduleController@detail
 Route::post("/api/groupCallSchedule/create", "GroupCallScheduleController@create");
 Route::post("/api/groupCallSchedule/update", "GroupCallScheduleController@update");
 Route::post("/api/groupCallSchedule/delete", "GroupCallScheduleController@delete");
+// system
+Route::post("/api/system/bulletinBoard/detail", "SystemController@bulletinBoardDetail");
+Route::post("/api/system/bulletinBoard/insertOrUpdate", "SystemController@bulletinBoardInsertOrUpdate");
