@@ -1,11 +1,12 @@
 <?php
-//require_once "swop/library/dba.php";
-//$dba=new dba();
+
+use Illuminate\Database\Capsule\Manager as DB;
+
 class Main_Model extends JModel
 {
     public function main()
     {
-        //$dba = $this->dba;
+        $this->bulletinBoard = DB::table("BulletinBoard")->first();
         return $this;
     }
 
@@ -23,7 +24,7 @@ class Main_Model extends JModel
                       where (UserID=? or UserID2=?) AND
                       UserPassword=?";
         $result = $dba->getAll($sql, [$username, $username, $password]);
-        
+
         if (count($result)) {
             $this->session["login"] = $result[0];
             $this->session["choicer"] = $result[0];
