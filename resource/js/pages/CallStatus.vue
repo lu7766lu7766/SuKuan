@@ -134,7 +134,7 @@
       </div>
     </div>
 
-    <div class="table-responsive col-md-12">
+    <div class="table-responsive col-md-12 col-xs-12">
       <table class="table table-h table-striped table-hover">
         <tbody>
           <tr>
@@ -147,7 +147,7 @@
             <th>接聽數</th>
             <th>接通率</th>
             <th>未接</th>
-            <th>座席</th>
+            <th style="min-width: 70px">座席</th>
             <th style="width: 80px">開關</th>
             <th>刪除</th>
           </tr>
