@@ -16,6 +16,7 @@ class Menu2
 			"name" => "用戶資訊",
 			"user_list" => array(
 				"name" => "用戶列表",
+				"icon" => "fas fa-user-friends",
 				"url" => "userInfo/userList",
 				"user" => "root",
 				"sub_url" => array("userInfo/userDetail"),
@@ -23,24 +24,29 @@ class Menu2
 			),
 			"rage_manage" => array(
 				"name" => "費率管理",
+				"icon" => "fas fa-money-check-alt",
 				"url" => "userInfo/rateManage",
 				"sub_url" => array("userInfo/userRatesModify")
 			),
 			"user_route" => array(
+				"icon" => "fab fa-autoprefixer",
 				"name" => "自動撥號路由",
 				"url" => "userInfo/userRoute"
 			),
 			"manual_user_route" => array(
+				"icon" => "fab fa-mandalorian",
 				"name" => "手動撥號路由",
 				"url" => "userInfo/manualUserRoute",
 				"user_only" => ["root"]
 			),
 			"search_route" => array(
+				"icon" => "fas fa-broom",
 				"name" => "掃號路由",
 				"url" => "userInfo/searchRoute",
 				"user_only" => ["root"]
 			),
 			"route_search" => array(
+				"icon" => "fas fa-file-search",
 				"name" => "路由查詢",
 				"url" => "userInfo/routeSearch"
 			),
@@ -48,10 +54,12 @@ class Menu2
 		"extension_info" => array(
 			"name" => "分機資訊",
 			"add_extension" => array(
+				"icon" => "fas fa-mobile-alt",
 				"name" => "新增分機",
 				"url" => "extensionInfo/addExtension"
 			),
 			"extension_manage" => array(
+				"icon" => "fas fa-tasks",
 				"name" => "分機管理",
 				"url" => "extensionInfo/extensionManage",
 				"sub_url" => array("extensionInfo/extensionModify")
@@ -60,26 +68,32 @@ class Menu2
 		"communication_history" => array(
 			"name" => "通聯紀錄",
 			"communication_search" => array(
+				"icon" => "fas fa-search",
 				"name" => "通聯查詢",
 				"url" => "communicationHistory/communicationSearch_vue"
 			),
 			"task_ranking" => array(
+				"icon" => "fas fa-sort-amount-down-alt",
 				"name" => "話務排行",
 				"url" => "communicationHistory/taskRanking"
 			),
 			"point_history" => array(
+				"icon" => "fas fa-piggy-bank",
 				"name" => "儲值紀錄",
 				"url" => "communicationHistory/pointHistory"
 			),
 			"record_download" => array(
+				"icon" => "fas fa-microphone-alt",
 				"name" => "錄音下載",
 				"url" => "communicationHistory/recordDownload"
 			),
 			"black_list" => array(
+				"icon" => "fas fa-ban",
 				"name" => "黑名單管理",
 				"url" => "communicationHistory/blackList"
 			),
 			"effective_number_upload" => array(
+				"icon" => "fas fa-upload",
 				"name" => "有效號上傳",
 				"url" => "communicationHistory/effectiveNumberUpload"
 			)
@@ -87,11 +101,13 @@ class Menu2
 		"group_call_setting" => array(
 			"name" => "群呼設定",
 			"group_call_schedule" => array(
+				"icon" => "fas fa-plus-circle",
 				"name" => "新增群呼",
 				"url" => "groupCallSetting/groupCallSchedule",
 				"sub_url" => array("groupCallSetting/groupCallScheduleModify")
 			),
 			"effective_number" => array(
+				"icon" => "fas fa-headset",
 				"name" => "有效號新增群呼",
 				"url" => "groupCallSetting/effectiveNumber"
 			)
@@ -99,19 +115,23 @@ class Menu2
 		"sys_lookout" => array(
 			"name" => "系統監視",
 			"call_status" => array(
+				"icon" => "fas fa-assistive-listening-systems",
 				"name" => "呼叫狀態",
 				"url" => "sysLookout/callStatus"
 				// "url" => "sysLookout/callStatus_vue"
 			),
 			"key_method" => array(
+				"icon" => "fas fa-keyboard",
 				"name" => "按鍵功能",
 				"url" => "sysLookout/keyMethod"
 			),
 			"net_state" => array(
+				"icon" => "fas fa-network-wired",
 				"name" => "網路狀態",
 				"url" => "sysLookout/ping"
 			),
 			"call_statistics" => [
+				"icon" => "fas fa-id-badge",
 				"name" => "使用線數統計",
 				"url" => "sysLookout/callStatistics"
 			]
@@ -119,11 +139,13 @@ class Menu2
 		"sys_sweep" => array(
 			"name" => "掃號系統",
 			"add_sweep" => array(
+				"icon" => "fas fa-calendar-plus",
 				"name" => "新增掃號",
 				"url" => "sweepSetting/addSweep",
 				"sub_url" => array("sweepSetting/addSweepModify")
 			),
 			"sweep_status" => array(
+				"icon" => "fas fa-chalkboard-teacher",
 				"name" => "掃號狀態",
 				"url" => "sysSweep/sweepStatus"
 			)
@@ -131,19 +153,23 @@ class Menu2
 		"ad_call_setting" => [
 			"name" => "語音廣告設定",
 			"voice_file_manage" => [
+				"icon" => "fas fa-volume-down",
 				"name" => "語音檔管理",
 				"url" => "adCallSetting/voiceFileManage"
 			],
 			"ad_call_schedule" => [
+				"icon" => "fas fa-ad",
 				"name" => "新增廣告群呼",
 				"url" => "adCallSetting/adCallSchedule",
 				"sub_url" => ["adCallSetting/adCallScheduleModify"]
 			],
 			"ad_call_status" => [
+				"icon" => "fas fa-map",
 				"name" => "廣告呼叫狀態",
 				"url" => "adCallSetting/adCallStatus"
 			],
 			"ad_communication_search" => [
+				"icon" => "fas fa-hands-helping",
 				"name" => "廣告通聯查詢",
 				"url" => "adCallSetting/adCommunicationSearch"
 			]
@@ -151,6 +177,7 @@ class Menu2
 		"member_info" => [
 			"name" => "會員資訊",
 			"member_list" => [
+				"icon" => "fas fa-users",
 				"name" => "會員列表",
 				"url" => "memberInfo/memberList",
 				"sub_url" => ["memberInfo/memberModify", "memberInfo/memberAdd"]
@@ -159,6 +186,7 @@ class Menu2
 		"system" => [
 			"name" => "系統設定",
 			"bulletin_board" => [
+				"icon" => "fas fa-clipboard-list",
 				"name" => "佈告欄管理",
 				"url" => "system/bulletinBoard",
 			],
@@ -266,7 +294,9 @@ class Menu2
 
 				$body .= "<li>";
 				$class = "lastmenu";
-				$body .= "<a class='$tmp_class' href='" . $this->base["folder"] . $val["url"] . "'>" . $val["name"] . "</a>";
+				$body .= "<a class='$tmp_class' href='" . $this->base["folder"] . $val["url"] . "'>" .
+					(isset($val["icon"]) ? "<i class='{$val['icon']}'></i>" : "") .
+					$val["name"] . "</a>";
 				$body .= "</li>";
 			} else {
 				$body .= "<li>";

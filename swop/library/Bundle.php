@@ -28,6 +28,7 @@ class Bundle
             "~/public/bootstrap/css/slidebar.css"
         ),
         "default" => array(
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css",
             "~/public/js/common.js",
             "~/public/css/common.css"
         ),

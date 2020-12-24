@@ -333,14 +333,25 @@ input:not(:checked) + .slider:before {
 #sidebar-wrapper {
 	background-color: rgb(47, 49, 67);
 }
-#sidebar-wrapper .lastmenu li {
-	line-height: 35px;
+#sidebar-wrapper .mainmenu > li {
+	line-height: 28px;
+	margin-bottom: 10px;
+}
+#sidebar-wrapper .mainmenu > li:not(:nth-child(2)) > a {
+	border-top: rgb(47, 62, 67) 1px solid;
+}
+#sidebar-wrapper .lastmenu > li {
+	line-height: 30px;
 }
 #sidebar-wrapper .lastmenu {
 	padding-left: 0px;
 }
 #sidebar-wrapper .lastmenu a {
 	padding-left: 20px;
+}
+#sidebar-wrapper .lastmenu a i {
+	margin-left: -30px;
+	margin-right: 5px;
 }
 #sidebar-wrapper .slideactive {
 	background-color: #62b6ba;
