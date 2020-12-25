@@ -47,10 +47,10 @@ class GroupCallScheduleService
   public function buildRangeNumberList($CallOutID, $StartCalledNumber,  $CalledCount)
   {
     $phone_len = strlen($StartCalledNumber);
-    return Collection(range(1, $CalledCount))->map(function () use ($CallOutID, $StartCalledNumber, $phone_len) {
+    return Collection(range(0, $CalledCount - 1))->map(function ($add) use ($CallOutID, $StartCalledNumber, $phone_len) {
       return [
         'CallOutID'    => $CallOutID,
-        'CalledNumber' => str_pad($StartCalledNumber++, $phone_len, '0', STR_PAD_LEFT)
+        'CalledNumber' => str_pad($StartCalledNumber + $add, $phone_len, '0', STR_PAD_LEFT)
       ];
     });
   }

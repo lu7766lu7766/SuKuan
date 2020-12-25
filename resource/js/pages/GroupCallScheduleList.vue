@@ -125,9 +125,21 @@
                   v-model="editData.ExtProgressTime"
                 />
               </td>
+              <td>亂數排序</td>
+              <td>
+                <label class="switch">
+                  <input
+                    id="switch"
+                    disabled
+                    type="checkbox"
+                    :checked="editData.random"
+                  />
+                  <div class="slider round"></div>
+                </label>
+              </td>
 
               <td></td>
-              <td colspan="3">
+              <td>
                 <input
                   class="form-control btn btn-primary"
                   type="button"
@@ -180,8 +192,9 @@
           <label class="switch">
             <input
               id="switch"
-              disabled
               type="checkbox"
+              :true-value="true"
+              :false-value="false"
               :checked="data.UseState"
             />
             <div class="slider round"></div>
@@ -217,6 +230,7 @@ export default {
       CallProgressTime: "30",
       Calldistribution: "0",
       CalloutGroupID: 1,
+      random: true,
     },
     Const: {
       RANGE,
