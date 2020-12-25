@@ -130,7 +130,6 @@
                 <label class="switch">
                   <input
                     id="switch"
-                    disabled
                     type="checkbox"
                     :checked="editData.random"
                   />
