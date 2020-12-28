@@ -7,7 +7,7 @@
         { key: 'Count', name: '線數', sortable: true },
       ]"
       :sort="sort"
-      @sortChange="(key) => changeSort(key)"
+      @changeSort="(key) => changeSort(key)"
     >
     </data-table>
   </div>

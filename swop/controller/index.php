@@ -27,11 +27,11 @@ class Index_Controller extends JController
 
     public function changeUser()
     {
-        $user = DB::table("SysUser")->where("UserID", $this->model->choice)->first();
-        $this->model->session["choicer"] = json_decode(json_encode($user), true);
+        $user = json_decode(json_encode(DB::table("SysUser")->where("UserID", $this->model->choice)->first()), true);
+        $this->model->session["choicer"] = $user;
+        $this->model->session["permission"] = $user["MenuList"];
         $this->model->session["choice"] = $this->model->choice;
         $this->model->session["isRoot"] = $this->model->session["choice"] == "root";
-        $this->model->session["permission"] = $user->MenuList;
         $this->model->session["sub_emp"] = $this->model->getSubEmp($this->model->session["login"]["UserID"]);
         $this->model->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp(
             $this->model->session["sub_emp"],

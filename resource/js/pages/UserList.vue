@@ -37,6 +37,7 @@
         { key: 'action', name: '操作', width: 100 },
       ]"
       :sort="sort"
+      @changeSort="e => changeSort(e)"
     >
       <template v-slot:allChecked>
         <input type="checkbox" class="checkAll" v-model="isAllChecked" />

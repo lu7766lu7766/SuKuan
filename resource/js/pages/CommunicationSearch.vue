@@ -133,7 +133,7 @@
           })
         "
         :sort="sort"
-        @sortChange="(key) => apiChangeSort(key)"
+        @changeSort="(key) => apiChangeSort(key)"
       >
         <template v-slot:allChecked>
           <input type="checkbox" v-model="isAllChecked" />

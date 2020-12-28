@@ -80,6 +80,7 @@
         { key: 'BillCost', name: '成本', sortable: true, show: isRoot },
       ]"
       :sort="sort"
+      @changeSort="e => changeSort(e)"
     >
       <template v-slot:ExtensionNo="{ data }">
         {{ data.ExtensionNo || "Wait" }}

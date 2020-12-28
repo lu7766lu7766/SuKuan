@@ -22,7 +22,7 @@
                 item.sortable && sort.key == item.key && sort.type == 'desc',
             }"
             :width="item.width"
-            @click="item.sortable ? sortChange(item.key) : ''"
+            @click="item.sortable ? changeSort(item.key) : ''"
           >
             {{ item.name }}
           </th>
@@ -79,8 +79,8 @@ export default {
     },
   },
   methods: {
-    sortChange(key) {
-      this.$emit("sortChange", key);
+    changeSort(key) {
+      this.$emit("changeSort", key);
     },
   },
   computed: {
