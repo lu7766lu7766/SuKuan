@@ -61,7 +61,7 @@
         </label>
       </template>
       <template v-slot:Balance="{ data }">
-        {{ parseFloat(data.Balance).toFixed(2) }}
+        {{ parseFloat(data.Balance || 0).toFixed(2) }}
       </template>
       <template v-slot:action="{ data }">
         <button
@@ -95,7 +95,7 @@ export default {
       });
     },
     toDetail(UserID) {
-      redirect(`userInfo/userDetail${UserID ? "?userId=" + UserID : ""}`);
+      redirect(`userInfo/userDetail${UserID ? "?userID=" + UserID : ""}`);
     },
     async doDelete() {
       await $.callApi.post("user/delete", {
@@ -165,8 +165,8 @@ export default {
       });
       await $.callApi.post("user/create/batch", { datas });
       alertify.alert("已成功新增!");
-      await $.updateSession()
-      location.reload()
+      await $.updateSession();
+      location.reload();
     },
   },
   computed: {

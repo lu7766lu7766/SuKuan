@@ -26,20 +26,23 @@ class UserController extends JController
 	 */
 	public function list($req)
 	{
+		["session" => $session] = $req;
+		$db = DB::table("SysUser")
+			->select(
+				"UserID",
+				"UseState",
+				"RateGroupID",
+				"Balance",
+				"UserName",
+				"Distributor",
+				"NoteText",
+				DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
+			);
+		if (!$session["isRoot"]) {
+			$db = $db->whereIn("UserID", $req["session"]["current_sub_emp"]);
+		}
 		ReturnMessage::success(
-			DB::table("SysUser")
-				->select(
-					"UserID",
-					"UseState",
-					"RateGroupID",
-					"Balance",
-					"UserName",
-					"Distributor",
-					"NoteText",
-					DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
-				)
-				->whereIn("UserID", $req["session"]["current_sub_emp"])
-				->get()
+			$db->get()
 		);
 	}
 
