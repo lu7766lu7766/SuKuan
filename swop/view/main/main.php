@@ -38,7 +38,7 @@ $this->partialView($top_view_path);
 
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="col-md-offset-5 col-md-2 col-xs-offset-4 col-xs-4">
+						<div class="col-md-offset-4 col-md-4 col-xs-offset-4 col-xs-4">
 							<input type="submit" class="btn btn-primary btn-block" value="登入">
 						</div>
 					</div>
