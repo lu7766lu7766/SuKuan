@@ -165,10 +165,10 @@ export default {
           const { 0: RateGroupID, 1: RateGroupName } = line
             .split(",")
             .map((x) => x.trim());
-          return {
+          return _.pickBy({
             RateGroupID,
             RateGroupName,
-          };
+          });
         });
       await $.callApi.post("rate/create/batch", { datas });
       alertify.alert("已成功新增!");

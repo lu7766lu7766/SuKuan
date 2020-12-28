@@ -159,7 +159,7 @@ export default {
             6: UserName,
             7: NoteText,
           } = line.split(",").map((x) => x.trim());
-          return {
+          return _.pickBy({
             UserID,
             UseState,
             Distributor,
@@ -168,7 +168,7 @@ export default {
             Balance,
             UserName,
             NoteText,
-          };
+          });
         });
       await $.callApi.post("user/create/batch", { datas });
       alertify.alert("已成功新增!");

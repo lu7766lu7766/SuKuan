@@ -244,7 +244,7 @@ export default {
             6: RouteName,
             7: SubNum,
           } = line.split(",").map((x) => x.trim());
-          return {
+          return _.pickBy({
             UserID,
             PrefixCode,
             AddPrefix,
@@ -253,7 +253,7 @@ export default {
             TrunkPort,
             RouteName,
             SubNum,
-          };
+          });
         });
       await $.callApi.post("api/manualUserRoute/create/batch", { datas });
       this.$swal("新增成功");
