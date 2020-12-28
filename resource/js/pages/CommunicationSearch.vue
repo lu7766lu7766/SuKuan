@@ -1,5 +1,5 @@
 <template>
-  <div class="table-responsive" >
+  <div class="table-responsive">
     <table class="table table-v table-condensed">
       <tbody>
         <tr>
@@ -25,7 +25,7 @@
               @keyup.prevent.83="where.extensionNo = 'system'"
             />
           </td>
-          <td class="col-md-1">目的端號碼</td>
+          <td class="col-md-1">撥打號碼</td>
           <td class="col-md-3">
             <input
               type="text"
@@ -52,7 +52,7 @@
               type="datetimepicker"
             />
           </td>
-          <td>等級</td>
+          <td>按鍵</td>
           <td>
             <input
               type="text"
@@ -120,11 +120,11 @@
         :columns="[
           { key: 'UserID', name: '用戶', sortable: true },
           { key: 'ExtensionNo', name: '分機', sortable: true },
-          { key: 'OrgCalledId', name: '目的端號碼', sortable: true },
+          { key: 'OrgCalledId', name: '撥打號碼', sortable: true },
           { key: 'CallStartBillingDate', name: '開始時間', sortable: true },
           { key: 'CallDuration', name: '時間', sortable: true },
           { key: 'BillValue', name: '費用', sortable: true },
-          { key: 'CustomerLevel', name: '等級', sortable: true },
+          { key: 'CustomerLevel', name: '按鍵', sortable: true },
           { key: 'RecordDownload', name: '錄音下載' },
         ]"
         :trStyle="
