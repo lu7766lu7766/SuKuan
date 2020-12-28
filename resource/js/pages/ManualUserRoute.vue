@@ -128,7 +128,7 @@
         { key: 'TrunkIP', name: 'Trunk IP' },
         { key: 'TrunkPort', name: 'Trunk Port' },
         { key: 'RouteName', name: '路由名稱' },
-        { key: 'SubNum', name: '刪除幾碼' },
+        { key: 'SubNum', name: '刪除機碼' },
         { key: 'action', name: '操作' },
       ]"
     >
@@ -229,7 +229,7 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text.split("\r\n").map((line) => {
+      const datas = text.split("\r\n").slice(1).map((line) => {
         const {
           0: UserID,
           1: PrefixCode,

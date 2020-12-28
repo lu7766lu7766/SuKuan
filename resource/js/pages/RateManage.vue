@@ -159,7 +159,7 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text.split("\r\n").map((line) => {
+      const datas = text.split("\r\n").slice(1).map((line) => {
         const { 0: RateGroupID, 1: RateGroupName } = line
           .split(",")
           .map((x) => x.trim());
