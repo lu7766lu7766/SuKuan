@@ -229,28 +229,33 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text.split("\r\n").slice(1).map((line) => {
-        const {
-          0: UserID,
-          1: PrefixCode,
-          2: AddPrefix,
-          3: RouteCLI,
-          4: TrunkIP,
-          5: TrunkPort,
-          6: RouteName,
-          7: SubNum,
-        } = line.split(",").map((x) => x.trim());
-        return {
-          UserID,
-          PrefixCode,
-          AddPrefix,
-          RouteCLI,
-          TrunkIP,
-          TrunkPort,
-          RouteName,
-          SubNum,
-        };
-      });
+      return;
+      const datas = text
+        .split("\r\n")
+        .slice(1)
+        .filter(x => x)
+        .map((line) => {
+          const {
+            0: UserID,
+            1: PrefixCode,
+            2: AddPrefix,
+            3: RouteCLI,
+            4: TrunkIP,
+            5: TrunkPort,
+            6: RouteName,
+            7: SubNum,
+          } = line.split(",").map((x) => x.trim());
+          return {
+            UserID,
+            PrefixCode,
+            AddPrefix,
+            RouteCLI,
+            TrunkIP,
+            TrunkPort,
+            RouteName,
+            SubNum,
+          };
+        });
       await $.callApi.post("api/userRoute/create/batch", { datas });
       this.$swal("新增成功");
       this.getList();

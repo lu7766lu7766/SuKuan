@@ -146,9 +146,7 @@ export default {
       this.fileFunc.exportCSV(
         [["費率表代號", "費率表名稱"].join(",")]
           .concat(
-            this.datas.map((x) =>
-              [x.RateGroupID, x.RateGroupName].join(",")
-            )
+            this.datas.map((x) => [x.RateGroupID, x.RateGroupName].join(","))
           )
           .join("\r\n"),
         "費率表.csv"
@@ -159,15 +157,19 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text.split("\r\n").slice(1).map((line) => {
-        const { 0: RateGroupID, 1: RateGroupName } = line
-          .split(",")
-          .map((x) => x.trim());
-        return {
-          RateGroupID,
-          RateGroupName,
-        };
-      });
+      const datas = text
+        .split("\r\n")
+        .slice(1)
+        .filter((x) => x)
+        .map((line) => {
+          const { 0: RateGroupID, 1: RateGroupName } = line
+            .split(",")
+            .map((x) => x.trim());
+          return {
+            RateGroupID,
+            RateGroupName,
+          };
+        });
       await $.callApi.post("rate/create/batch", { datas });
       alertify.alert("已成功新增!");
       this.getList();

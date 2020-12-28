@@ -37,7 +37,7 @@
         { key: 'action', name: '操作', width: 100 },
       ]"
       :sort="sort"
-      @changeSort="e => changeSort(e)"
+      @changeSort="(e) => changeSort(e)"
     >
       <template v-slot:allChecked>
         <input type="checkbox" class="checkAll" v-model="isAllChecked" />
@@ -144,28 +144,32 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text.split("\r\n").slice(1).map((line) => {
-        const {
-          0: UserID,
-          1: UseState,
-          2: Distributor,
-          3: ExtensionCount,
-          4: RateGroupID,
-          5: Balance,
-          6: UserName,
-          7: NoteText,
-        } = line.split(",").map((x) => x.trim());
-        return {
-          UserID,
-          UseState,
-          Distributor,
-          ExtensionCount,
-          RateGroupID,
-          Balance,
-          UserName,
-          NoteText,
-        };
-      });
+      const datas = text
+        .split("\r\n")
+        .slice(1)
+        .filter((x) => x)
+        .map((line) => {
+          const {
+            0: UserID,
+            1: UseState,
+            2: Distributor,
+            3: ExtensionCount,
+            4: RateGroupID,
+            5: Balance,
+            6: UserName,
+            7: NoteText,
+          } = line.split(",").map((x) => x.trim());
+          return {
+            UserID,
+            UseState,
+            Distributor,
+            ExtensionCount,
+            RateGroupID,
+            Balance,
+            UserName,
+            NoteText,
+          };
+        });
       await $.callApi.post("user/create/batch", { datas });
       alertify.alert("已成功新增!");
       await $.updateSession();
