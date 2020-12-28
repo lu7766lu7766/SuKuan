@@ -229,11 +229,10 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      return;
       const datas = text
         .split("\r\n")
         .slice(1)
-        .filter(x => x)
+        .filter((x) => x)
         .map((line) => {
           const {
             0: UserID,
