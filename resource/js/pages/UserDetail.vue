@@ -38,7 +38,12 @@
           <td>帳號狀態</td>
           <td>
             <label class="switch">
-              <input type="checkbox" v-model="editData.UseState" />
+              <input
+                type="checkbox"
+                true-value="1"
+                false-value="0"
+                v-model="editData.UseState"
+              />
               <div class="slider round"></div>
             </label>
           </td>
@@ -280,7 +285,12 @@
           <td>分機管理權限</td>
           <td>
             <label class="switch">
-              <input type="checkbox" v-model="editData.CanSwitchExtension" />
+              <input
+                type="checkbox"
+                true-value="1"
+                false-value="0"
+                v-model="editData.CanSwitchExtension"
+              />
               <div class="slider round"></div>
             </label>
           </td>
@@ -290,7 +300,12 @@
           <td>權限設定</td>
           <td>
             <label class="switch">
-              <input type="checkbox" v-model="editData.PermissionControl" />
+              <input
+                type="checkbox"
+                true-value="1"
+                false-value="0"
+                v-model="editData.PermissionControl"
+              />
               <div class="slider round"></div>
             </label>
           </td>
@@ -347,12 +362,15 @@ export default {
   },
   data: () => ({
     editData: {
+      UseState: "1",
       StartTime: "",
       StopTime: "",
       MaxRoutingCalls: 0,
       MaxSearchCalls: 0,
       MaxRegularCalls: 0,
       MaxCalls: 0,
+      CanSwitchExtension: true,
+      PermissionControl: true,
       MenuList: [],
     },
     options: {

@@ -55,7 +55,9 @@
             id="switch"
             disabled
             type="checkbox"
-            :checked="data.UseState"
+            true-value="1"
+            false-value="0"
+            v-model="data.UseState"
           />
           <div class="slider round"></div>
         </label>
