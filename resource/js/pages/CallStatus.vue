@@ -88,7 +88,7 @@
             <tbody>
               <tr>
                 <th>號</th>
-                <th>目的端號碼</th>
+                <th>撥打號碼</th>
                 <th>狀態</th>
                 <th>分機</th>
                 <th>座</th>

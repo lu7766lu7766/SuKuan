@@ -54,7 +54,7 @@ $can_switch_extension = $isRoot || $model->session["choicer"]["CanSwitchExtensio
           <th>用戶</th>
           <th>分機</th>
           <th>名稱</th>
-          <th>手動撥號主叫</th>
+          <th>手動撥號顯號</th>
           <th>來源IP</th>
           <th>錄音</th>
           <th>座席</th>
