@@ -2,8 +2,10 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <?php
-echo Bundle::$allLink;
-Bundle::addLink("default");
+Bundle::echoLink("jquery");
+Bundle::echoLink("bootstrap");
+Bundle::echoLink("default");
+
 $top_view_path = "";
 $this->partialView($top_view_path);
 ?>
@@ -12,7 +14,7 @@ $this->partialView($top_view_path);
 	<div class="row">
 		<div class="login-box col-xs-12 col-md-offset-4 col-md-4" style="border-radius: 10px;">
 			<div class="login-logo">
-				<div class="h2 form-signin-heading">電訪系統</ㄎ>
+				<div class="h2 form-signin-heading">ZH行銷</ㄎ>
 					<!--<img src="/admin/upload/company/images/logo.png" alt="KenKo" s="" clear="" beauty'=""> -->
 				</div>
 				<p class="login-box-msg" style="letter-spacing:3px;"><b></b></p>

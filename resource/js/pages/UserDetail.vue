@@ -136,15 +136,12 @@
           </td>
         </tr>
         <tr>
-          <td>*每日可使用時間</td>
+          <td>每日可使用時間</td>
           <td>
-            <validate rules="required">
-              <date-time-picker
-                type="timepicker"
-                :time.sync="editData.StartTime"
-              />
-              <input type="hidden" v-model="editData.StartTime" />
-            </validate>
+            <date-time-picker
+              type="timepicker"
+              :time.sync="editData.StartTime"
+            />
           </td>
         </tr>
         <tr>
@@ -166,15 +163,12 @@
           </td>
         </tr>
         <tr>
-          <td>*每日結束時間</td>
+          <td>每日結束時間</td>
           <td>
-            <validate rules="required">
-              <date-time-picker
-                type="timepicker"
-                :time.sync="editData.StopTime"
-              />
-              <input type="hidden" v-model="editData.StopTime" />
-            </validate>
+            <date-time-picker
+              type="timepicker"
+              :time.sync="editData.StopTime"
+            />
           </td>
         </tr>
         <tr>
@@ -353,6 +347,8 @@ export default {
   },
   data: () => ({
     editData: {
+      StartTime: "",
+      StopTime: "",
       MaxRoutingCalls: 0,
       MaxSearchCalls: 0,
       MaxRegularCalls: 0,

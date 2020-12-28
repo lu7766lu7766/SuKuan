@@ -23,9 +23,7 @@ class Main_Controller extends Controller
                 }
             }
         }
-        Bundle::addLink("jquery");
-        Bundle::addLink("bootstrap");
-        Bundle::addLink("default");
+        
         return $this->render();
     }
 

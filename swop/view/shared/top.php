@@ -6,14 +6,16 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <title>
-	電訪系統
+	ZH行銷
 </title>
 
 <head>
-	<?php echo Bundle::$allLink ?>
 	<?php
-	//Bundle::addLink("default");
-	//Bundle::addLink("bootstrap");
+	Bundle::echoLink("jquery");
+	Bundle::echoLink("bootstrap");
+	Bundle::echoLink("default");
+	echo Bundle::$allLink;
+
 	$choice_id = $model->session["choice"];
 	$isRoot = $model->session["isRoot"];
 	?>
@@ -52,6 +54,7 @@
 							}
 						},
 						error(xhr, errorType, error) {
+							alert("系統錯誤，請稍後在試，或聯繫管理員。")
 							reject(error)
 						}
 					}
@@ -79,9 +82,11 @@
 							}
 						},
 						error(xhr, errorType, error) {
+							alert("系統錯誤，請稍後在試或聯繫管理員。")
 							reject(error)
 						}
 					})
+
 				})
 			}
 
@@ -180,7 +185,7 @@
 					<span class="icon-bar eye-protector-processed" style="transition: background 0.3s ease; background-color: rgb(193, 230, 198);"></span>
 					<span class="icon-bar eye-protector-processed" style="transition: background 0.3s ease; background-color: rgb(193, 230, 198);"></span>
 				</button>
-				<a class="navbar-brand" id="menu-toggle" style="cursor:pointer">電訪系統</a>
+				<a class="navbar-brand" id="menu-toggle" style="cursor:pointer">ZH行銷</a>
 			</div>
 			<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
 				<div class="navbar-right">

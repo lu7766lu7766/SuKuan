@@ -23,7 +23,6 @@
 </template>
 
 <script>
-// need Bundle::addLink("datetime");
 export default {
   props: ["date", "time", "type"],
   mounted: function () {

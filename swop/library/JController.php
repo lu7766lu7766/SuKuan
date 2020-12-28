@@ -49,9 +49,6 @@ class JController extends Controller
 
     public function render($view = null)
     {
-        Bundle::addLink("jquery");
-        Bundle::addLink("bootstrap");
-        Bundle::addLink("default");
         parent::render($view);
     }
 

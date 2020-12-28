@@ -219,8 +219,8 @@ class UserController extends JController
 		$validator = new Validator();
 		$validation = $validator->validate($post, [
 			'UserID'                 => 'required',
-			'StartTime'             => 'required',
-			'StopTime'              => 'required',
+			// 'StartTime'             => 'required',
+			// 'StopTime'              => 'required',
 		]);
 		if ($validation->fails()) {
 			throw new Exception("驗證失敗，請確認欄位");
