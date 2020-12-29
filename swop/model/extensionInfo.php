@@ -72,95 +72,6 @@ class ExtensionInfo_Model extends JModel
 	}
 
 	/**
-	 * 刪除分機
-	 * @return $this|void
-	 */
-	public function deleteExtension ()
-	{
-		$dba = $this->dba;
-		$sql = "";
-		$params = [ ];
-		foreach ($this->delete as $delete) {
-			$params = array_merge($params, explode(",", $delete), explode(",", $delete));
-			$sql .= "
-                delete from ExtensionGroup
-                where
-                UserID=? and
-                CustomerNO=?;
-                delete from CustomerLists
-                where
-                UserID=? and
-                CustomerNO=?;
-            ";
-		}
-		$result = $dba->exec($sql, $params);
-
-		return $result;
-	}
-
-	/**
-	 * 分機管理
-	 * @return $this|void
-	 */
-	public function getExtensionManage ()
-	{
-		$emps = [ $this->session[ "choice" ] ];
-		$sub_emp = $this->getSubEmp($this->session[ "choice" ]);
-		foreach ($sub_emp as $user) {
-			$emps[] = $user[ "UserID" ];
-		}
-
-		$page = $this->page = $this->page ?? 0;
-		$per_page = $this->per_page = $this->per_page ?? 50;
-		$offset = $per_page * $page + 1;
-		$limit = $per_page;
-
-		$db = DB::table('CustomerLists')->select('count(1) as count')->whereIn('UserID', $emps);
-		$db2 = Db::table('CustomerLists as a')->select([
-			'a.UserID',
-			'a.ExtName',
-			'a.ExtensionNo',
-			'c.HostInfo',
-			'a.StartRecorder',
-			'b.CalloutGroupID',
-			'a.Suspend',
-			'c.ETime',
-			'c.PingTime',
-			'c.Received',
-			'a.UseState',
-			'a.OffNetCli'
-		])->leftJoin('ExtensionGroup as b', 'a.UserID=b.UserID', 'and', 'a.ExtensionNo=b.CustomerNO')
-			->leftJoin('RegisteredLogs as c', 'a.ExtensionNo=c.CustomerNO')
-			->whereIn('a.UserID', $emps);
-
-		if (!empty( $this->search_userID )) {
-			$db->andWhere('UserID', $this->search_userID);
-			$db2->andWhere('a.UserID', $this->search_userID);
-		}
-
-		if (!empty( $this->search_content )) {
-			$db->andWhere(function ($mdb) {
-				return $mdb->where([
-					[ 'UserID', $this->search_content ],
-					[ 'ExtensionNo', $this->search_content ]
-				], SQL:: OR);
-			});
-
-			$db2->andWhere(function ($mdb) {
-				return $mdb->where([
-					[ 'a.UserID', $this->search_content ],
-					[ 'a.ExtensionNo', $this->search_content ]
-				], SQL:: OR);
-			});
-		}
-
-		$this->rows = $db->get()[ 0 ][ 'count' ];
-		$this->last_page = ceil($this->rows / $per_page);
-		$db2->orderBy('a.UserID')->limit($offset, $limit);
-		$this->data = $db2->get();
-	}
-
-	/**
 	 * 分機修改
 	 * @return $this|void
 	 */
@@ -236,36 +147,6 @@ class ExtensionInfo_Model extends JModel
 
 		return $dba->exec($sql, $params);
 
-	}
-
-	/**
-	 * 座息策略 (已屏蔽)
-	 * @return $this|void
-	 */
-	public function getSeatTactics ()
-	{
-		$dba = $this->dba;
-
-		$where = "where";
-
-		if (!empty( $this->userId )) {
-			$where .= " a.UserID=?  and";
-			$params[] = $this->userId;
-		}
-
-		if (!empty( $this->calloutGroupId )) {
-			$where .= " b.CalloutGroupID=?  and";
-			$params[] = $this->calloutGroupId;
-		}
-		$where = substr($where, 0, -5);
-
-		$sql = "select a.UserID,b.CalloutGroupID,count(1) as ExtensionRows
-                from CustomerLists as a WITH (NOLOCK)
-                left join ExtensionGroup as b WITH (NOLOCK) on a.UserID=b.UserID and a.ExtensionNo=b.CustomerNO
-                $where
-                group by a.UserID,b.CalloutGroupID";
-
-		$this->data = $dba->getAll($sql, $params);
 	}
 }
 

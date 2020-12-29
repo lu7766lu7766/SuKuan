@@ -33,24 +33,6 @@ class ExtensionInfo_Controller extends JController
      */
     public function extensionManage()
     {
-        $model = $this->model;
-
-        if($model->submit && $model->status=="delete")
-        {
-            $model->deleteExtension();
-        }
-
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            array(
-                "selected"=>$model->search_userID,
-                "option"=>array("value"=>"","name"=>""),
-                "name"=>"search_userID"
-            ));
-
-        $model->getExtensionManage();
-
-        $model->pageSelect = PageHelper::getPageSelect($model->page,$model->last_page);
-
         return parent::render();
     }
 
@@ -82,23 +64,6 @@ class ExtensionInfo_Controller extends JController
         }
         return parent::render();
     }
-
-    /**
-     * 座席策略 (目前已屏蔽)
-     * @return $this|void
-     */
-    public function seatTactics()
-    {
-        $model = $this->model;
-
-        $model->getSeatTactics();
-
-        $model->empSelect2 = EmpHelper::getEmpSelect($model->empSelect,
-            array("selected"=>$model->userId,"option"=>array("value"=>"","name"=>"")));
-
-        return parent::render();
-    }
-
 }
 
 ?>

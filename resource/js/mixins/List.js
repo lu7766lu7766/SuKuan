@@ -14,15 +14,13 @@ export default {
 	methods: {
 		getList() {},
 		getTotal() {},
-		methods: {
-			changePage(page) {
-				this.paginate.page = page
-				this.getList()
-			},
-			doSearch() {
-				this.changePage(1)
-				this.getTotal()
-			},
+		changePage(page) {
+			this.paginate.page = page
+			this.getList()
+		},
+		doSearch() {
+			this.changePage(1)
+			this.getTotal()
 		},
 	},
 	computed: {
