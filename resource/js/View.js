@@ -27,5 +27,6 @@ new Vue({
 		GroupCallScheduleList: () => import('pages/GroupCallScheduleList'),
 		GroupCallScheduleDetail: () => import('pages/GroupCallScheduleDetail'),
 		BulletinBoard: () => import('pages/BulletinBoard'),
+		ExtensionManage: () => import('pages/ExtensionManage'),
 	},
 }).$mount('#app')

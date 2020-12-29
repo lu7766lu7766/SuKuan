@@ -1,22 +1,22 @@
 <template>
   <ul class="pager responsive">
-    <li><a href="#" @click="pageChange(1)">第一頁</a></li>
+    <li><a href="#" @click="changePage(1)">第一頁</a></li>
     <li>
-      <a href="#" v-if="page != 1" @click="pageChange(page - 1)">上一頁</a>
+      <a href="#" v-if="page != 1" @click="changePage(page - 1)">上一頁</a>
     </li>
     <li>
       <a
         href="#"
         v-if="lastPage > 0 && page != lastPage"
-        @click="pageChange(page + 1)"
+        @click="changePage(page + 1)"
         >下一頁</a
       >
     </li>
-    <li><a href="#" @click="pageChange(lastPage)">最後一頁</a></li>
+    <li><a href="#" @click="changePage(lastPage)">最後一頁</a></li>
     <li>
       <a href="#"
         >第
-        <select :value="page" @change="pageChange($event.target.value)">
+        <select :value="page" @change="changePage($event.target.value)">
           <option
             v-for="(page, index) in pageSelector"
             :key="index"
@@ -48,7 +48,7 @@ export default {
     },
   },
   methods: {
-    pageChange(page) {
+    changePage(page) {
       this.$emit("change", page);
     },
   },

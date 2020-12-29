@@ -87,12 +87,11 @@
 
 <script>
 import CommonMiins from "mixins/Common";
-import PaginateMiins from "mixins/Paginate";
 import ListMiins from "mixins/List";
 import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMiins, PaginateMiins, ListMiins, LibraryMixins],
+  mixins: [CommonMiins, ListMiins, LibraryMixins],
   data: () => ({
     options: {
       subEmp: [],

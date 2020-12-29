@@ -1,17 +1,30 @@
-import Paginate from '../components/Paginate'
-import DataTable from '../components/DataTable'
-import Switcher from '../components/Switcher.vue'
+import PaginateMixins from './Paginate'
 
 export default {
+	mixins: [PaginateMixins],
 	components: {
-		Paginate,
-		DataTable,
-		Switcher,
+		Paginate: () => import('../components/Paginate'),
+		Switcher: () => import('../components/Switcher'),
+		DataTable: () => import('../components/DataTable'),
 	},
 	data: () => ({
 		editData: {},
 		datas: [],
 	}),
+	methods: {
+		getList() {},
+		getTotal() {},
+		methods: {
+			changePage(page) {
+				this.paginate.page = page
+				this.getList()
+			},
+			doSearch() {
+				this.changePage(1)
+				this.getTotal()
+			},
+		},
+	},
 	computed: {
 		isAllChecked: {
 			get() {

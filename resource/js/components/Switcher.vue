@@ -24,9 +24,8 @@ export default {
     off: {
       default: "0",
     },
-    value: {
-      required: true,
-    },
+    value: {},
+    checked: {},
   },
   watch: {
     data(val) {
@@ -43,5 +42,8 @@ export default {
   data: () => ({
     data: null,
   }),
+  mounted() {
+    this.data = this.checked || this.data;
+  },
 };
 </script>

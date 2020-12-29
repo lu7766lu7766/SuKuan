@@ -111,7 +111,7 @@
         :page="paginate.page"
         :total="paginate.total"
         :per_page="paginate.per_page"
-        @change="(page) => pageChange(page)"
+        @change="(page) => changePage(page)"
       />
       <data-table
         allChecked
@@ -186,14 +186,13 @@
 
 <script>
 import CommonMixins from "mixins/Common";
-import PaginateMixins from "mixins/Paginate";
 import ListMixins from "mixins/List";
 import EmpMixins from "mixins/Emp";
 import OrderBy from "mixins/OrderBy";
 import DateTimePicker from "../components/DateTimePicker";
 
 export default {
-  mixins: [CommonMixins, PaginateMixins, ListMixins, EmpMixins, OrderBy],
+  mixins: [CommonMixins, ListMixins, EmpMixins, OrderBy],
   components: {
     DateTimePicker,
   },
@@ -241,7 +240,7 @@ export default {
     openDownloadWindow() {
       window.open(ctrl_uri + "communicationSearchDownload");
     },
-    async getCommonData() {
+    async getTotal() {
       const res = await $.callApi.post(
         "api/communication/common",
         this.requestBody
@@ -259,10 +258,6 @@ export default {
       this.datas = res.data.map((x) => ({ ...x, checked: false }));
       $("body").loading("stop");
     },
-    doSearch() {
-      this.pageChange(1);
-      this.getCommonData();
-    },
     doDelete() {
       $.callApi
         .post("api/communication/common", {
@@ -275,10 +270,6 @@ export default {
         .catch(() => {
           alertify.alert("刪除失敗!");
         });
-    },
-    pageChange(page) {
-      this.paginate.page = page;
-      this.getList();
     },
     apiChangeSort(key) {
       this.changeSort(key);

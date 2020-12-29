@@ -21,6 +21,11 @@ class OldApi_Controller extends JController
 			}));
 	}
 
+	public function choicer()
+	{
+		ReturnMessage::success($this->model->session["choicer"]);
+	}
+
 	public function parentOptions()
 	{
 		ReturnMessage::success(EmpHelper::KillValue(

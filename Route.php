@@ -69,3 +69,7 @@ Route::post("/api/groupCallSchedule/delete", "GroupCallScheduleController@delete
 // system
 Route::post("/api/system/bulletinBoard/detail", "SystemController@bulletinBoardDetail");
 Route::post("/api/system/bulletinBoard/insertOrUpdate", "SystemController@bulletinBoardInsertOrUpdate");
+// extension manage
+Route::post("/api/extensionManage/list", "ExtensionManageController@list");
+Route::post("/api/extensionManage/total", "ExtensionManageController@total");
+Route::post("/api/extensionManage/delete", "ExtensionManageController@delete");
