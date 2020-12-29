@@ -63,9 +63,6 @@
           <div class="slider round"></div>
         </label>
       </template>
-      <template v-slot:Balance="{ data }">
-        {{ parseFloat(data.Balance || 0).toFixed(2) }}
-      </template>
       <template v-slot:action="{ data }">
         <button
           type="button"
@@ -93,6 +90,7 @@ export default {
         .filter((x) => x.checked)
         .map((x) => x.UserID);
       this.datas = res.data.map((x) => {
+        x.Balance = parseFloat(x.Balance || 0).toFixed(2);
         x.checked = checkedUserID.includes(x.UserID);
         return x;
       });
@@ -109,33 +107,16 @@ export default {
     },
     exportCSV() {
       this.fileFunc.exportCSV(
-        [
-          [
-            "帳號",
-            "狀態",
-            "經銷商",
-            "分機數",
-            "費率",
-            "剩餘點數",
-            "用戶名稱",
-            "用戶備註",
-          ].join(","),
-        ]
-          .concat(
-            this.sortDatas.map((x) =>
-              [
-                x.UserID,
-                x.UseState ? "開啟" : "關閉",
-                x.Distributor,
-                x.ExtensionCount,
-                x.RateGroupID,
-                parseFloat(x.Balance).toFixed(2),
-                x.UserName,
-                x.NoteText,
-              ].join(",")
-            )
-          )
-          .join("\r\n"),
+        this.fileFunc.buildCSVContext(this.sortDatas, [
+          { key: "UserID", name: "帳號" },
+          { key: "UseState", name: "狀態" },
+          { key: "Distributor", name: "經銷商" },
+          { key: "ExtensionCount", name: "分機數" },
+          { key: "RateGroupID", name: "費率" },
+          { key: "Balance", name: "剩餘點數" },
+          { key: "UserName", name: "用戶名稱" },
+          { key: "NoteText", name: "用戶備註" },
+        ]),
         "用戶列表.csv"
       );
     },
@@ -144,32 +125,16 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text
-        .split("\r\n")
-        .slice(1)
-        .filter((x) => x)
-        .map((line) => {
-          const {
-            0: UserID,
-            1: UseState,
-            2: Distributor,
-            3: ExtensionCount,
-            4: RateGroupID,
-            5: Balance,
-            6: UserName,
-            7: NoteText,
-          } = line.split(",").map((x) => x.trim());
-          return _.pickBy({
-            UserID,
-            UseState,
-            Distributor,
-            ExtensionCount,
-            RateGroupID,
-            Balance,
-            UserName,
-            NoteText,
-          });
-        });
+      const datas = this.fileFunc.toDatas(text, [
+        "UserID",
+        "UseState",
+        "Distributor",
+        "ExtensionCount",
+        "RateGroupID",
+        "Balance",
+        "UserName",
+        "NoteText",
+      ]);
       await $.callApi.post("user/create/batch", { datas });
       alertify.alert("已成功新增!");
       await $.updateSession();

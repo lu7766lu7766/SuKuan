@@ -68,19 +68,17 @@ export default {
 			return {
 				exportCSV,
 				exportTxt,
+				buildCSVContext,
 				toText: convertToText,
 				toDataUrl: convertToDataUrl,
+				toDatas: convertToDatas,
 				download,
 				getURL,
 			}
 		},
 		lodashFunc() {
 			return {
-				uniq,
-				pick,
-				omit,
 				isUndefined,
-				range,
 			}
 		},
 		formater() {
@@ -207,6 +205,26 @@ const convertToDataUrl = (file) => {
 	})
 }
 
+const buildCSVContext = (datas, keymap) => {
+	const keys = _.map(keymap, 'key')
+	return [_.map(keymap, 'name').join(',')].concat(datas.map((x) => keys.map((key) => x[key]).join(','))).join('\r\n')
+}
+
+const convertToDatas = (text, keymap, skipFirstLine = true, filterEmptyProp = true) => {
+	return text
+		.split('\r\n')
+		.slice(skipFirstLine ? 1 : 0)
+		.filter((x) => x)
+		.map((line) => {
+			console.log(line.split(',').map((x) => x.trim()))
+			const res = _.mapKeys(
+				line.split(',').map((x) => x.trim()),
+				(v, k) => keymap[k]
+			)
+			return filterEmptyProp ? _.pickBy(res) : res
+		})
+}
+
 function getDate(value) {
 	return moment(value).format('YYYY-MM-DD')
 }
@@ -215,54 +233,4 @@ function getDateTime(value) {
 	return moment(value).format('YYYY-MM-DD HH:mm:ss')
 }
 
-const pick = (data, props = []) => {
-	return props.reduce((result, prop) => {
-		if (!isUndefined(data[prop])) {
-			result[prop] = data[prop]
-		}
-		return result
-	}, {})
-}
-const range = (...params) => {
-	let start = 0
-	let end = 0
-	let step = 1
-	switch (params.length) {
-		case 1:
-			end = params[0]
-			break
-		case 2:
-			start = params[0]
-			end = params[1]
-			break
-		case 3:
-			start = params[0]
-			end = params[1]
-			step = params[2]
-			break
-		default:
-			break
-	}
-	const res = []
-	for (let i = start; i < end; i += step) {
-		res.push(i)
-	}
-	return res
-}
-const omit = (data, key) => {
-	if (typeof key === 'string') {
-		const { [key]: _, ...res } = data
-		noUse(_)
-		return res
-	}
-	if (key instanceof Array) {
-		return key.reduce((result, k) => {
-			const { [k]: _, ...res } = result
-			noUse(_)
-			return res
-		}, data)
-	}
-	return {}
-}
-const uniq = (array) => array.filter((value, index, self) => self.indexOf(value) === index)
 const isUndefined = (value) => typeof value === 'undefined'

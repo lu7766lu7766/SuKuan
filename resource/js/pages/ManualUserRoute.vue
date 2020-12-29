@@ -194,33 +194,16 @@ export default {
     },
     exportCSV() {
       this.fileFunc.exportCSV(
-        [
-          [
-            "用戶",
-            "前置碼",
-            "新增前置碼",
-            "顯示號碼",
-            "Trunk IP",
-            "Trunk Port",
-            "路由名稱",
-            "刪除機碼",
-          ].join(","),
-        ]
-          .concat(
-            this.filterDatas.map((x) =>
-              [
-                x.UserID,
-                x.PrefixCode,
-                x.AddPrefix,
-                x.RouteCLI,
-                x.TrunkIP,
-                x.TrunkPort,
-                x.RouteName,
-                x.SubNum,
-              ].join(",")
-            )
-          )
-          .join("\r\n"),
+        this.fileFunc.buildCSVContext(this.filterDatas, [
+          { key: "UserID", name: "用戶" },
+          { key: "PrefixCode", name: "前置碼" },
+          { key: "AddPrefix", name: "新增前置碼" },
+          { key: "RouteCLI", name: "顯示號碼" },
+          { key: "TrunkIP", name: "Trunk IP" },
+          { key: "TrunkPort", name: "Trunk Port" },
+          { key: "RouteName", name: "路由名稱" },
+          { key: "SubNum", name: "刪除機碼" },
+        ]),
         "手動撥號路由.csv"
       );
     },
@@ -229,32 +212,16 @@ export default {
         accept: ".csv",
       });
       const text = await this.fileFunc.toText(file);
-      const datas = text
-        .split("\r\n")
-        .slice(1)
-        .filter((x) => x)
-        .map((line) => {
-          const {
-            0: UserID,
-            1: PrefixCode,
-            2: AddPrefix,
-            3: RouteCLI,
-            4: TrunkIP,
-            5: TrunkPort,
-            6: RouteName,
-            7: SubNum,
-          } = line.split(",").map((x) => x.trim());
-          return _.pickBy({
-            UserID,
-            PrefixCode,
-            AddPrefix,
-            RouteCLI,
-            TrunkIP,
-            TrunkPort,
-            RouteName,
-            SubNum,
-          });
-        });
+      const datas = this.fileFunc.toDatas(text, [
+        "UserID",
+        "PrefixCode",
+        "AddPrefix",
+        "RouteCLI",
+        "TrunkIP",
+        "TrunkPort",
+        "RouteName",
+        "SubNum",
+      ]);
       await $.callApi.post("api/manualUserRoute/create/batch", { datas });
       this.$swal("新增成功");
       this.getList();
