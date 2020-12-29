@@ -127,14 +127,7 @@
               </td>
               <td>亂數排序</td>
               <td>
-                <label class="switch">
-                  <input
-                    id="switch"
-                    type="checkbox"
-                    :checked="editData.random"
-                  />
-                  <div class="slider round"></div>
-                </label>
+                <Switcher v-model="editData.random"/>
               </td>
 
               <td></td>
@@ -188,16 +181,7 @@
         </template>
 
         <template v-slot:UseState="{ data }">
-          <label class="switch">
-            <input
-              id="switch"
-              type="checkbox"
-              :true-value="true"
-              :false-value="false"
-              :checked="data.UseState"
-            />
-            <div class="slider round"></div>
-          </label>
+          <Switcher  disabled v-model="data.UseState"/>
         </template>
 
         <template v-slot:action="{ data }">

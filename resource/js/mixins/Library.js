@@ -38,30 +38,6 @@ export default {
 			return {
 				toFormData: convertToFormData,
 				parse: loopParse,
-				async success(fn) {
-					return loopParse(await requestSuccess(fn))
-				},
-				successWithoutParse: requestSuccess,
-				async successNotifyMessage(fn, message) {
-					const res = await this.success(fn)
-					$notify.success(message)
-					return res
-				},
-				async createSuccess(fn) {
-					const res = await this.successNotifyMessage(fn, '新增成功')
-					return res
-				},
-				async updateSuccess(fn) {
-					const res = await this.successNotifyMessage(fn, '更新成功')
-					return res
-				},
-				async deleteSuccess(fn) {
-					const res = await this.successNotifyMessage(fn, '刪除成功')
-					return res
-				},
-				deleteConfirm() {
-					return new Promise((resolve) => $confirm('確定要刪除嗎?').then((isOK) => (isOK ? resolve() : '')))
-				},
 			}
 		},
 		fileFunc() {
@@ -91,8 +67,6 @@ export default {
 	},
 }
 
-const noUse = (_) => _
-
 function number(value, fixed = 0) {
 	const newValue = Number(value)
 	let newFixed
@@ -110,10 +84,6 @@ function number(value, fixed = 0) {
 		}
 	}
 	return newValue.toFixed(0).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,') + suffix
-}
-
-function requestSuccess(fn) {
-	return new Promise((resolve) => fn.then((res) => (res.returnCode === 0 ? resolve(res) : '')))
 }
 
 function convertToFormData(data, sendString = true) {

@@ -110,14 +110,7 @@
           <tr>
             <td>啟用</td>
             <td>
-              <label class="switch">
-                <input
-                  id="switch"
-                  type="checkbox"
-                  :checked="editData.UseState"
-                />
-                <div class="slider round"></div>
-              </label>
+              <Switcher v-model="editData.UseState" />
             </td>
           </tr>
           <tr>
@@ -141,6 +134,7 @@
 
 <script>
 import CommonMixins from "mixins/Common";
+import Switcher from "../components/Switcher";
 
 const RANGE = "0";
 const LIST = "1";
@@ -149,6 +143,7 @@ const VALID = "3";
 
 export default {
   mixins: [CommonMixins],
+  components: { Switcher },
   data: () => ({
     editData: {
       User: {},

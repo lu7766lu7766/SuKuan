@@ -37,15 +37,7 @@
         <tr>
           <td>帳號狀態</td>
           <td>
-            <label class="switch">
-              <input
-                type="checkbox"
-                true-value="1"
-                false-value="0"
-                v-model="editData.UseState"
-              />
-              <div class="slider round"></div>
-            </label>
+            <Switcher v-model="editData.UseState" />
           </td>
         </tr>
         <tr>
@@ -284,30 +276,14 @@
         <tr v-if="isRoot">
           <td>分機管理權限</td>
           <td>
-            <label class="switch">
-              <input
-                type="checkbox"
-                true-value="1"
-                false-value="0"
-                v-model="editData.CanSwitchExtension"
-              />
-              <div class="slider round"></div>
-            </label>
+            <Switcher v-model="editData.CanSwitchExtension" />
           </td>
         </tr>
 
         <tr v-if="isRoot">
           <td>權限設定</td>
           <td>
-            <label class="switch">
-              <input
-                type="checkbox"
-                true-value="1"
-                false-value="0"
-                v-model="editData.PermissionControl"
-              />
-              <div class="slider round"></div>
-            </label>
+            <Switcher v-model="editData.PermissionControl" />
           </td>
         </tr>
 
@@ -354,11 +330,13 @@
 <script>
 import DateTimePicker from "../components/DateTimePicker";
 import CommonMixins from "mixins/Common";
+import Switcher from "../components/Switcher";
 
 export default {
   mixins: [CommonMixins],
   components: {
     DateTimePicker,
+    Switcher,
   },
   data: () => ({
     editData: {

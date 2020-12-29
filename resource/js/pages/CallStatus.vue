@@ -241,17 +241,10 @@
               </select>
             </td>
             <td>
-              <label class="switch">
-                <input
-                  class="useState_switch"
-                  type="checkbox"
-                  value="1"
-                  v-model="data.UseState"
-                  @change="changeUseState(subData.data3[index])"
-                />
-
-                <div class="slider round"></div>
-              </label>
+              <Switcher
+                v-model="data.UseState"
+                @change="changeUseState(subData.data3[index])"
+              />
             </td>
             <td>
               <input

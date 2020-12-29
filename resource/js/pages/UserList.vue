@@ -51,17 +51,7 @@
         />
       </template>
       <template v-slot:UseState="{ data }">
-        <label class="switch">
-          <input
-            id="switch"
-            disabled
-            type="checkbox"
-            true-value="1"
-            false-value="0"
-            v-model="data.UseState"
-          />
-          <div class="slider round"></div>
-        </label>
+        <Switcher disabled v-model="data.UseState" />
       </template>
       <template v-slot:action="{ data }">
         <button

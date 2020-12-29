@@ -1,10 +1,12 @@
 import Paginate from '../components/Paginate'
 import DataTable from '../components/DataTable'
+import Switcher from '../components/Switcher.vue'
 
 export default {
 	components: {
 		Paginate,
 		DataTable,
+		Switcher,
 	},
 	data: () => ({
 		editData: {},
