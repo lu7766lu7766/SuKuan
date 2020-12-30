@@ -13,7 +13,7 @@
           <th
             :key="index"
             v-if="!(item.show === false)"
-            style="text-align: center; border-left: 1px solid #444"
+            style="text-align: center; border-left: 1px solid #333"
             :class="{
               [item.thClass]: true,
               sorting: item.sortable,

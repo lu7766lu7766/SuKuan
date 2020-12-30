@@ -107,7 +107,7 @@ class GroupCallScheduleController extends JController
 					"CallProgressTime"  => $post["CallProgressTime"],
 					"ExtProgressTime"   => $post["ExtProgressTime"],
 					"UseState"          => 0,
-					"ConcurrentCalls"   => $post["ConcurrentCalls"],
+					"ConcurrentCalls"   => $post["ConcurrentCalls"] ?? 0,
 					"NumberMode"        => $post["NumberMode"],
 					"CallOutID"         => $callOutID
 				]);
@@ -138,7 +138,7 @@ class GroupCallScheduleController extends JController
 						"Calldistribution"  => $post["Calldistribution"],
 						"CallProgressTime"  => $post["CallProgressTime"],
 						"ExtProgressTime"   => $post["ExtProgressTime"],
-						"ConcurrentCalls"   => $post["ConcurrentCalls"],
+						"ConcurrentCalls"   => $post["ConcurrentCalls"] ?? 0,
 						"UseState"          => $post["UseState"] ?? 0
 					])
 			);
