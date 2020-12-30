@@ -218,10 +218,11 @@ class Router
      */
     public function notMatched()
     {
+        // 因為是/開頭，所以第一個元素是null，走路徑要先移掉
         array_shift($this->base_hierarchy);
         $base_url = $this->config->base['controller_dir'] . $this->base_hierarchy[0] . ".php";
         $store_pos = 2;
-        
+
         if (file_exists($base_url)) // 驗證 controller 是否存在
         {
             $controller = $this->base_hierarchy[0];
@@ -233,7 +234,7 @@ class Router
         $controller_class = $controller . "_Controller";
         require_once $base_url;
         $swop = new $controller_class($this->config->base); //Env_Controller($base);
-        
+
         if (isset($this->base_hierarchy[1]) && method_exists($swop, $this->base_hierarchy[1])) //驗證 controller 與 action 是否存在
         {
             $action = $this->base_hierarchy[1];
@@ -266,12 +267,8 @@ class Router
         }
         $data["post"] = $a_post;
         $swop->getData($data);
-        
-        $swop->{$action}();
-    }
 
-    public function __destruct()
-    {
+        $swop->{$action}();
     }
 
     /**
