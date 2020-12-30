@@ -60,9 +60,9 @@ class Route
         return self::$router;
     }
 
-    static public function isMatched()
+    static public function procRoute()
     {
-        return self::$router->isMatched();
+        return self::$router->procRoute();
     }
 }
 
@@ -107,15 +107,14 @@ class Router
     public function __construct()
     {
         $this->config = new Config();
+        $this->requestUri = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
+        $this->base_hierarchy = explode("/", $this->requestUri);
     }
 
     private $_isMatched = false;
 
-    public function isMatched()
+    public function procRoute()
     {
-        // TODO: Implement __destruct() method.
-        $requestUri = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
-
         /** 開始mapping */
         foreach ($this->map as $path => $args) {
             if ($this->_isMatched) {
@@ -123,7 +122,7 @@ class Router
             }
 
             /** 路徑長度檢測 */
-            if (count(explode('/', $requestUri)) != count(explode('/', $path))) continue;
+            if (count($this->base_hierarchy) != count(explode('/', $path))) continue;
 
 
             $method = $args['method'];
@@ -160,7 +159,7 @@ class Router
                 $req[$var] = '';
             }
             /** 取出所有的變數 */
-            preg_match($path, $requestUri, $match);
+            preg_match($path, $this->requestUri, $match);
 
             if ($len == count($match) - 1) {
 
@@ -211,85 +210,68 @@ class Router
             }
         }
         // return true;
-        return $this->_isMatched;
+        $this->notMatched();
+    }
+
+    /**
+     * 走路徑
+     */
+    public function notMatched()
+    {
+        array_shift($this->base_hierarchy);
+        $base_url = $this->config->base['controller_dir'] . $this->base_hierarchy[0] . ".php";
+        $store_pos = 2;
+        
+        if (file_exists($base_url)) // 驗證 controller 是否存在
+        {
+            $controller = $this->base_hierarchy[0];
+        } else {
+            $controller = $this->config->base["default_controller"];
+            $base_url = $this->config->base['controller_dir'] . $this->config->base["default_controller"] . ".php";
+            $store_pos--;
+        }
+        $controller_class = $controller . "_Controller";
+        require_once $base_url;
+        $swop = new $controller_class($this->config->base); //Env_Controller($base);
+        
+        if (isset($this->base_hierarchy[1]) && method_exists($swop, $this->base_hierarchy[1])) //驗證 controller 與 action 是否存在
+        {
+            $action = $this->base_hierarchy[1];
+        } else {
+            $swop->redirect("index/index");
+            $action = $this->config->base["default_action"];
+            $store_pos--;
+        }
+
+        $data['submit_link'] = $this->config->base['folder'] . $controller . "/" . $action;
+        $data["controller"] = $controller;
+        $data["action"] = $action;
+        $data["top_layout"] = "shared/top.php";
+        $data["layout"] = $action;
+        $data["bottom_layout"] = "shared/bottom.php";
+        $a_get = [];
+        $len = count($this->base_hierarchy);
+        for ($i = $store_pos; $i < $len; $i += 2) {
+            if (isset($this->base_hierarchy[$i + 1]) && $this->base_hierarchy[$i]) {
+                $a_get[$this->base_hierarchy[$i]] = $this->base_hierarchy[$i + 1];
+            }
+        }
+        foreach ($_GET as $key => $val) {
+            $a_get[$key] = $val;
+        }
+        $data["get"] = $a_get;
+        $a_post = [];
+        foreach ($_POST as $key => $val) {
+            $a_post[$key] = $val;
+        }
+        $data["post"] = $a_post;
+        $swop->getData($data);
+        
+        $swop->{$action}();
     }
 
     public function __destruct()
     {
-
-
-        /** 沒有符合route表則走舊式 */
-        // if (!$isMatched) {
-        //            $base_hierarchy = explode("/", $requestUri);
-        //
-        //            $base_url = $this->config->base['controller_dir'] . $base_hierarchy[0] . ".php";
-        //
-        //            $store_pos = 2;
-        //            if (file_exists($base_url)) // 驗證 controller 是否存在
-        //            {
-        //                $controller = $base_hierarchy[0];
-        //            }
-        //            else
-        //            {
-        //                $controller = $this->config->base["default_controller"];
-        //                $base_url = $this->config->base['controller_dir'] . $this->config->base["default_controller"] . ".php";
-        //                $store_pos--;
-        //            }
-        //            $controller_class = $controller."_Controller";
-        //
-        //            require_once $base_url;
-        //            $swop = new $controller_class($this->config->base);//Env_Controller($base);
-        //
-        //            if (isset($base_hierarchy[1]) && method_exists($swop, $base_hierarchy[1])) //驗證 controller 與 action 是否存在
-        //            {
-        //                $action = $base_hierarchy[1];
-        //            }
-        //            else
-        //            {
-        ////    if(strpos($requestUri,"downloadAdCommunicationSearch")!==false)
-        ////    {
-        ////        die(); // 一個神奇的bug，沒有這行就會進來，導致excel無法下載
-        ////    }
-        //                $swop->redirect("index/index");
-        //                $action = $this->config->base["default_action"];
-        //                $store_pos--;
-        //            }
-        //
-        //            $data['submit_link'] = $this->config->base['folder'].$controller."/".$action;
-        //            $data["controller"] = $controller;
-        //            $data["action"] = $action;
-        //            $data["top_layout"] = "shared/top.php";
-        //            $data["layout"] = $action;
-        //            $data["bottom_layout"] = "shared/bottom.php";
-        //
-        //
-        //            $a_get = array();
-        //            $len = count($base_hierarchy);
-        //            for ($i = $store_pos; $i < $len; $i += 2)
-        //            {
-        //                if (isset($base_hierarchy[$i + 1]) && $base_hierarchy[$i])
-        //                {
-        //                    $a_get[$base_hierarchy[$i]] = $base_hierarchy[$i + 1];
-        //                }
-        //            }
-        //            foreach ($_GET as $key => $val)
-        //            {
-        //                $a_get[$key] = $val;
-        //            }
-        //            $data["get"] = $a_get;
-        //
-        //            $a_post = array();
-        //            foreach ($_POST as $key => $val)
-        //            {
-        //                $a_post[$key] = $val;
-        //            }
-        //
-        //            $data["post"] = $a_post;
-        //
-        //            $swop->getData($data);
-        //
-        //            $swop->$action();
-        // }
     }
 
     /**

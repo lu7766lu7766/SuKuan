@@ -37,7 +37,7 @@
             <select class="form-control" v-model="editData.UserID">
               <option value=""></option>
               <option
-                v-for="(item, index) in options.subEmp"
+                v-for="(item, index) in options.subEmpSelect"
                 :key="index"
                 :value="item.value"
               >
@@ -89,13 +89,11 @@
 import CommonMiins from "mixins/Common";
 import ListMiins from "mixins/List";
 import LibraryMixins from "mixins/Library";
+import EmpMixins from "mixins/Emp"
 
 export default {
-  mixins: [CommonMiins, ListMiins, LibraryMixins],
+  mixins: [CommonMiins, ListMiins, LibraryMixins, EmpMixins],
   data: () => ({
-    options: {
-      subEmp: [],
-    },
     editData: {
       StartDate: moment().startOf("month").format("YYYY/MM/DD"),
       EndDate: moment().format("YYYY/MM/DD"),
@@ -104,10 +102,6 @@ export default {
     },
   }),
   methods: {
-    async getOptions() {
-      const res = await $.callApi.post("oldApi/subEmp");
-      this.options.subEmp = res.data;
-    },
     async getList() {
       const res = await $.callApi.post(
         "api/point/history/list",
@@ -144,7 +138,7 @@ export default {
     },
   },
   mounted() {
-    this.getOptions();
+    this.getSubEmpSelect();
   },
 };
 </script>

@@ -13,7 +13,7 @@
                   :disabled="isUpdate"
                 >
                   <option
-                    v-for="(item, index) in options.subEmp"
+                    v-for="(item, index) in options.subEmpSelect"
                     :key="index"
                     :value="item.value"
                   >
@@ -109,7 +109,7 @@
       <select v-model="keyword">
         <option value="">顯示全部</option>
         <option
-          v-for="(item, index) in options.subEmp"
+          v-for="(item, index) in options.subEmpSelect"
           :key="index"
           :value="item.value"
         >
@@ -147,22 +147,16 @@
 <script>
 import ListMixins from "mixins/List";
 import LibraryMixins from "mixins/Library";
+import EmpMixins from "mixins/Emp"
 
 export default {
-  mixins: [ListMixins, LibraryMixins],
+  mixins: [ListMixins, LibraryMixins, EmpMixins],
   data: () => ({
-    options: {
-      subEmp: [],
-    },
     keyword: "",
     editData: {},
     isUpdate: false,
   }),
   methods: {
-    async getOptions() {
-      const res = await $.callApi.post("oldApi/subEmp");
-      this.options.subEmp = res.data;
-    },
     async getList() {
       const res = await $.callApi.post("api/userRoute/list");
       this.datas = res.data;
@@ -235,7 +229,7 @@ export default {
     },
   },
   mounted() {
-    this.getOptions();
+    this.getSubEmpSelect();
     this.getList();
   },
 };
