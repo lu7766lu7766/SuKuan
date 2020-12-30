@@ -25,12 +25,13 @@ export default {
       default: "0",
     },
     value: {},
-    checked: {},
   },
   watch: {
-    data(val) {
-      this.$emit("input", val);
-      this.$emit("change", val);
+    data(newVal, oldVal) {
+      if (oldVal != null) {
+        this.$emit("input", newVal);
+        this.$emit("change", newVal);
+      }
     },
     value: {
       immediate: true,
@@ -42,8 +43,5 @@ export default {
   data: () => ({
     data: null,
   }),
-  mounted() {
-    this.data = this.checked || this.data;
-  },
 };
 </script>

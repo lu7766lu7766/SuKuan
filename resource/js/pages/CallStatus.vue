@@ -264,9 +264,11 @@
 <script>
 import CommonMixins from "mixins/Common";
 import LibraryMixins from "mixins/Library";
+import Switcher from "../components/Switcher";
 
 export default {
   mixins: [CommonMixins, LibraryMixins],
+  components: { Switcher },
   data: () => ({
     timer: null,
     user: {},

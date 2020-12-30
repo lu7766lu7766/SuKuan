@@ -81,16 +81,16 @@
         {{ data.Received || data.HostInfo }}
       </template>
       <template v-slot:StartRecorder="{ data }">
-        <Switcher disabled :checked="data.StartRecorder" />
+        <Switcher disabled :value="data.StartRecorder" />
       </template>
       <template v-slot:Suspend="{ data }">
-        <Switcher disabled :checked="!data.Suspend" />
+        <Switcher disabled :value="!data.Suspend" />
       </template>
       <template v-slot:ETime="{ data }">
-        <Switcher disabled :checked="moment(data.ETime).isAfter(moment())" />
+        <Switcher disabled :value="moment(data.ETime).isAfter(moment())" />
       </template>
       <template v-slot:UseState="{ data }">
-        <Switcher v-if="canSwitchExtension" disabled :checked="data.UseState" />
+        <Switcher v-if="canSwitchExtension" disabled :value="data.UseState" />
         <span v-else></span>
       </template>
       <template v-slot:action="{ data }">
