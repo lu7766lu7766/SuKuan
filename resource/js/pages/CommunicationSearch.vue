@@ -223,6 +223,7 @@ export default {
     },
     sort: {
       key: "CallStartBillingDate",
+      type: "desc",
     },
   }),
   methods: {
