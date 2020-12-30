@@ -92,7 +92,7 @@ class UserRouteService
   {
     ["post" => $post] = $req;
     return DB::table($this->tableName)->insert(
-      Collection($post["datas"])->map(function ($x) {
+      collect($post["datas"])->map(function ($x) {
         return [
           "UserID" => $x["UserID"],
           "PrefixCode" => $x["PrefixCode"],

@@ -88,7 +88,7 @@ class ExtensionManageController extends JController
 	public function create($req)
 	{
 		["post" => $post] = $req;
-		$insertBody1 = Collection(range($post["ExtensionNo"], $post["ExtensionNos"]))
+		$insertBody1 = collect(range($post["ExtensionNo"], $post["ExtensionNos"]))
 			->map(function ($x) use ($post) {
 				return [
 					"CustomerNO" => $x,
@@ -104,7 +104,7 @@ class ExtensionManageController extends JController
 		if ($db->count()) {
 			throw new Exception($db->pluck("CustomerNO")->join(",") . "分機已存在，請避開這些分機");
 		}
-		$insertBody2 = Collection(range($post["ExtensionNo"], $post["ExtensionNos"]))
+		$insertBody2 = collect(range($post["ExtensionNo"], $post["ExtensionNos"]))
 			->map(function ($x) use ($post) {
 				return [
 					"UserID" => $post["UserID"],

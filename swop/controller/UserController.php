@@ -123,7 +123,7 @@ class UserController extends JController
 
 		DB::transaction(function () use ($post, $session) {
 			DB::table("SysUser")->insert(
-				Collection($post["datas"])->map(function ($x) use ($session) {
+				collect($post["datas"])->map(function ($x) use ($session) {
 					return [
 						"UserID" => $x["UserID"],
 						"UserName" => $x["UserName"],
@@ -137,7 +137,7 @@ class UserController extends JController
 					];
 				})->toArray()
 			);
-			DB::table("RechargeLog")->insert(Collection($post["datas"])->map(function ($x) use ($session) {
+			DB::table("RechargeLog")->insert(collect($post["datas"])->map(function ($x) use ($session) {
 				return [
 					"UserID" => $x["UserID"],
 					"AddValue" => $x["Balance"],
@@ -220,7 +220,7 @@ class UserController extends JController
 		}
 
 		return
-			Collection(explode(",", $result))
+			collect(explode(",", $result))
 			->map(function ($key) {
 				return [
 					"value" => $key,

@@ -45,8 +45,3 @@ function GUID(): String
         mt_rand(0, 65535)
     );
 }
-
-function Collection($item): Collection
-{
-    return new Collection($item);
-}

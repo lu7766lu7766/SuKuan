@@ -12,9 +12,9 @@ class OldApi_Controller extends JController
 
 	public function subEmpSelect()
 	{
-		ReturnMessage::success(Collection($this->model->empSelect["option"])
+		ReturnMessage::success(collect($this->model->empSelect["option"])
 			->filter(function ($x) {
-				return Collection($this->model->session["current_sub_emp"])->contains($x["value"]);
+				return collect($this->model->session["current_sub_emp"])->contains($x["value"]);
 			}));
 	}
 

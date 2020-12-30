@@ -22,7 +22,7 @@ class RateController extends JController
     {
         ["post" => $post] = $req;
         return DB::table("RateGroup")->insert(
-            Collection($post["datas"])->map(function ($x) {
+            collect($post["datas"])->map(function ($x) {
                 return [
                     "RateGroupID" => $x["RateGroupID"],
                     "RateGroupName" => $x["RateGroupName"],

@@ -107,7 +107,7 @@ class CallStatusController extends JController
   public function numberList($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])->get()
     )
       ->pluck("CalledNumber");
@@ -116,7 +116,7 @@ class CallStatusController extends JController
   public function waitCall($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])
         ->where("CallResult", 0)
         ->get()
@@ -127,7 +127,7 @@ class CallStatusController extends JController
   public function callOut($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", "<>", 0)->get()
     )->pluck("CalledNumber");
   }
@@ -135,7 +135,7 @@ class CallStatusController extends JController
   public function callCon($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 3)->get()
     )->pluck("CalledNumber");
   }
@@ -143,7 +143,7 @@ class CallStatusController extends JController
   public function callFaild($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 1)->get()
     )->pluck("CalledNumber")->toArray();
   }
@@ -151,7 +151,7 @@ class CallStatusController extends JController
   public function callMissed($req)
   {
     ["post" => $post] = $req;
-    return Collection(
+    return collect(
       $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 2)->get()
     )->pluck("CalledNumber");
   }

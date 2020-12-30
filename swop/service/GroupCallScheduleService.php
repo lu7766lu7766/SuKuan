@@ -47,7 +47,7 @@ class GroupCallScheduleService
   public function buildRangeNumberList($CallOutID, $StartCalledNumber,  $CalledCount)
   {
     $phone_len = strlen($StartCalledNumber);
-    return Collection(range(0, $CalledCount - 1))->map(function ($add) use ($CallOutID, $StartCalledNumber, $phone_len) {
+    return collect(range(0, $CalledCount - 1))->map(function ($add) use ($CallOutID, $StartCalledNumber, $phone_len) {
       return [
         'CallOutID'    => $CallOutID,
         'CalledNumber' => str_pad($StartCalledNumber + $add, $phone_len, '0', STR_PAD_LEFT)
@@ -57,7 +57,7 @@ class GroupCallScheduleService
 
   public function buildListNumberList($CallOutID, $list)
   {
-    return Collection($list)->reverse()->map(function ($x) use ($CallOutID) {
+    return collect($list)->reverse()->map(function ($x) use ($CallOutID) {
       return [
         'CallOutID'    => $CallOutID,
         'CalledNumber' => $x
@@ -67,7 +67,7 @@ class GroupCallScheduleService
 
   public function buildSameNumberList($CallOutID, $StartCalledNumber,  $CalledCount)
   {
-    return Collection(range(1, $CalledCount))->map(function () use ($CallOutID, $StartCalledNumber) {
+    return collect(range(1, $CalledCount))->map(function () use ($CallOutID, $StartCalledNumber) {
       return [
         'CallOutID'    => $CallOutID,
         'CalledNumber' => $StartCalledNumber
@@ -77,7 +77,7 @@ class GroupCallScheduleService
 
   public function getValidListAndValide($StartCalledNumber,  $CalledCount)
   {
-    return Collection(
+    return collect(
       DB::connection("validDB")
         ->table("AllCdrList")
         ->distinct()
