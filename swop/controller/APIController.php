@@ -25,7 +25,7 @@ class APIController extends JController
         if (!empty($req["post"]["userID"])) {
             $query->where("CallOutCDR.UserID", $req["post"]["userID"]);
         } else {
-            $query->whereIn("CallOutCDR.UserID", count($req["session"]["current_sub_emp"]) ? $req["session"]["current_sub_emp"] : [$req["session"]["choice"]]);
+            $query->whereIn("CallOutCDR.UserID", $req["session"]["current_sub_emp"]);
         }
         if (!empty($req["post"]["callStopBillingDate"])) {
             $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$req["post"]["callStopBillingDate"] . "  23:59:59"]);

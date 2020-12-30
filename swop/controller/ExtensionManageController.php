@@ -19,7 +19,7 @@ class ExtensionManageController extends JController
 					->orWhere("CustomerLists.ExtensionNo", $post["SearchContent"]);
 			});
 		}
-		return $db->whereIn("CustomerLists.UserID", count($session["current_sub_emp"]) ? $session["current_sub_emp"] : [$session["choice"]]);
+		return $db->whereIn("CustomerLists.UserID", $session["current_sub_emp"]);
 	}
 
 	public function list($req)

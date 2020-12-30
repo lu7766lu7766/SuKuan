@@ -12,12 +12,9 @@ class OldApi_Controller extends JController
 
 	public function subEmp()
 	{
-		// dd($this->model->empSelect["option"]);
 		ReturnMessage::success(Collection($this->model->empSelect["option"])
 			->filter(function ($x) {
-				return $x["value"]
-					&& $x["value"] == $this->model->session["choice"]
-					|| in_array($x["value"], $this->model->session["current_sub_emp"]);
+				return Collection($this->model->session["current_sub_emp"])->contains($x["value"]);
 			}));
 	}
 
