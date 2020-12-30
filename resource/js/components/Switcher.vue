@@ -3,8 +3,8 @@
     <input
       :disabled="disabled"
       type="checkbox"
-      true-value="1"
-      false-value="0"
+      :true-value="on"
+      :false-value="off"
       v-model="data"
     />
     <div class="slider round"></div>

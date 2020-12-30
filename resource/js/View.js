@@ -4,6 +4,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import MyPlugin from './plugin'
 import './css/my.styl'
+import VueRouter from 'vue-router'
 
 Vue.use(JacPlugin, {
 	_,
@@ -11,7 +12,13 @@ Vue.use(JacPlugin, {
 })
 Vue.use(MyPlugin)
 
+Vue.use(VueRouter)
+const router = new VueRouter({
+	routes: [],
+})
+
 new Vue({
+	router,
 	components: {
 		// Test: () => import('pages/Test'),
 		RateManage: () => import('pages/RateManage'),
@@ -28,5 +35,6 @@ new Vue({
 		GroupCallScheduleDetail: () => import('pages/GroupCallScheduleDetail'),
 		BulletinBoard: () => import('pages/BulletinBoard'),
 		ExtensionManage: () => import('pages/ExtensionManage'),
+		ExtensionDetail: () => import('pages/ExtensionDetail'),
 	},
 }).$mount('#app')

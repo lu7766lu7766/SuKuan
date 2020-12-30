@@ -84,7 +84,7 @@
         <Switcher disabled :value="data.StartRecorder" />
       </template>
       <template v-slot:Suspend="{ data }">
-        <Switcher disabled :value="!data.Suspend" />
+        <Switcher disabled on="0" off="1" :value="data.Suspend" />
       </template>
       <template v-slot:ETime="{ data }">
         <Switcher disabled :value="moment(data.ETime).isAfter(moment())" />
@@ -109,6 +109,16 @@ import EmpMixins from "mixins/Emp";
 
 export default {
   mixins: [CommonMixins, ListMixins, EmpMixins],
+  watch: {
+    requestBody: {
+      deep: true,
+      handler() {
+        this.$router.push({
+          query: this.requestBody,
+        });
+      },
+    },
+  },
   methods: {
     async getList() {
       const res = await $.callApi.post(
@@ -135,7 +145,7 @@ export default {
     },
     toEdit(data) {
       redirect(
-        `extensionInfo/extensionModify?userId=${data.UserID}&extensionNo=${data.ExtensionNo}`
+        `extensionInfo/extensionModify?UserID=${data.UserID}&ExtensionNo=${data.ExtensionNo}`
       );
     },
   },
@@ -151,6 +161,7 @@ export default {
     },
   },
   mounted() {
+    this.editData = _.pick(this.$route.query, ["UserID", "SearchContent"]);
     this.getChoicer();
     this.getEmpSelect();
     this.doSearch();

@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Capsule\Manager as DB;
 use lib\ReturnMessage;
-use Rakit\Validation\Rules\Extension;
 
 class ExtensionManageController extends JController
 {
@@ -26,7 +25,6 @@ class ExtensionManageController extends JController
 	{
 		ReturnMessage::success(
 			$this->buildWhere(DB::table("CustomerLists"), $req)
-				->distinct()
 				->select(
 					'CustomerLists.UserID',
 					'CustomerLists.ExtName',
@@ -42,7 +40,7 @@ class ExtensionManageController extends JController
 					'CustomerLists.OffNetCli'
 				)
 				->orderBy("CustomerLists.UserID")
-				->leftJoin("ExtensionGroup", "CustomerLists.UserID", "=", "ExtensionGroup.UserID", "CustomerLists.ExtensionNo", "=", "ExtensionGroup.CustomerNO")
+				->leftJoin("ExtensionGroup", [["CustomerLists.UserID", "ExtensionGroup.UserID"], ["CustomerLists.ExtensionNo", "ExtensionGroup.CustomerNO"]])
 				->leftJoin("RegisteredLogs", "CustomerLists.ExtensionNo", "=", "RegisteredLogs.CustomerNO")->get()
 		);
 	}
@@ -76,8 +74,87 @@ class ExtensionManageController extends JController
 				$db2->delete();
 			});
 			ReturnMessage::success(true);
-		} catch (Extension $err) {
+		} catch (Exception $err) {
 			ReturnMessage::error($err->getMessage());
 		}
+	}
+
+	public function detail($req)
+	{
+		["post" => $post] = $req;
+		ReturnMessage::success(
+			DB::table("CustomerLists as a")
+				->select("a.UserID", "a.ExtensionNo", "a.ExtName", "a.CustomerPwd", "a.StartRecorder", "a.Suspend", "a.UseState", "b.CalloutGroupID", "a.OffNetCli")
+				->leftJoin("ExtensionGroup as b", [["a.UserID", "b.UserID"], ["a.CustomerNO", "b.CustomerNO"]])
+				->where("a.UserID", $post["UserID"])
+				->where("a.ExtensionNo", $post["ExtensionNo"])
+				->first()
+		);
+	}
+
+	public function create($req)
+	{
+		["post" => $post] = $req;
+		try {
+			$insertBody1 = Collection(range($post["ExtensionNo"], $post["ExtensionNos"]))
+				->map(function ($x) use ($post) {
+					return [
+						"CustomerNO" => $x,
+						"UserID" => $post["UserID"],
+						"ExtensionNo" => $x,
+						"UserName" => $x,
+						"ExtName" => $post["ExtName"],
+						"OffNetCli" => $post["OffNetCli"],
+						"CustomerPwd" => $post["CustomerPwd"],
+					];
+				});
+			$db =	DB::table("CustomerLists")->select("CustomerNO")->whereIn("CustomerNO", $insertBody1->pluck("CustomerNO")->toArray())->get();
+			if ($db->count()) {
+				throw new Exception($db->pluck("CustomerNO")->join(",") . "分機已存在，請避開這些分機");
+			}
+			$insertBody2 = Collection(range($post["ExtensionNo"], $post["ExtensionNos"]))
+				->map(function ($x) use ($post) {
+					return [
+						"UserID" => $post["UserID"],
+						"CalloutGroupID" => $post["CalloutGroupID"],
+						"CustomerNO" => $x,
+					];
+				});
+			DB::transaction(function () use ($insertBody1, $insertBody2) {
+				DB::table("CustomerLists")->insert($insertBody1->toArray());
+				DB::table("ExtensionGroup")->insert($insertBody2->toArray());
+			});
+			ReturnMessage::success(true);
+		} catch (Exception $err) {
+			ReturnMessage::error($err->getMessage());
+		}
+	}
+
+	public function update($req)
+	{
+		["post" => $post, "session" => $session] = $req;
+		$updateBody = [
+			"ExtName" => $post["ExtName"],
+			"CustomerPwd" => $post["CustomerPwd"],
+			"StartRecorder" => $post["StartRecorder"],
+			"Suspend" => $post["Suspend"],
+			"UseState" => $post["UseState"],
+		];
+		if ($session["isRoot"]) {
+			$updateBody["OffNetCli"] = $post["OffNetCli"];
+		}
+		DB::transaction(function () use ($post, $updateBody) {
+			DB::table("CustomerLists")
+				->where("UserID", $post["UserID"])
+				->where("ExtensionNo", $post["ExtensionNo"])
+				->update($updateBody);
+			DB::table("ExtensionGroup")
+				->where("UserID", $post["UserID"])
+				->where("CustomerNO", $post["ExtensionNo"])
+				->update([
+					"CalloutGroupID" => $post["CalloutGroupID"]
+				]);
+		});
+		ReturnMessage::success(true);
 	}
 }

@@ -432,8 +432,7 @@ export default {
   },
   computed: {
     userID() {
-      const url = new URLSearchParams(location.search);
-      return url.get("userID");
+      return this.$url.get("userID");
     },
     isUpdate() {
       return !!this.userID;

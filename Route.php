@@ -72,3 +72,6 @@ Route::post("/api/system/bulletinBoard/insertOrUpdate", "SystemController@bullet
 Route::post("/api/extensionManage/list", "ExtensionManageController@list");
 Route::post("/api/extensionManage/total", "ExtensionManageController@total");
 Route::post("/api/extensionManage/delete", "ExtensionManageController@delete");
+Route::post("/api/extensionManage/detail", "ExtensionManageController@detail");
+Route::post("/api/extensionManage/create", "ExtensionManageController@create");
+Route::post("/api/extensionManage/update", "ExtensionManageController@update");

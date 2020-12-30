@@ -55,5 +55,6 @@ export default {
 					.catch(() => reject())
 			})
 		}
+		Vue.prototype.$url = new URLSearchParams(location.search)
 	},
 }
