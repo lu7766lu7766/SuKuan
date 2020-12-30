@@ -316,13 +316,6 @@ export default {
       });
       this.updateSuccess();
     },
-    async changeConcurrentCalls(value, CallOutID) {
-      await $.callApi.post("api/callStatus/modify/concurrentCalls", {
-        ConcurrentCalls: value,
-        CallOutID,
-      });
-      this.updateSuccess();
-    },
     async changeCalloutGroupID(value, CallOutID) {
       await $.callApi.post("api/callStatus/modify/calloutGroupID", {
         CalloutGroupID: value,

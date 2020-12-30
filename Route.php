@@ -44,7 +44,6 @@ Route::post("/api/point/history/total", "PointController@total");
 Route::post("/api/point/history/update", "PointController@update");
 //call status
 Route::post("/api/callStatus/base", "CallStatusController@base");
-Route::post("/api/callStatus/modify/concurrentCalls", "CallStatusController@concurrentCalls");
 Route::post("/api/callStatus/modify/calloutGroupID", "CallStatusController@calloutGroupID");
 Route::post("/api/callStatus/modify/useState", "CallStatusController@useState");
 Route::post("/api/callStatus/delete/callPlan", "CallStatusController@deleteCallPlan");

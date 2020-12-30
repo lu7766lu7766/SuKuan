@@ -21,16 +21,6 @@ class CallStatusController extends JController
       ->where("CallOutID", $callOutID);
   }
 
-  public function concurrentCalls($req)
-  {
-    ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
-        "ConcurrentCalls" => $post["ConcurrentCalls"]
-      ])
-    );
-  }
-
   public function calloutGroupID($req)
   {
     ["post" => $post, "session" => $session] = $req;
