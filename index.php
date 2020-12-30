@@ -40,9 +40,9 @@ if (Route::isMatched()) {
     exit();
 }
 
-$air = explode('?', str_replace($config->base["folder"], "", $_SERVER['REQUEST_URI']))[0];
+$requestUri = explode('?', str_replace($config->base["folder"], "", $_SERVER['REQUEST_URI']))[0];
 
-$base_hierarchy = explode("/", $air);
+$base_hierarchy = explode("/", $requestUri);
 $base_url = $config->base['controller_dir'] . $base_hierarchy[0] . ".php";
 $store_pos = 2;
 if (file_exists($base_url)) // 驗證 controller 是否存在
@@ -60,11 +60,6 @@ if (isset($base_hierarchy[1]) && method_exists($swop, $base_hierarchy[1])) //驗
 {
     $action = $base_hierarchy[1];
 } else {
-    //    if(strpos($air,"downloadAdCommunicationSearch")!==false)
-    //    {
-    //        die(); // 一個神奇的bug，沒有這行就會進來，導致excel無法下載
-    //    }
-    //    die($controller_class . "^^" . $base_hierarchy[0] . "^^" . $base_hierarchy[1]);
     $swop->redirect("index/index");
     $action = $config->base["default_action"];
     $store_pos--;

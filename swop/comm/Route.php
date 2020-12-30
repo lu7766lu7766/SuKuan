@@ -114,27 +114,19 @@ class Router
     public function isMatched()
     {
         // TODO: Implement __destruct() method.
-        $air = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
+        $requestUri = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
 
-        // print_r($air);
-        // die();
         /** 開始mapping */
         foreach ($this->map as $path => $args) {
             if ($this->_isMatched) {
                 break;
             }
-            // print_r([$air, count(explode('/', $air)), count(explode('/', $path))]);
-            // die();
+
             /** 路徑長度檢測 */
-            if (count(explode('/', $air)) != count(explode('/', $path))) continue;
+            if (count(explode('/', $requestUri)) != count(explode('/', $path))) continue;
 
-            $pregvar = [];
-            $req = [];
-            $len = 0;
+
             $method = $args['method'];
-            $func = $this->procFunc($args['callback']);
-            $wheres = $args['where'];
-
             /** method檢測，any沒有檢查必要 */
             if (
                 $method !== Method::ANY &&
@@ -143,6 +135,11 @@ class Router
             ) {
                 continue;
             }
+
+            $pregvar = [];
+            $req = [];
+            $len = 0;
+            $wheres = $args['where'];
 
             /** 找到所有的變數名稱 */
             $tmpPath = $path;
@@ -163,9 +160,10 @@ class Router
                 $req[$var] = '';
             }
             /** 取出所有的變數 */
-            preg_match($path, $air, $match);
+            preg_match($path, $requestUri, $match);
 
             if ($len == count($match) - 1) {
+
                 array_shift($match);
                 foreach ($req as $var => $val) {
                     $val = array_shift($match);
@@ -200,9 +198,14 @@ class Router
                 $data["bottom_layout"] = "shared/bottom.php";
                 $data["params"] = $req;
                 $data["session"] = $_SESSION[$this->config->base['folder']];
-                
+
                 /** @var callback $func */
-                $func($data);
+                $func = $this->procFunc($args['callback']);
+                try {
+                    ReturnMessage::success($func($data));
+                } catch (Exception $err) {
+                    ReturnMessage::error($err->getMessage());
+                };
                 $this->_isMatched = true;
                 break;
             }
@@ -217,7 +220,7 @@ class Router
 
         /** 沒有符合route表則走舊式 */
         // if (!$isMatched) {
-        //            $base_hierarchy = explode("/", $air);
+        //            $base_hierarchy = explode("/", $requestUri);
         //
         //            $base_url = $this->config->base['controller_dir'] . $base_hierarchy[0] . ".php";
         //
@@ -243,7 +246,7 @@ class Router
         //            }
         //            else
         //            {
-        ////    if(strpos($air,"downloadAdCommunicationSearch")!==false)
+        ////    if(strpos($requestUri,"downloadAdCommunicationSearch")!==false)
         ////    {
         ////        die(); // 一個神奇的bug，沒有這行就會進來，導致excel無法下載
         ////    }
@@ -309,16 +312,12 @@ class Router
                 $swop = new $map[0]($this->config->base);
                 if (count($map) == 2 && method_exists($swop, $map[1])) {
                     $action = $map[1];
-                } else {
-                    $action = $this->config->base['default_action'];
-                }
-                return function ($req) use ($swop, $action) {
-                    try {
-                        ReturnMessage::success($swop->{$action}($req));
-                    } catch (Exception $err) {
-                        ReturnMessage::error($err->getMessage());
+                    return function ($req) use ($swop, $action) {
+                        return $swop->{$action}($req);
                     };
-                };
+                } else {
+                    throw new Exception("didn't find the action: {$map[1]}");
+                }
             }
             throw new Exception("didn't find the controller: {$file_path}");
         }
