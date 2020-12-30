@@ -228,7 +228,7 @@ export default {
   methods: {
     getVoiceUrl(data) {
       return data.RecordFile
-        ? downloaderUrl +
+        ? apiUrl +
             "downloadFile/recordFile?userId=" +
             data.UserID +
             "&connectDate=" +

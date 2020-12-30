@@ -27,7 +27,7 @@ $this->partialView($top_view_path);
                     params += key + '=' + this.value + '&';
                 }
             })
-            window.open(downloaderUrl + 'downloadFile/recordFilesToZip' + params)
+            window.open(apiUrl + 'downloadFile/recordFilesToZip' + params)
         })
     });
 </script>

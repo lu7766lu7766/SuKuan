@@ -26,14 +26,7 @@ function getApiUrl($uri): String
     return '//' . $currentHost . $uri;
 }
 
-function getDownloaderUrl($uri): String
-{
-    $config = new Config();
-    $currentHost = getenv2('DOWNLOAD_HOST')
-        ? getenv2('DOWNLOAD_HOST') . '/'
-        : getenv2('DB_IP') . $config->base["folder"];
-    return '//' . $currentHost . $uri;
-}
+
 
 function GUID(): String
 {

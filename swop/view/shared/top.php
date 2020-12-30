@@ -23,7 +23,6 @@
 	<script>
 		var folder = "<?php echo $base["folder"] ?>";
 		var apiUrl = "<?php echo getApiUrl('') ?>";
-		var downloaderUrl = "<?php echo getDownloaderUrl('') ?>";
 		var controller = "<?php echo $this->controller ?>";
 		var ctrl_uri = folder + controller + "/";
 		var action = "<?php echo $this->action ?>";
@@ -32,10 +31,7 @@
 		var permission = <?php echo $model->session["permission_control"] ?>;
 		var isLoginRoot = <?php echo $model->session['login']['UserID'] == 'root' ? 'true' : 'false' ?>;
 		var current_sub_emp = <?php echo json_encode($model->session["current_sub_emp"]) ?>;
-		// if (isLoginRoot) {
-		//   apiUrl = '//125.227.84.247:8099/'
-		//   downloaderUrl = '//125.227.84.247:8099/'
-		// }
+		
 		function callApi() {
 
 			const request = function(method, url, data = {}, option = {}) {
