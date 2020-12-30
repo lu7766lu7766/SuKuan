@@ -1,6 +1,5 @@
 <?php
 
-use lib\ReturnMessage;
 use Illuminate\Database\Capsule\Manager as DB;
 
 /**
@@ -36,20 +35,16 @@ class APIController extends JController
 
         switch ($req["post"]["display_mode"]) {
             case "0":
-                ReturnMessage::success(
-                    $query
-                        ->select("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName", $selectRaw)
-                        ->groupBy("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName")
-                        ->get()
-                );
+                return $query
+                    ->select("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName", $selectRaw)
+                    ->groupBy("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName")
+                    ->get();
                 break;
             case "1":
-                ReturnMessage::success(
-                    $query
-                        ->select("CallOutCDR.UserID", "SysUser.UserName", $selectRaw)
-                        ->groupBy("CallOutCDR.UserID", "SysUser.UserName")
-                        ->get()
-                );
+                return $query
+                    ->select("CallOutCDR.UserID", "SysUser.UserName", $selectRaw)
+                    ->groupBy("CallOutCDR.UserID", "SysUser.UserName")
+                    ->get();
                 break;
         }
     }

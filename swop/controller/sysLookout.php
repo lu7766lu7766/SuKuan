@@ -1,7 +1,5 @@
 <?php
 
-use lib\ReturnMessage;
-
 class SysLookout_Controller extends JController
 {
     public function callStatus()

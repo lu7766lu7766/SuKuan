@@ -4,6 +4,7 @@ namespace comm;
 
 use setting\Config;
 use Exception;
+use lib\ReturnMessage;
 
 /**
  * Class Route
@@ -199,7 +200,7 @@ class Router
                 $data["bottom_layout"] = "shared/bottom.php";
                 $data["params"] = $req;
                 $data["session"] = $_SESSION[$this->config->base['folder']];
-
+                
                 /** @var callback $func */
                 $func($data);
                 $this->_isMatched = true;
@@ -307,14 +308,17 @@ class Router
                 require_once($file_path);
                 $swop = new $map[0]($this->config->base);
                 if (count($map) == 2 && method_exists($swop, $map[1])) {
-                    return function ($req) use ($swop, $map) {
-                        $swop->{$map[1]}($req);
-                    };
+                    $action = $map[1];
                 } else {
-                    return function ($req) use ($swop) {
-                        return $swop->{$this->config->base['default_action']}($req);
-                    };
+                    $action = $this->config->base['default_action'];
                 }
+                return function ($req) use ($swop, $action) {
+                    try {
+                        ReturnMessage::success($swop->{$action}($req));
+                    } catch (Exception $err) {
+                        ReturnMessage::error($err->getMessage());
+                    };
+                };
             }
             throw new Exception("didn't find the controller: {$file_path}");
         }

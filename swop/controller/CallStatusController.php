@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
-use lib\ReturnMessage;
 use Tightenco\Collect\Support\Collection;
 
 class CallStatusController extends JController
@@ -11,7 +10,7 @@ class CallStatusController extends JController
     ["session" => $session] = $req;
     $user = DB::table("SysUser")->where("UserID", $session["choice"])->first();
     $user->isSuspend = $user->Suspend != "1";
-    ReturnMessage::success($user);
+    return $user;
   }
 
   private function buildCallPlanWhere($userID, $callOutID)
@@ -24,35 +23,27 @@ class CallStatusController extends JController
   public function calloutGroupID($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
-        "CalloutGroupID" => $post["CalloutGroupID"]
-      ])
-    );
+    return $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
+      "CalloutGroupID" => $post["CalloutGroupID"]
+    ]);
   }
 
   public function deleteCallPlan($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    try {
-      DB::transaction(function () use ($session, $post) {
-        $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->delete();
-        DB::table("NumberList")->where("CallOutID", $post["CallOutID"])->delete();
-      });
-      ReturnMessage::success(true);
-    } catch (Exception $e) {
-      ReturnMessage::error("刪除失敗");
-    }
+    DB::transaction(function () use ($session, $post) {
+      $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->delete();
+      DB::table("NumberList")->where("CallOutID", $post["CallOutID"])->delete();
+    });
+    return true;
   }
 
   public function useState($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
-        "UseState" => $post["UseState"]
-      ])
-    );
+    return $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
+      "UseState" => $post["UseState"]
+    ]);
   }
 
   private function buildUserWhere($userID)
@@ -63,51 +54,41 @@ class CallStatusController extends JController
   public function switchSuspend($req)
   {
     ["session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildUserWhere($session["choice"])->update([
-        "Suspend" => DB::raw("abs(Suspend-1)")
-      ])
-    );
+    return $this->buildUserWhere($session["choice"])->update([
+      "Suspend" => DB::raw("abs(Suspend-1)")
+    ]);
   }
 
   public function updateMaxRoutingCalls($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildUserWhere($session["choice"])->update([
-        "MaxRoutingCalls" => $post["MaxRoutingCalls"]
-      ])
-    );
+    return $this->buildUserWhere($session["choice"])->update([
+      "MaxRoutingCalls" => $post["MaxRoutingCalls"]
+    ]);
   }
 
   public function updateConcurrentCallsAmp($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildUserWhere($session["choice"])->update([
-        "ConcurrentCallsAmp" => $post["ConcurrentCallsAmp"]
-      ])
-    );
+    return $this->buildUserWhere($session["choice"])->update([
+      "ConcurrentCallsAmp" => $post["ConcurrentCallsAmp"]
+    ]);
   }
 
   public function updateCallWaitingTime($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildUserWhere($session["choice"])->update([
-        "CallWaitingTime" => $post["CallWaitingTime"]
-      ])
-    );
+    return $this->buildUserWhere($session["choice"])->update([
+      "CallWaitingTime" => $post["CallWaitingTime"]
+    ]);
   }
 
   public function updatePlanDistribution($req)
   {
     ["post" => $post, "session" => $session] = $req;
-    ReturnMessage::success(
-      $this->buildUserWhere($session["choice"])->update([
-        "PlanDistribution" => $post["PlanDistribution"]
-      ])
-    );
+    return $this->buildUserWhere($session["choice"])->update([
+      "PlanDistribution" => $post["PlanDistribution"]
+    ]);
   }
 
   public function callRelease($req)
@@ -115,7 +96,7 @@ class CallStatusController extends JController
     ["post" => $post] = $req;
     $url = "http://127.0.0.1:60/CallRelease.atp?Seat=" . $post["Seat"] . "&CalledID=" . $post["CalledID"];
     comm\Http::get($url);
-    ReturnMessage::success(true);
+    return true;
   }
 
   public function buildNumberListWhere($CallOutID)
@@ -126,89 +107,57 @@ class CallStatusController extends JController
   public function numberList($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection($this->buildNumberListWhere($post["CallOutID"])->get())->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])->get()
+    )
+      ->pluck("CalledNumber");
   }
 
   public function waitCall($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection(
-          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 0)->get()
-        )->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])
+        ->where("CallResult", 0)
+        ->get()
+    )
+      ->pluck("CalledNumber");
   }
 
   public function callOut($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection(
-          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", "<>", 0)->get()
-        )->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", "<>", 0)->get()
+    )->pluck("CalledNumber");
   }
 
   public function callCon($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection(
-          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 3)->get()
-        )->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 3)->get()
+    )->pluck("CalledNumber");
   }
 
   public function callFaild($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection(
-          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 1)->get()
-        )->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 1)->get()
+    )->pluck("CalledNumber")->toArray();
   }
 
   public function callMissed($req)
   {
     ["post" => $post] = $req;
-    try {
-      ReturnMessage::success(
-        Collection(
-          $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 2)->get()
-        )->pluck("CalledNumber")->toArray()
-      );
-    } catch (Exception $err) {
-      ReturnMessage::error($err->getMessage());
-    }
+    return Collection(
+      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 2)->get()
+    )->pluck("CalledNumber");
   }
 
   public function callStatistics()
   {
-    ReturnMessage::success(
-      DB::table("CallState")->select(DB::raw("UserID, count(1) as Count"))->groupBy("UserID")->get()
-    );
+    return DB::table("CallState")->select(DB::raw("UserID, count(1) as Count"))->groupBy("UserID")->get();
   }
 }

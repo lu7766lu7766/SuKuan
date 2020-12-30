@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
-use lib\ReturnMessage;
 
 class TempController extends JController
 {

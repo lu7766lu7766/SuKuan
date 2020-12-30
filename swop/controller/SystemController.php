@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
-use lib\ReturnMessage;
 
 class SystemController extends JController
 {
 	public function bulletinBoardDetail($req)
 	{
-		ReturnMessage::success(DB::table("BulletinBoard")->first());
+		return DB::table("BulletinBoard")->first();
 	}
 
 	public function bulletinBoardInsertOrUpdate($req)
@@ -18,10 +17,8 @@ class SystemController extends JController
 			"Status" => $post["Status"] ?? 0,
 		];
 		$db = DB::table("BulletinBoard");
-		ReturnMessage::success(
-			$db->count()
-				? $db->update($modify)
-				: $db->insert($modify)
-		);
+		return $db->count()
+			? $db->update($modify)
+			: $db->insert($modify);
 	}
 }

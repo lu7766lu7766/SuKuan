@@ -2,7 +2,7 @@ export default {
 	data: () => ({
 		options: {
 			empSelect: [],
-			subEmp: [],
+			subEmpSelect: [],
 			choicer: {},
 		},
 	}),
@@ -12,7 +12,7 @@ export default {
 			this.options.empSelect = res.data
 		},
 		async getSubEmpSelect() {
-			const res = await $.callApi.post('oldApi/subEmp')
+			const res = await $.callApi.post('oldApi/subEmpSelect')
 			this.options.subEmpSelect = res.data
 		},
 		async getChoicer() {

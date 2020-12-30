@@ -10,7 +10,7 @@ class OldApi_Controller extends JController
 		ReturnMessage::success($this->model->empSelect["option"]);
 	}
 
-	public function subEmp()
+	public function subEmpSelect()
 	{
 		ReturnMessage::success(Collection($this->model->empSelect["option"])
 			->filter(function ($x) {

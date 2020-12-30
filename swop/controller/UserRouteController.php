@@ -1,6 +1,5 @@
 <?php
 
-use lib\ReturnMessage;
 use service\UserRouteService;
 
 class UserRouteController extends JController
@@ -12,38 +11,26 @@ class UserRouteController extends JController
 
 	public function list($req)
 	{
-		ReturnMessage::success($this->service->list($req));
+		return $this->service->list($req);
 	}
 
 	public function create($req)
 	{
-		try {
-			ReturnMessage::success($this->service->create($req));
-		} catch (Exception $err) {
-			ReturnMessage::error($err->getMessage());
-		}
+		return $this->service->create($req);
 	}
 
 	public function update($req)
 	{
-		try {
-			ReturnMessage::success($this->service->update($req));
-		} catch (Exception $err) {
-			ReturnMessage::error($err->getMessage());
-		}
+		return $this->service->update($req);
 	}
 
 	public function delete($req)
 	{
-		ReturnMessage::success($this->service->delete($req));
+		return $this->service->delete($req);
 	}
 
 	public function createBatch($req)
 	{
-		try {
-			ReturnMessage::success($this->service->createBatch($req));
-		} catch (Exception $err) {
-			ReturnMessage::error($err->getMessage());
-		}
+		return $this->service->createBatch($req);
 	}
 }

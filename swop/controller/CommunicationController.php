@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
-use lib\ReturnMessage;
 use service\PaginateService;
 
 class CommunicationController
@@ -17,11 +16,11 @@ class CommunicationController
       );
     $db = $this->buildWhere($db, $req);
     $res = $db->first();
-    ReturnMessage::success([
+    return [
       "rows" => $res->rows,
       "totalTime" => $res->totalTime,
       "totalMoney" => $res->totalMoney
-    ]);
+    ];
   }
 
   public function list($req)
@@ -31,20 +30,20 @@ class CommunicationController
     $db = $this->buildWhere($db, $req);
     $db = (new PaginateService())->proccess($db, $post["page"], $post["per_page"]);
     $db = $this->buildOrderBy($db, $post["sortKey"], $post["sortType"]);
-    ReturnMessage::success($db->get());
+    return $db->get();
   }
 
   public function delete($req)
   {
     $post = $req["post"];
     if (!is_array($post["id"]) || !count($post["id"])) {
-      ReturnMessage::success(false);
+      return false;
     } else {
-      ReturnMessage::success(DB::table("CallOutCDR")
+      return DB::table("CallOutCDR")
         ->whereIn('LogID', $post["id"])
         ->update([
           "DeletedAt" => date('Y-m-d H:i:s', time())
-        ]));
+        ]);
     }
   }
 

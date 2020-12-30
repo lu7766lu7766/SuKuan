@@ -3,7 +3,6 @@
 namespace service;
 
 use Illuminate\Database\Capsule\Manager as DB;
-use lib\ReturnMessage;
 use Rakit\Validation\Validator;
 use Exception;
 use Tightenco\Collect\Support\Collection;
@@ -24,7 +23,7 @@ class UserRouteService
     if (!$session["isRoot"]) {
       $db->where("UserID", $session["choice"]);
     }
-    ReturnMessage::success($db->get());
+    return $db->get();
   }
 
   private function validate($post)
@@ -50,18 +49,16 @@ class UserRouteService
     ) {
       throw new Exception("用戶與前置碼重複，無法新增。");
     }
-    ReturnMessage::success(
-      DB::table($this->tableName)->insert([
-        "UserID" => $post["UserID"],
-        "PrefixCode" => $post["PrefixCode"],
-        "AddPrefix" => $post["AddPrefix"],
-        "RouteCLI" => $post["RouteCLI"],
-        "TrunkIP" => $post["TrunkIP"],
-        "TrunkPort" => $post["TrunkPort"],
-        "RouteName" => $post["RouteName"],
-        "SubNum" => $post["SubNum"]
-      ])
-    );
+    return DB::table($this->tableName)->insert([
+      "UserID" => $post["UserID"],
+      "PrefixCode" => $post["PrefixCode"],
+      "AddPrefix" => $post["AddPrefix"],
+      "RouteCLI" => $post["RouteCLI"],
+      "TrunkIP" => $post["TrunkIP"],
+      "TrunkPort" => $post["TrunkPort"],
+      "RouteName" => $post["RouteName"],
+      "SubNum" => $post["SubNum"]
+    ]);
   }
 
   public function update($req)
@@ -69,50 +66,44 @@ class UserRouteService
     ["post" => $post] = $req;
     $this->validate($post);
 
-    ReturnMessage::success(
-      DB::table($this->tableName)
-        ->where("UserID", $post["UserID"])
-        ->where("PrefixCode", $post["PrefixCode"])
-        ->update([
-          "AddPrefix" => $post["AddPrefix"],
-          "RouteCLI" => $post["RouteCLI"],
-          "TrunkIP" => $post["TrunkIP"],
-          "TrunkPort" => $post["TrunkPort"],
-          "RouteName" => $post["RouteName"],
-          "SubNum" => $post["SubNum"]
-        ])
-    );
+    return DB::table($this->tableName)
+      ->where("UserID", $post["UserID"])
+      ->where("PrefixCode", $post["PrefixCode"])
+      ->update([
+        "AddPrefix" => $post["AddPrefix"],
+        "RouteCLI" => $post["RouteCLI"],
+        "TrunkIP" => $post["TrunkIP"],
+        "TrunkPort" => $post["TrunkPort"],
+        "RouteName" => $post["RouteName"],
+        "SubNum" => $post["SubNum"]
+      ]);
   }
 
   public function delete($req)
   {
     ["post" => $post] = $req;
-    ReturnMessage::success(
-      DB::table($this->tableName)
-        ->where("UserID", $post["UserID"])
-        ->where("PrefixCode", $post["PrefixCode"])
-        ->delete()
-    );
+    return DB::table($this->tableName)
+      ->where("UserID", $post["UserID"])
+      ->where("PrefixCode", $post["PrefixCode"])
+      ->delete();
   }
 
   public function createBatch($req)
   {
     ["post" => $post] = $req;
-    ReturnMessage::success(
-      DB::table($this->tableName)->insert(
-        Collection($post["datas"])->map(function ($x) {
-          return [
-            "UserID" => $x["UserID"],
-            "PrefixCode" => $x["PrefixCode"],
-            "AddPrefix" => $x["AddPrefix"],
-            "RouteCLI" => $x["RouteCLI"],
-            "TrunkIP" => $x["TrunkIP"],
-            "TrunkPort" => $x["TrunkPort"],
-            "RouteName" => $x["RouteName"],
-            "SubNum" => $x["SubNum"]
-          ];
-        })->toArray()
-      )
+    return DB::table($this->tableName)->insert(
+      Collection($post["datas"])->map(function ($x) {
+        return [
+          "UserID" => $x["UserID"],
+          "PrefixCode" => $x["PrefixCode"],
+          "AddPrefix" => $x["AddPrefix"],
+          "RouteCLI" => $x["RouteCLI"],
+          "TrunkIP" => $x["TrunkIP"],
+          "TrunkPort" => $x["TrunkPort"],
+          "RouteName" => $x["RouteName"],
+          "SubNum" => $x["SubNum"]
+        ];
+      })->toArray()
     );
   }
 }

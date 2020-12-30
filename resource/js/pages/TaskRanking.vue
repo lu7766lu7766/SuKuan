@@ -8,9 +8,9 @@
             <select class="form-control" v-model="editData.userID">
               <option value=""></option>
               <option
-                :value="item.value"
-                v-for="(item, index) in options.subEmps"
+                v-for="(item, index) in options.subEmpSelect"
                 :key="index"
+                :value="item.value"
               >
                 {{ item.name }}
               </option>
@@ -80,7 +80,7 @@
         { key: 'BillCost', name: '成本', sortable: true, show: isRoot },
       ]"
       :sort="sort"
-      @changeSort="e => changeSort(e)"
+      @changeSort="(e) => changeSort(e)"
     >
       <template v-slot:ExtensionNo="{ data }">
         {{ data.ExtensionNo || "Wait" }}
@@ -114,15 +114,13 @@ import DateTimePicker from "../components/DateTimePicker.vue";
 import OrderByMixins from "mixins/OrderBy";
 import CommonMixins from "mixins/Common";
 import ListMixins from "mixins/List";
+import EmpMixins from "mixins/Emp";
 import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMixins, OrderByMixins, ListMixins, LibraryMixins],
+  mixins: [CommonMixins, OrderByMixins, ListMixins, LibraryMixins, EmpMixins],
   components: { DateTimePicker },
   data: () => ({
-    options: {
-      subEmps: [],
-    },
     editData: {
       userID: "",
       callStartBillingDate: moment().startOf("month").format("YYYY/MM/DD"),
@@ -132,10 +130,6 @@ export default {
     display_mode: "",
   }),
   methods: {
-    async getOptions() {
-      const res = await $.callApi.post("userInfo/getSubEmpOption");
-      this.options.subEmps = res.data.option;
-    },
     async getList() {
       const res = await $.callApi.post("api/taskReanking/list", this.editData);
       this.datas = res.data;
@@ -172,7 +166,7 @@ export default {
     },
   },
   mounted() {
-    this.getOptions();
+    this.getSubEmpSelect();
   },
 };
 </script>
