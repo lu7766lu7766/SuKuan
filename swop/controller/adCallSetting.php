@@ -70,7 +70,7 @@ class AdCallSetting_Controller extends JController
      */
     public function downloadVoiceFile()
     {
-        $filePath = $this->base["voiceManage"] . $this->model->session['choice'] . "/" . $this->model->fileName;
+        $filePath = config("voiceManage") . $this->model->session['choice'] . "/" . $this->model->fileName;
         if (file_exists($filePath)) {
             $this->downloadFile($filePath);
         } else {
@@ -297,5 +297,3 @@ class AdCallSetting_Controller extends JController
         ]);
     }
 }
-
-?>

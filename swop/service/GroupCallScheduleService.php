@@ -30,9 +30,9 @@ class GroupCallScheduleService
     }
   }
 
-  public function getListAndValide($base)
+  public function getListAndValide()
   {
-    $modal = new \JModel($base);
+    $modal = new \JModel();
     $result = $modal->readUploadList();
     $len = count($result);
     if (!$len) {

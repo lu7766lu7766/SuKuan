@@ -48,7 +48,7 @@ class SweepSetting_Controller extends JController
 
     public function getPhoneTip()
     {
-        $cn_phone_rule = $this->base["cn_phone_rule"];
+        $cn_phone_rule = config("cn_phone_rule");
         $tmp = array();
         $result = array();
 
@@ -77,7 +77,7 @@ class SweepSetting_Controller extends JController
     }
 
     public function getCNPhoneRule(){
-        echo json_encode($this->base["cn_phone_rule"]);
+        echo json_encode(config("cn_phone_rule"));
     }
 
     public function getInspectModeSelect()
@@ -95,5 +95,3 @@ class SweepSetting_Controller extends JController
 //        );
     }
 }
-
-?>

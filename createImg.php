@@ -23,7 +23,6 @@ $_len = strlen($charset) - 1;
 for ($i = 0; $i < $codelen; $i++) {
     $code .= $charset[mt_rand(0, $_len)];
 }
-//$_SESSION[$base["folder"]]["code_login"] = $code;
 $_SESSION["code_login"] = $code;
 //繪製干擾
 for ($i = 0; $i < 6; $i++) {

@@ -5,9 +5,9 @@ use comm\DBA;
 
 class GroupCallSetting_Model extends JModel
 {
-    public function __construct($base)
+    public function __construct()
     {
-        parent::__construct($base);
+        parent::__construct();
         // 名單數限制
         $this->phone_limit = getenv2("GROUP_CALL_PHONE_LIMIT", 200000);
         // 排程數限制

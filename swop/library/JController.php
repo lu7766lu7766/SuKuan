@@ -2,10 +2,10 @@
 
 class JController extends Controller
 {
-    public function __construct($base)
+    public function __construct()
     {
-        parent::__construct($base);
-        $this->menu = new setting\Menu2($base);
+        parent::__construct();
+        $this->menu = new setting\Menu();
     }
 
     public function getData($data)
@@ -79,7 +79,7 @@ class JController extends Controller
     {
         $txt = join("\r\n", $array);
         $filePath = "download/" . $fileName;
-        @mkdir($this->base["download"]);
+        @mkdir(config("download"));
         file_put_contents($fileName, $txt);
         rename($fileName, $filePath);
         $fileSize = filesize($filePath);
@@ -112,5 +112,3 @@ class JController extends Controller
         header("Content-Disposition:filename={$fileName}");
     }
 }
-
-?>

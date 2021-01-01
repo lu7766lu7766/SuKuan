@@ -17,8 +17,7 @@ echo Html::form();
         <option v-for="(country, code) in countrySelect" :value="code" v-text="country"></option>
       </select>
     </div>
-    <select v-for="(numberSelect, index) in numberSelectList" @change="setPhone(index, $event.target.value)"
-            class="numberSelect">
+    <select v-for="(numberSelect, index) in numberSelectList" @change="setPhone(index, $event.target.value)" class="numberSelect">
       <option v-for="s in numberSelect" :value="s" v-text="s"></option>
     </select>
     <button type="button" v-show="showSearch" @click="search" class="btn btn-primary">搜索</button>
@@ -73,26 +72,25 @@ echo Html::formEnd();
       searchResult: [],
     },
     methods: {
-      chgCountry: function () {
+      chgCountry: function() {
         this.searchNumber = ''
         this.numberSelectList = []
         this.checkPhone(0)
       },
-      setPhone: function (index, value) {
+      setPhone: function(index, value) {
         var len = index + 1
         this.searchNumber = this.searchNumber.substr(0, index)
         this.numberSelectList = this.numberSelectList.splice(0, len)
         this.searchNumber += value
         this.checkPhone(len)
       },
-      checkPhone: function (len) {
+      checkPhone: function(len) {
         // 預設國碼開頭
         if (len === 0) {
           if (this.countryCode === '0') {
             this.searchNumber = '0'
             this.numberSelectList.push(['0'])
-          }
-          else if (this.countryCode === '1') {
+          } else if (this.countryCode === '1') {
             this.searchNumber = '86'
             this.numberSelectList.push(['8'])
             this.numberSelectList.push(['6'])
@@ -102,15 +100,14 @@ echo Html::formEnd();
         this.numberLimitLenList = []
 
         if (this.countryCode === '0') {
-          _.forEach(this.twRules, function (val, key) {
+          _.forEach(this.twRules, function(val, key) {
             if (key.startsWith(this.searchNumber) && key.length >= this.searchNumber.length) {
               numberCurrent.push(key.substr(this.searchNumber.length, 1))
               this.numberLimitLenList.push(parseInt(val))
             }
           }.bind(this))
-        }
-        else if (this.countryCode === '1') {
-          _.forEach(this.cnRules, function (val, key) {
+        } else if (this.countryCode === '1') {
+          _.forEach(this.cnRules, function(val, key) {
             if (key.startsWith(this.searchNumber) && key.length >= this.searchNumber.length) {
               numberCurrent.push(key.substr(this.searchNumber.length, 1))
               this.numberLimitLenList.push(parseInt(val))
@@ -123,9 +120,9 @@ echo Html::formEnd();
         numberCurrent = numberCurrent.distinc()
         this.numberLimitLenList = _.uniq(this.numberLimitLenList)
         // 如果沒有match到
-//                if (numberCurrent.length === 2) {
+        //                if (numberCurrent.length === 2) {
         numberCurrent = _.clone(this.numberSelectDefault)
-//                }
+        //                }
         // 比對到多個長度，取最大值
         if (this.numberLimitLenList.length > 0) {
           this.numberLimitLen = _.max(this.numberLimitLenList)
@@ -133,55 +130,51 @@ echo Html::formEnd();
         // 如果號碼長度小於最終長度
         if (this.numberSelectList.length < this.numberLimitLen) {
           this.numberSelectList.push(numberCurrent)
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             $('.numberSelect:last').val('')
           })
           this.showSearch = false
-        }
-        else {
+        } else {
           this.showSearch = true
         }
       },
-      search: function () {
+      search: function() {
         this.message = '搜索中請稍待...'
         $.post(folder + controller + '/getEffectiveNumber2', {
           countryCode: this.countryCode,
           searchNumber: this.searchNumber,
-        }, function (result) {
+        }, function(result) {
           if (result.status == 0 && result.data.length > 0) {
             this.searchResult = result.data
             this.message = ''
-          }
-          else if (result.status == 0 && result.data.length == 0) {
+          } else if (result.status == 0 && result.data.length == 0) {
             this.message = '查無資料'
-          }
-          else if (result.status == -1 && result.data == -1) {
+          } else if (result.status == -1 && result.data == -1) {
             this.message = '資料筆數過超過20萬筆，請縮小查詢範圍'
-          }
-          else {
+          } else {
             this.message = '資料新增失敗，請聯繫管理員'
           }
         }.bind(this), 'json')
       },
-      upload: function (list) {
+      upload: function(list) {
         this.message = '上傳中請稍待...'
         $.post(folder + controller + '/addDefaultSchedule', {
           list: list.join(','),
-        }, function () {
+        }, function() {
           this.message = ''
           alertify.alert('新增成功')
         }.bind(this))
       },
     },
     computed: {
-      resultList: function () {
+      resultList: function() {
         var max_limit = 5000
         var len = Math.ceil(this.searchResult.length / max_limit)
-        var searchResult = _.map(this.searchResult, function (x) {
+        var searchResult = _.map(this.searchResult, function(x) {
           return x.number
         })
         var list = []
-        _.times(len, function () {
+        _.times(len, function() {
           list.push(
             searchResult.splice(0, max_limit),
           )
@@ -189,21 +182,21 @@ echo Html::formEnd();
         return list
       },
     },
-    mounted: function () {
-      this.$nextTick(function () {
+    mounted: function() {
+      this.$nextTick(function() {
         this.chgCountry(0)
       })
     },
   })
-  var json_folder = folder + '<?php echo $base['setting_uri'];?>'
-  $.getJSON(json_folder + 'tw_phone_rule.json', function (data) {
+  var json_folder = folder + '<?php echo config("setting_uri"); ?>'
+  $.getJSON(json_folder + 'tw_phone_rule.json', function(data) {
     vm.twRules = data
     vm.chgCountry(0)
   })
-  $.getJSON(json_folder + 'cn_phone_rule.json', {}, function (data) {
+  $.getJSON(json_folder + 'cn_phone_rule.json', {}, function(data) {
     vm.cnRules = data
   })
-  $(window).keyup(function (e) {
+  $(window).keyup(function(e) {
     var key = ''
     //@keyup.down="countryCode='1'" @keyup.up="countryCode='0'"
     //@keyup.enter="search"
@@ -261,7 +254,7 @@ echo Html::formEnd();
     }
   })
 
-  var lastSelectReset = function (key) {
+  var lastSelectReset = function(key) {
 
     if ($('.numberSelect:last').find('[value=\'' + key + '\']').length) {
       var len = vm.numberSelectList.length

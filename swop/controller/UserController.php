@@ -4,7 +4,7 @@ use \lib\ReturnMessage;
 use Illuminate\Database\Capsule\Manager as DB;
 use Rakit\Validation\Validator;
 use repostory\UserRepostory;
-use setting\Menu2;
+use setting\Menu;
 use Tightenco\Collect\Support\Collection;
 
 class UserController extends JController
@@ -212,7 +212,7 @@ class UserController extends JController
 	{
 		["session" => $session] = $req;
 		if ($session["isRoot"]) {
-			return Menu2::getAllMenus();
+			return Menu::getAllMenus();
 		} else if ($session["choice"] == $session["login"]["UserID"]) {
 			$result = $session["login"]["MenuList"];
 		} else {
@@ -224,7 +224,7 @@ class UserController extends JController
 			->map(function ($key) {
 				return [
 					"value" => $key,
-					"name" => Menu2::findNameByKey($key, Menu2::$menus)
+					"name" => Menu::findNameByKey($key, Menu::$menus)
 				];
 			})
 			->filter(function ($x) {

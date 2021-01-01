@@ -106,8 +106,7 @@ class Router
     /** 設定環境變數 */
     public function __construct()
     {
-        $this->config = new Config();
-        $this->requestUri = explode('?', str_replace($this->config->base["folder"], "/", $_SERVER['REQUEST_URI']))[0];
+        $this->requestUri = explode('?', str_replace(config("folder"), "/", $_SERVER['REQUEST_URI']))[0];
         $this->base_hierarchy = explode("/", $this->requestUri);
     }
 
@@ -184,19 +183,19 @@ class Router
                         break;
                 }
                 /** 塞入共用變數 */
-                $controller = $this->config->base["default_controller"];
-                $action = $this->config->base["default_action"];
+                $controller = config("default_controller");
+                $action = config("default_action");
                 if (is_string($args['callback']) && strpos($args['callback'], "@") !== false) {
                     list($controller, $action) = explode("@", $args['callback']);
                 }
-                $data['submit_link'] = $this->config->base['folder'] . $controller . "/" . $action;
+                $data['submit_link'] = config('folder') . $controller . "/" . $action;
                 $data["controller"] = $controller;
                 $data["action"] = $action;
                 $data["top_layout"] = "shared/top.php";
                 $data["layout"] = $action;
                 $data["bottom_layout"] = "shared/bottom.php";
                 $data["params"] = $req;
-                $data["session"] = $_SESSION[$this->config->base['folder']];
+                $data["session"] = $_SESSION[config('folder')];
 
                 /** @var callback $func */
                 $func = $this->procFunc($args['callback']);
@@ -220,31 +219,31 @@ class Router
     {
         // 因為是/開頭，所以第一個元素是null，走路徑要先移掉
         array_shift($this->base_hierarchy);
-        $base_url = $this->config->base['controller_dir'] . $this->base_hierarchy[0] . ".php";
+        $filePath = config('controller_dir') . $this->base_hierarchy[0] . ".php";
         $store_pos = 2;
 
-        if (file_exists($base_url)) // 驗證 controller 是否存在
+        if (file_exists($filePath)) // 驗證 controller 是否存在
         {
             $controller = $this->base_hierarchy[0];
         } else {
-            $controller = $this->config->base["default_controller"];
-            $base_url = $this->config->base['controller_dir'] . $this->config->base["default_controller"] . ".php";
+            $controller = config("default_controller");
+            $filePath = config('controller_dir') . config("default_controller") . ".php";
             $store_pos--;
         }
         $controller_class = $controller . "_Controller";
-        require_once $base_url;
-        $swop = new $controller_class($this->config->base); //Env_Controller($base);
+        require_once $filePath;
+        $swop = new $controller_class(); 
 
         if (isset($this->base_hierarchy[1]) && method_exists($swop, $this->base_hierarchy[1])) //驗證 controller 與 action 是否存在
         {
             $action = $this->base_hierarchy[1];
         } else {
             $swop->redirect("index/index");
-            $action = $this->config->base["default_action"];
+            $action = config("default_action");
             $store_pos--;
         }
 
-        $data['submit_link'] = $this->config->base['folder'] . $controller . "/" . $action;
+        $data['submit_link'] = config('folder') . $controller . "/" . $action;
         $data["controller"] = $controller;
         $data["action"] = $action;
         $data["top_layout"] = "shared/top.php";
@@ -282,13 +281,12 @@ class Router
             return $arg;
         } else if (is_string($arg)) {
             $map = explode('@', $arg);
-            //dirname(dirname(__DIR__))."/". $this->config->base['controller_dir'] . "adCallSetting.php" ;
 
-            $file_path = dirname(__DIR__) . "/" . $this->config->base['controller'] . $map[0] . ".php";
+            $file_path = dirname(__DIR__) . "/" . config('controller') . $map[0] . ".php";
 
             if (file_exists($file_path)) {
                 require_once($file_path);
-                $swop = new $map[0]($this->config->base);
+                $swop = new $map[0]();
                 if (count($map) == 2 && method_exists($swop, $map[1])) {
                     $action = $map[1];
                     return function ($req) use ($swop, $action) {

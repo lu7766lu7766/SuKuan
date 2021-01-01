@@ -4,10 +4,9 @@ class Controller
 {
     public $checkLogin = true;
 
-    public function __construct($base)
+    public function __construct()
     {
-        $this->base = $base;
-        $this->defaultUrl = $base["default_controller"] . "/" . $base["default_action"];
+        $this->defaultUrl = config("default_controller") . "/" . config("default_action");
     }
 
     public function getData($data)
@@ -16,20 +15,21 @@ class Controller
             $this->$key = $val;
         }
         $controller = $this->controller;
-        $base = $this->base;
-        $model_url = $this->base["model_dir"] . $controller . ".php";
+        $model_url = config("model_dir") . $controller . ".php";
         if (file_exists($model_url)) {
             require_once $model_url;
             $model_class = $controller . "_Model";
-            $this->model = new $model_class($base);
+            $this->model = new $model_class();
         } else {
-            $this->model = new JModel($base);
+            $this->model = new JModel();
         }
         if (is_array($this->get)) {
             foreach ($this->get as $key => $val) {
                 if (isset($key) && isset($val)) {
-                    $this->model->$key = urldecode(preg_match("/^\d{4}-\d{1,2}-\d{1,2}/", $val) ? strtr($val,
-                        ["-" => "/"]) : $val);
+                    $this->model->$key = urldecode(preg_match("/^\d{4}-\d{1,2}-\d{1,2}/", $val) ? strtr(
+                        $val,
+                        ["-" => "/"]
+                    ) : $val);
                 }
             }
             $this->get = null;
@@ -42,8 +42,8 @@ class Controller
             }
             $this->post = null;
         }
-//            $this->redirect($base["default_controller"]."/".$base["default_action"]);
-        if ($controller != $base["default_controller"]) {
+        //            $this->redirect(config("default_controller")."/".config("default_action"));
+        if ($controller != config("default_controller")) {
             if ($this->checkLogin && !$this->model->session["login"]) {
                 $this->redirect($this->defaultUrl);
             }
@@ -69,15 +69,14 @@ class Controller
             $url = $this->defaultUrl;
         }
         $url = trim($url, "/");
-        $url = $this->base["folder"] . $url;
+        $url = config("folder") . $url;
         header("location:" . $url);
     }
 
     public function partialView($url)
     {
-        $base = $this->base;
         $model = $this->model;
-        $url = str_replace("~/", $base["folder"], $url);
+        $url = str_replace("~/", config("folder"), $url);
         if (file_exists($url)) {
             include_once $url;
         }
@@ -85,9 +84,9 @@ class Controller
 
     public function getModel($controller)
     {
-        include_once $this->base["model_dir"] . $controller . ".php";
+        include_once config("model_dir") . $controller . ".php";
         $model_name = $controller . "_Model";
-        return new $model_name($this->base);
+        return new $model_name();
     }
 
     /**
@@ -100,14 +99,13 @@ class Controller
 
     protected function render($view = null)
     {
-        $base = $this->base;
         $model = $this->model;
         if (!$view || !is_string($view)) {
             $view = $this->layout;
         }
-        $top_view_path = $base['view_dir'] . $this->top_layout;
-        $view_path = $base['view_dir'] . $this->controller . "/" . $view . ".php";
-        $bottom_view_path = $base['view_dir'] . $this->bottom_layout;
+        $top_view_path = config("view_dir") . $this->top_layout;
+        $view_path = config("view_dir") . $this->controller . "/" . $view . ".php";
+        $bottom_view_path = config("view_dir") . $this->bottom_layout;
         if (file_exists($view_path)) {
             include_once $view_path;
         } else {

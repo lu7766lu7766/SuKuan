@@ -1,14 +1,11 @@
 <?php
-//require_once "swop/library/dba.php";
-//$dba=new dba();
 use comm\DB;
-use comm\Http;
 
 class JModel extends Model
 {
-    public function __construct($base)
+    public function __construct()
     {
-        parent::__construct($base);
+        parent::__construct();
         $this->user = $this->session["login"];
         $this->subEmp = $this->session["sub_emp"];
         $this->choice = $this->session["choice"];//被選中的使用者
@@ -21,7 +18,7 @@ class JModel extends Model
         $files = glob($dir . $prefix . '*', GLOB_MARK);
         foreach ($files as $file) {
             if (substr($file, -1) == '/') {
-                delTree($file);
+                $this->delTreePrefix($file);
             } else {
                 unlink($file);
             }
@@ -39,7 +36,7 @@ class JModel extends Model
                       where ParentID=?";
         $result = $dba->getAll($sql, [$userId]);
         $len = count($result);
-        //echo $len."^^";
+
         $i = 0;
         while ($i < $len) {
             $a_tmp = $result[$i++];
@@ -47,8 +44,7 @@ class JModel extends Model
             $a_rs[] = $a_tmp;
             $a_rs = array_merge($a_rs, $this->getSubEmp($a_tmp["UserID"], $class + 1));
         }
-//        echo count($a_rs)."^^";
-//        print_r($a_rs);die();
+
         return $a_rs;
     }
 
@@ -130,5 +126,3 @@ class JModel extends Model
         }
     }
 }
-
-?>

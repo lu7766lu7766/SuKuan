@@ -2,10 +2,9 @@
 
 class Model
 {
-    public function __construct($base)
+    public function __construct()
     {
-        require_once $base['comm_dir']."DBA.php";
-        $this->base = $base;
+        require_once config("comm_dir") . "DBA.php";
         $this->dba = new comm\DBA;
         $this->dba->connect();
         $this->session = $this->getSession();
@@ -18,13 +17,11 @@ class Model
 
     private function setSession($session)
     {
-        $_SESSION[$this->base["folder"]] = $session;
+        $_SESSION[config("folder")] = $session;
     }
 
     private function getSession()
     {
-        return $_SESSION[$this->base["folder"]];
+        return $_SESSION[config("folder")];
     }
 }
-
-?>

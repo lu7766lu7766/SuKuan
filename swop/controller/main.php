@@ -29,7 +29,7 @@ class Main_Controller extends Controller
 
     public function code_login()
     {
-        require_once $this->base["comm_dir"] . "verification.php";;
+        require_once config("comm_dir") . "verification.php";;
         $vert = new Library_Verification();
         $vert->kernel();
         $_SESSION["code_login"] = $vert->code;
@@ -43,5 +43,3 @@ class Main_Controller extends Controller
 //        echo $this->defaultUrl . "^^";
     }
 }
-
-?>

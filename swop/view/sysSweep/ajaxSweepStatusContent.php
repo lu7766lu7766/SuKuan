@@ -34,7 +34,7 @@
                     }
                 }
                 $callOutId = $data["CallOutID"];
-                $d_url = "{$base[folder]}sysSweep/";
+                $d_url = config("folder")."sysSweep/";
                 $d_params = "?callOutId=$callOutId&startCalledNumber={$data['StartCalledNumber']}";
                 $total_calledCount += $waitCall;
                 $total_waitCall += $data["CalledCount"] - $data["RunTimeCount"];

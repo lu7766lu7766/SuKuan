@@ -24,7 +24,7 @@
 		],
 		"files": [
 			"swop/setting/config.php",
-			"swop/setting/menu2.php"
+			"swop/setting/menu.php"
 		]
 	}
 }

@@ -21,7 +21,7 @@
 	?>
 
 	<script>
-		var folder = "<?php echo $base["folder"] ?>";
+		var folder = "<?php echo config("folder") ?>";
 		var apiUrl = "<?php echo getApiUrl('') ?>";
 		var controller = "<?php echo $this->controller ?>";
 		var ctrl_uri = folder + controller + "/";
@@ -31,7 +31,7 @@
 		var permission = <?php echo $model->session["permission_control"] ?>;
 		var isLoginRoot = <?php echo $model->session['login']['UserID'] == 'root' ? 'true' : 'false' ?>;
 		var current_sub_emp = <?php echo json_encode($model->session["current_sub_emp"]) ?>;
-		
+
 		function callApi() {
 
 			const request = function(method, url, data = {}, option = {}) {
@@ -191,15 +191,15 @@
 						?>
 					</div>
 					<ul class="nav navbar-nav navbar-left">
-						<li><a href="<?php echo $base["folder"] . "index/index" ?>">首頁</a></li>
-						<!--<li><a href="<?php echo $base["folder"] . "index/service" ?>">服務</a></li>-->
+						<li><a href="<?php echo config("folder") . "index/index" ?>">首頁</a></li>
+						<!--<li><a href="<?php echo config("folder") . "index/service" ?>">服務</a></li>-->
 						<?php if ($isRoot) { ?>
 							<li><a class="shotdown_btn" href="javascript:;">關機</a><?php } ?>
 							<!-- -->
 							<?php if ($isRoot) { ?>
 							<li><a class="reboot_btn" href="javascript:;">重啟</a><?php } ?>
-							<li><a href="<?php echo $base["folder"] . "index/password" ?>">密碼</a></li>
-							<li><a href="<?php echo $base["folder"] . "index/logout" ?>">登出</a></li>
+							<li><a href="<?php echo config("folder") . "index/password" ?>">密碼</a></li>
+							<li><a href="<?php echo config("folder") . "index/logout" ?>">登出</a></li>
 					</ul>
 				</div>
 

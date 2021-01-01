@@ -147,12 +147,12 @@ class SysSweep_Model extends JModel
         $txt = join("\r\n", $data);
         $this->fileName = date("Y-m-d", time()) . "_{$this->session['choice']}{$suffix}.txt";
         $this->filePath = "download/" . $this->fileName;
-        @mkdir($this->base["download"]);
-        @mkdir($this->base["sweep"]);
+        @mkdir(config("download"));
+        @mkdir(config("sweep"));
         file_put_contents($this->fileName, $txt);
         rename($this->fileName, $this->filePath);
         $pastMonth = date("Y-m", strtotime('-2 month'));
-        $this->delTreePrefix($this->base["sweep"], $pastMonth);
+        $this->delTreePrefix(config("sweep"), $pastMonth);
     }
 
     public function getDownloadCallAvailable()//有效
@@ -167,5 +167,3 @@ class SysSweep_Model extends JModel
         $this->createFile($sql, [$this->callOutId]);
     }
 }
-
-?>

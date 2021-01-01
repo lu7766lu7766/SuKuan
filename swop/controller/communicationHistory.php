@@ -45,7 +45,7 @@ class CommunicationHistory_Controller extends JController
         $model = $this->model;
         $model->getCommunicationSearchDownload();
         $fileName = $model->fileName;
-        $filePath = $this->base["communicationSearch"] . $fileName;
+        $filePath = config("communicationSearch") . $fileName;
         $newFileName = str_replace(".txt" . $model->session["login"]["UserID"], ".txt", $fileName);
         $fileSize = filesize($filePath);
         header('Pragma: public');

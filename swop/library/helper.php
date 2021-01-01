@@ -15,7 +15,6 @@ function getenv2(...$args)
 }
 
 use setting\Config;
-use Tightenco\Collect\Support\Collection;
 
 function getApiUrl($uri): String
 {
@@ -26,7 +25,10 @@ function getApiUrl($uri): String
     return '//' . $currentHost . $uri;
 }
 
-
+function config($key)
+{
+    return Config::get($key);
+}
 
 function GUID(): String
 {

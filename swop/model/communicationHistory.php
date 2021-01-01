@@ -6,9 +6,9 @@ use comm\SQL;
 
 class CommunicationHistory_Model extends JModel
 {
-    public function __construct($base)
+    public function __construct()
     {
-        parent::__construct($base);
+        parent::__construct();
         // 單次上傳筆數限制
         $this->black_list_once_limit = getenv2("BLACK_LIST_ONCE_LIMIT", 10000);
     }
@@ -140,13 +140,13 @@ class CommunicationHistory_Model extends JModel
         $fp = fopen($this->fileName, 'w');
         fwrite($fp, $content);
         fclose($fp);
-        @mkdir($this->base["download"]);
-        @mkdir($this->base["communicationSearch"]);
+        @mkdir(config("download"));
+        @mkdir(config("communicationSearch"));
         if (file_exists($this->fileName)) {
-            rename($this->fileName, $this->base["communicationSearch"] . $this->fileName);
+            rename($this->fileName, config("communicationSearch") . $this->fileName);
         }
         $pastMonth = date("Y-m", strtotime('-2 month'));
-        $this->delTreePrefix($this->base["communicationSearch"], $pastMonth);
+        $this->delTreePrefix(config("communicationSearch"), $pastMonth);
     }
 
     public function getRecordDownload()
@@ -176,7 +176,7 @@ class CommunicationHistory_Model extends JModel
             $this->warning = "條件範圍，找不到任何資料！！";//$dba->mergeSQL($sql,$params).
             return;
         }
-        //include_once $this->base["comm_dir"]."phpzip.php";
+        //include_once config("comm_dir")."phpzip.php";
         //$zip = new PHPZip("test.zip");
         //$tmpFolder = "tmp/".$this->session["choice"]."/";
         //@mkdir("tmp");
@@ -203,9 +203,9 @@ class CommunicationHistory_Model extends JModel
             }
         }
         $zip->close();
-        @mkdir($this->base['record']);
-        $this->targetPath = $this->base['record'] . $this->targetFile;
-        rename($this->base["root_folder"] . $this->targetFile, $this->targetPath);
+        @mkdir(config("record"));
+        $this->targetPath = config("record") . $this->targetFile;
+        rename(config("root_folder") . $this->targetFile, $this->targetPath);
     }
 
     public function getBlackList()
@@ -247,12 +247,12 @@ class CommunicationHistory_Model extends JModel
         $txt = join("\r\n", $data);
         $this->fileName = date("Y-m-d", time()) . "_{$this->session['choice']}{$suffix}.txt";
         $this->filePath = "download/" . $this->fileName;
-        @mkdir($this->base["download"]);
-        @mkdir($this->base["callStatus"]);
+        @mkdir(config("download"));
+        @mkdir(config("callStatus"));
         file_put_contents($this->fileName, $txt);
         rename($this->fileName, $this->filePath);
         $pastMonth = date("Y-m", strtotime('-2 month'));
-        $this->delTreePrefix($this->base["callStatus"], $pastMonth);
+        $this->delTreePrefix(config("callStatus"), $pastMonth);
     }
 
     public function uploadBlackList()
@@ -314,7 +314,7 @@ class CommunicationHistory_Model extends JModel
         //return false;
         //echo $sql;
         if (!empty($sql)) {
-            $this->dba->exec($sql, $params);
+            $this->dba->exec($sql);
         }
     }
 
@@ -362,7 +362,7 @@ class CommunicationHistory_Model extends JModel
         if (!is_array($result) || !$len || empty($result)) {
             return;
         }
-        $dba2 = new DBA();
+        $dba2 = new comm\DBA();
         $dba2->dbHost = "125.227.84.247";
         $dba2->dbName = "NumberCollector";
         $dba2->connect();
@@ -416,5 +416,3 @@ class CommunicationHistory_Model extends JModel
         }
     }
 }
-
-?>

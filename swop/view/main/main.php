@@ -8,6 +8,7 @@ Bundle::echoLink("default");
 
 $top_view_path = "";
 $this->partialView($top_view_path);
+$imageUrl = config("folder") . "createImg.php";
 ?>
 
 <body class="container-fluid" style="background-color: #666">
@@ -31,10 +32,10 @@ $this->partialView($top_view_path);
 				<div class="form-group row">
 					<span class="col-xs-5 control-label">
 						<label class="sr-only">驗證圖片</label>
-						<img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $base["folder"]; ?>createImg.php" onclick="javascript:this.src='<?php echo $base["folder"]; ?>createImg.php?n='+Math.random();" width="130" height="50" />
+						<img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $imageUrl; ?>" onclick="javascript:this.src='<?php echo $imageUrl; ?>?n='+Math.random();" width="130" height="50" />
 					</span>
 					<div class="col-xs-7">
-						<input style="height:34px;border-color:#DCDDD" class="form-control" placeholder="輸入驗證碼" name="captcha" type="text">
+						<input style="height:34px;border-color:#DCDDDD" class="form-control" placeholder="輸入驗證碼" name="captcha" type="text">
 					</div>
 				</div>
 

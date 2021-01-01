@@ -60,7 +60,7 @@ class GroupCallScheduleController extends JController
 		$this->validate($post);
 		$this->service->valideCallPlanMaxLimit($session["choice"]);
 		if ($post["NumberMode"] == self::LIST) {
-			$list = $this->service->getListAndValide($this->base);
+			$list = $this->service->getListAndValide();
 			$post["StartCalledNumber"] = $list[0];
 			$post["CalledCount"] = count($list);
 		} else if ($post["NumberMode"] == self::VALID) {

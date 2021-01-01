@@ -31,7 +31,7 @@ class DownloadFile_Model extends JModel
             $this->warning = "條件範圍，找不到任何資料！！";//$dba->mergeSQL($sql,$params).
             return;
         }
-        //include_once $this->base["comm_dir"]."phpzip.php";
+        //include_once config("comm_dir")."phpzip.php";
         //$zip = new PHPZip("test.zip");
         //$tmpFolder = "tmp/".$this->session["choice"]."/";
         //@mkdir("tmp");
@@ -58,10 +58,8 @@ class DownloadFile_Model extends JModel
             }
         }
         $zip->close();
-        @mkdir($this->base['record']);
-        $this->targetPath = $this->base['record'] . $this->targetFile;
-        rename($this->base["root_folder"] . $this->targetFile, $this->targetPath);
+        @mkdir(config("record"));
+        $this->targetPath = config("record") . $this->targetFile;
+        rename(config("root_folder") . $this->targetFile, $this->targetPath);
     }
 }
-
-?>﻿

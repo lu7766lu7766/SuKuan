@@ -2,14 +2,9 @@
 
 namespace setting;
 
-class Menu2
+class Menu
 {
 	public $currentName = "";
-
-	public function __construct($base)
-	{
-		$this->base = $base;
-	}
 
 	static public $menus = array(
 		"user_info" => array(
@@ -46,7 +41,7 @@ class Menu2
 				"user_only" => ["root"]
 			),
 			"route_search" => array(
-				"icon" => "fas fa-file-search",
+				"icon" => "fas fa-route",
 				"name" => "路由查詢",
 				"url" => "userInfo/routeSearch"
 			),
@@ -201,7 +196,7 @@ class Menu2
 	{
 		$this->menuList = explode(",", $menuList);
 		$this->parentMenuList = explode(",", $parentMenuList);
-		return "<ul style='display: inline-block;'>" . $this->getSubMenuList(Menu2::$menus, $userID) . "</ul>";
+		return "<ul style='display: inline-block;'>" . $this->getSubMenuList(Menu::$menus, $userID) . "</ul>";
 	}
 
 	private function getSubMenuList($menus, $userID)
@@ -231,7 +226,7 @@ class Menu2
 
 	public function CreateMenu($permission, $userID)
 	{
-		$menus = $this->delete_menus(Menu2::$menus, explode(",", stripslashes($permission)), $userID);
+		$menus = $this->delete_menus(Menu::$menus, explode(",", stripslashes($permission)), $userID);
 		//        print_r($menus);
 		return $this->getSubMenu($menus);
 	}
@@ -280,13 +275,13 @@ class Menu2
 
 			if (isset($val["url"])) {
 				$tmp_class = "";
-				if (strpos($_SERVER['REQUEST_URI'], $this->base["folder"] . $val["url"]) !== false) {
+				if (strpos($_SERVER['REQUEST_URI'], config("folder") . $val["url"]) !== false) {
 					$this->currentName = $val["name"];
 					$tmp_class = "slideactive";
 				}
 				if (is_array($val["sub_url"]) && empty($tmp_class)) {
 					foreach ($val["sub_url"] as $sub_url) {
-						if (strpos($_SERVER['REQUEST_URI'], $this->base["folder"] . $sub_url) !== false) {
+						if (strpos($_SERVER['REQUEST_URI'], config("folder") . $sub_url) !== false) {
 							$tmp_class = "slideactive";
 						}
 					}
@@ -294,7 +289,7 @@ class Menu2
 
 				$body .= "<li>";
 				$class = "lastmenu";
-				$body .= "<a class='$tmp_class' href='" . $this->base["folder"] . $val["url"] . "'>" .
+				$body .= "<a class='$tmp_class' href='" . config("folder") . $val["url"] . "'>" .
 					(isset($val["icon"]) ? "<i class='{$val['icon']}'></i>" : "") .
 					$val["name"] . "</a>";
 				$body .= "</li>";
@@ -323,7 +318,7 @@ class Menu2
 	static public function getAllMenus()
 	{
 		$res = [];
-		foreach (Menu2::$menus as $firstMenu) {
+		foreach (Menu::$menus as $firstMenu) {
 			foreach ($firstMenu as $key => $menu) {
 				if ($key != "name" && $menu["hide"] !== true) {
 					$res[] = [
