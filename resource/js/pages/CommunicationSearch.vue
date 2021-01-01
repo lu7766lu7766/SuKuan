@@ -146,16 +146,13 @@
         </template>
         <template v-slot:RecordDownload="{ data }">
           <a
+            v-if="data.RecordFile"
             :href="getVoiceUrl(data)"
-            :target="data.RecordFile ? '_blank' : ''"
-            :class="[
-              'label',
-              {
-                [data.RecordFile ? 'label-info' : 'label-default']: true,
-              },
-            ]"
-            >下載</a
+            class="label label-info"
           >
+            下載
+          </a>
+          <span v-else class="label label-default"> 下載 </span>
         </template>
         <template v-slot:tfoot>
           <tr>
@@ -228,18 +225,14 @@ export default {
   }),
   methods: {
     getVoiceUrl(data) {
-      return data.RecordFile
-        ? apiUrl +
-            "downloadFile/recordFile?userId=" +
-            data.UserID +
-            "&connectDate=" +
-            moment(data.CallStartBillingDate).format("YYYYMMDD") +
-            "&fileName=" +
-            data.RecordFile
-        : "#";
-    },
-    openDownloadWindow() {
-      window.open(ctrl_uri + "communicationSearchDownload");
+      const params = new URLSearchParams();
+      params.set("userId", data.UserID);
+      params.set(
+        "connectDate",
+        moment(data.CallStartBillingDate).format("YYYYMMDD")
+      );
+      params.set("fileName", data.RecordFile);
+      return apiUrl + "downloadFile/recordFile?" + params.toString();
     },
     async getTotal() {
       const res = await $.callApi.post(
