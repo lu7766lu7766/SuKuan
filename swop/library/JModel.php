@@ -72,34 +72,6 @@ class JModel extends Model
         return explode(',', $content);
     }
 
-    public function convertQuotes($str)
-    {
-        if (strpos($str, "\"") !== 0) {
-            return preg_replace("/\"/", "'", $str);
-        } else {
-//            return preg_replace("/\"/g", "'", $str);
-        }
-        return $str;
-    }
-
-    public function chunkInsertDB($table, $body, $chunk_limit = 100)
-    {
-        // 輸入筆數
-        $len = count($body);
-        $i = 0;
-        $execBody = [];
-        while ($i < $len) {
-            $execBody[] = $body[$i++];
-            if ($i % $chunk_limit == 0) {
-                DB::table($table)->insert($execBody)->exec();
-                $execBody = [];
-            }
-        }
-        if (count($execBody)) {
-            DB::table($table)->insert($execBody)->exec();
-        }
-    }
-
     public function chunkInsertDB2($table, $body, $chunk_limit = 100)
     {
         // 輸入筆數
