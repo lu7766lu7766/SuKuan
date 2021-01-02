@@ -70,7 +70,6 @@ class Router
 {
     private $path = "";
     public $map = [];
-    public $config = [];
 
     /**
      * regular

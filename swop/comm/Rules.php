@@ -15,8 +15,6 @@ class Rules
 
 	public static function filter ($list, $rules)
 	{
-		global $config;
-
 		$result = [ ];
 		$filter = [ ];
 		foreach ($list as $value) {
@@ -44,8 +42,8 @@ class Rules
 					case 'phone_rule':
 						// 依電話規則過濾電話
 						// 有符合算pass
-						$cnPhoneRule = self::$cnPhoneRule ?? json_decode(file_get_contents($config->base[ "cn_phone_rule" ]), true);
-						$twPhoneRule = self::$twPhoneRule ?? json_decode(file_get_contents($config->base[ "tw_phone_rule" ]), true);
+						$cnPhoneRule = self::$cnPhoneRule ?? json_decode(file_get_contents(config("cn_phone_rule")), true);
+						$twPhoneRule = self::$twPhoneRule ?? json_decode(file_get_contents(config("tw_phone_rule")), true);
 						self::$cnPhoneRule = $cnPhoneRule;
 						self::$twPhoneRule = $twPhoneRule;
 

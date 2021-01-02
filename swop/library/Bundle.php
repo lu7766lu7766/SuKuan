@@ -78,14 +78,13 @@ class Bundle
 
     static private function parseLink($linkKey)
     {
-        $config = new Config();
 
         $result = "";
-        $ver = "?ver=" . $config->base["version"];
+        $ver = "?ver=" . config("version");
 
         foreach (self::$bundle[$linkKey] as $file) {
-            $file = str_replace("~/", $config->base["folder"], $file);
-            $ext = end(explode('.', $file));
+            $file = str_replace("~/", config("folder"), $file);
+            $ext = end(explode(".", $file));
             switch (strtolower($ext)) {
                 case "js":
                     $result .= "<script src=\"" . $file . $ver . "\"></script>\n";

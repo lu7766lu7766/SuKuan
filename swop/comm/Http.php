@@ -150,8 +150,7 @@ class Http
 
 	static public function download2 ($filePath)
 	{
-		global $config;
-		$url = $config->base[ 'url' ] . str_replace($config->base[ "root_folder" ], "", $filePath);
+		$url = config("url") . str_replace(config("root_folder"), "", $filePath);
 		header("location:" . $url);
 	}
 }

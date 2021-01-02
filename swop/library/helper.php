@@ -18,10 +18,9 @@ use setting\Config;
 
 function getApiUrl($uri): String
 {
-    $config = new Config();
     $currentHost = getenv2('API_HOST')
         ? getenv2('API_HOST') . '/'
-        : getenv2('DB_IP') . $config->base["folder"];
+        : getenv2('DB_IP') . config("folder");
     return '//' . $currentHost . $uri;
 }
 
