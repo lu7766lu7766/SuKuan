@@ -222,15 +222,16 @@ class Router
 
     public function procMiddleware($func, $context, $path)
     {
-        $next = Middleware::use(function () use ($func, $context) {
+        $middleware = new Middleware();
+        $middleware->use(function () use ($func, $context) {
             return $func($context);
         });
         foreach ($this->map[$path]["middleware"] as $middlewareMethod) {
-            $next = Middleware::use(function ($next) use ($middlewareMethod) {
-                return Middleware::$middlewareMethod($next);
-            }, $next);
+            $middleware->use(function ($next) use ($middleware, $middlewareMethod) {
+                return $middleware->$middlewareMethod($next);
+            });
         }
-        return Middleware::go($next);
+        return $middleware->go();
     }
 
     /**

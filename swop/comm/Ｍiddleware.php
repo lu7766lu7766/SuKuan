@@ -7,7 +7,7 @@ use \Exception;
 
 class Middleware
 {
-  static function api($next)
+  function api($next)
   {
     try {
       return ReturnMessage::success($next());
@@ -16,21 +16,22 @@ class Middleware
     };
   }
 
-  static function use($fn, $next = null)
+  function use($fn)
   {
-    if (!$next) {
-      $next = function () {
+    if (!$this->next) {
+      $this->next = function () {
       };
     }
-    return function () use ($fn, $next) {
+    $next = $this->next;
+    $this->next = function () use ($fn, $next) {
       return $fn($next);
     };
   }
 
-  static function go($next)
+  function go()
   {
-    if ($next) {
-      return ($next)();
+    if ($this->next) {
+      return ($this->next)();
     }
   }
 }
