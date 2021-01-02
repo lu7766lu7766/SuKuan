@@ -15,4 +15,22 @@ class Middleware
       return ReturnMessage::error($err->getMessage());
     };
   }
+
+  static function use($fn, $next = null)
+  {
+    if (!$next) {
+      $next = function () {
+      };
+    }
+    return function () use ($fn, $next) {
+      return $fn($next);
+    };
+  }
+
+  static function go($next)
+  {
+    if ($next) {
+      return ($next)();
+    }
+  }
 }

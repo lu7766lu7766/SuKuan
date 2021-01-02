@@ -6,13 +6,12 @@ class Config
 {
     static private $instance;
 
-    static public function getInstance() 
+    static public function getInstance()
     {
-        if (isset(self::$instance)) {
-            return self::$instance;
-        } else {
-            return new Config();
+        if (!isset(self::$instance)) {
+            self::$instance = new Config();
         }
+        return self::$instance;
     }
 
     static public function get($key)
@@ -27,7 +26,7 @@ class Config
         $base["version"] = "2018110201";
         $base["default_controller"] = "main";
         $base["default_action"] = "main";
-       
+
         $base["folder"] = getenv2("BASE_FOLDER"); //"/ZHCC/"; //dirname(dirname(__DIR__)). "/"; // "/aurora02/"
         $base["root_folder"] = dirname(dirname(__DIR__)) . "/";
         $base["swop"] = $base["root_folder"] . "swop/";
@@ -55,7 +54,7 @@ class Config
         $base["voiceManage"] = $base["download"] . "voiceManage/";
         $base["cn_phone_rule"] = $base["setting_dir"] . "cn_phone_rule.json";
         $base["tw_phone_rule"] = $base["setting_dir"] . "tw_phone_rule.json";
-        
+
         $this->base = $base;
     }
 }
