@@ -4,19 +4,19 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class TempController extends JController
 {
-    public function list($req)
+    public function list($ctx)
     {
     }
 
-    public function create($req)
+    public function create($ctx)
     {
     }
 
-    public function update($req)
+    public function update($ctx)
     {
     }
 
-    public function delete($req)
+    public function delete($ctx)
     {
     }
 }

@@ -5,25 +5,25 @@ use service\PaginateService;
 
 class PointController extends JController
 {
-    public function total($req)
+    public function total($ctx)
     {
         $db = DB::table("RechargeLog");
-        $db = $this->buildWhere($db, $req);
+        $db = $this->buildWhere($db, $ctx);
         return $db->count();
     }
 
-    public function list($req)
+    public function list($ctx)
     {
-        ["post" => $post] = $req;
+        ["post" => $post] = $ctx;
         $db = DB::table("RechargeLog");
-        $db = $this->buildWhere($db, $req);
+        $db = $this->buildWhere($db, $ctx);
         $db = (new PaginateService)->proccess($db, $post["page"], $post["per_page"]);
         return $db->get();
     }
 
-    public function buildWhere($db, $req)
+    public function buildWhere($db, $ctx)
     {
-        ["post" => $post, "session" => $session] = $req;
+        ["post" => $post, "session" => $session] = $ctx;
         if (!empty($post["UserID"])) {
             $db->where("UserID", $post["UserID"]);
         } else {
@@ -41,9 +41,9 @@ class PointController extends JController
         return $db;
     }
 
-    public function update($req)
+    public function update($ctx)
     {
-        ["post" => $post] = $req;
+        ["post" => $post] = $ctx;
         return DB::table("RechargeLog")
             ->where("LogID", $post["LogID"])
             ->update([

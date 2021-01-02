@@ -5,16 +5,16 @@ use service\PaginateService;
 
 class CommunicationController
 {
-  public function common($req)
+  public function common($ctx)
   {
-    $post = $req["post"];
+    $post = $ctx["post"];
     $db = DB::table("CallOutCDR")
       ->select(
         DB::raw("count(1) as rows"),
         DB::raw("sum(CallDuration) as totalTime"),
         DB::raw("sum(cast(BillValue as float)) as totalMoney")
       );
-    $db = $this->buildWhere($db, $req);
+    $db = $this->buildWhere($db, $ctx);
     $res = $db->first();
     return [
       "rows" => $res->rows,
@@ -23,19 +23,19 @@ class CommunicationController
     ];
   }
 
-  public function list($req)
+  public function list($ctx)
   {
-    $post = $req["post"];
+    $post = $ctx["post"];
     $db = DB::table("CallOutCDR");
-    $db = $this->buildWhere($db, $req);
+    $db = $this->buildWhere($db, $ctx);
     $db = (new PaginateService())->proccess($db, $post["page"], $post["per_page"]);
     $db = $this->buildOrderBy($db, $post["sortKey"], $post["sortType"]);
     return $db->get();
   }
 
-  public function delete($req)
+  public function delete($ctx)
   {
-    $post = $req["post"];
+    $post = $ctx["post"];
     if (!is_array($post["id"]) || !count($post["id"])) {
       return false;
     } else {
@@ -47,10 +47,10 @@ class CommunicationController
     }
   }
 
-  private function buildWhere($db, $req)
+  private function buildWhere($db, $ctx)
   {
-    $post = $req["post"];
-    $session = $req["session"];
+    $post = $ctx["post"];
+    $session = $ctx["session"];
     if (!empty($post["userId"])) {
       $db->where("UserID", $post["userId"]);
     } else {

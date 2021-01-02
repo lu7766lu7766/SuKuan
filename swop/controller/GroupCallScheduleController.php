@@ -19,18 +19,18 @@ class GroupCallScheduleController extends JController
 		$this->LIST_LIMIT = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
 	}
 
-	public function list($req)
+	public function list($ctx)
 	{
-		["session" => $session] = $req;
+		["session" => $session] = $ctx;
 		return DB::table("CallPlan")
 			->where("UserID", $session["choice"])
 			->orderBy("CallOutID", "desc")
 			->get();
 	}
 
-	public function detail($req)
+	public function detail($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		$result = DB::table("CallPlan")
 			->where("UserID", $post["userID"])
 			->where("CallOutID", $post["callOutID"])
@@ -54,9 +54,9 @@ class GroupCallScheduleController extends JController
 		}
 	}
 
-	public function create($req)
+	public function create($ctx)
 	{
-		["session" => $session, "post" => $post] = $req;
+		["session" => $session, "post" => $post] = $ctx;
 		$this->validate($post);
 		$this->service->valideCallPlanMaxLimit($session["choice"]);
 		if ($post["NumberMode"] == self::LIST) {
@@ -109,9 +109,9 @@ class GroupCallScheduleController extends JController
 		return true;
 	}
 
-	public function update($req)
+	public function update($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		return DB::table("CallPlan")
 			->where([
 				["UserID", $post["UserID"]],
@@ -128,9 +128,9 @@ class GroupCallScheduleController extends JController
 			]);
 	}
 
-	public function delete($req)
+	public function delete($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		DB::transaction(function () use ($post) {
 			foreach ($post["datas"] as $data) {
 				DB::table("CallPlan")->where("UserID", $data["UserID"])->where("CallOutID", $data["CallOutID"])->delete();

@@ -11,7 +11,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 class APIController extends JController
 {
 
-    public function getTaskRankingList($req)
+    public function getTaskRankingList($ctx)
     {
         $selectRaw = DB::raw("
             sum(cast(CallOutCDR.CallDuration as float)) as CallDuration,
@@ -21,19 +21,19 @@ class APIController extends JController
         $query = DB::table("CallOutCDR")
             ->leftJoin("SysUser", "CallOutCDR.UserID", "=", "SysUser.UserID")
             ->orderBy("CallOutCDR.UserID");
-        if (!empty($req["post"]["userID"])) {
-            $query->where("CallOutCDR.UserID", $req["post"]["userID"]);
+        if (!empty($ctx["post"]["userID"])) {
+            $query->where("CallOutCDR.UserID", $ctx["post"]["userID"]);
         } else {
-            $query->whereIn("CallOutCDR.UserID", $req["session"]["current_sub_emp"]);
+            $query->whereIn("CallOutCDR.UserID", $ctx["session"]["current_sub_emp"]);
         }
-        if (!empty($req["post"]["callStopBillingDate"])) {
-            $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$req["post"]["callStopBillingDate"] . "  23:59:59"]);
+        if (!empty($ctx["post"]["callStopBillingDate"])) {
+            $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$ctx["post"]["callStopBillingDate"] . "  23:59:59"]);
         }
-        if (!empty($req["post"]["callStartBillingDate"])) {
-            $query->whereRaw("cast((CallOutCDR.CallStopBillingDate+' '+CallOutCDR.CallStopBillingTime) as datetime) > ?", [$req["post"]["callStartBillingDate"] . " 00:00:00"]);
+        if (!empty($ctx["post"]["callStartBillingDate"])) {
+            $query->whereRaw("cast((CallOutCDR.CallStopBillingDate+' '+CallOutCDR.CallStopBillingTime) as datetime) > ?", [$ctx["post"]["callStartBillingDate"] . " 00:00:00"]);
         }
 
-        switch ($req["post"]["display_mode"]) {
+        switch ($ctx["post"]["display_mode"]) {
             case "0":
                 return $query
                     ->select("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName", $selectRaw)

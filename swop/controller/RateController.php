@@ -5,22 +5,22 @@ use Tightenco\Collect\Support\Collection;
 
 class RateController extends JController
 {
-    public function list($req)
+    public function list($ctx)
     {
         return DB::table("RateGroup")->select(["RateGroupID", "RateGroupName"])->where("UseState", "1")->orderBy("RateGroupID", "desc")->get();
     }
 
-    public function create($req)
+    public function create($ctx)
     {
         return DB::table("RateGroup")->insert([
-            "RateGroupID" => $req["post"]["RateGroupID"],
-            "RateGroupName" => $req["post"]["RateGroupName"],
+            "RateGroupID" => $ctx["post"]["RateGroupID"],
+            "RateGroupName" => $ctx["post"]["RateGroupName"],
         ]);
     }
 
-    public function createBatch($req)
+    public function createBatch($ctx)
     {
-        ["post" => $post] = $req;
+        ["post" => $post] = $ctx;
         return DB::table("RateGroup")->insert(
             collect($post["datas"])->map(function ($x) {
                 return [
@@ -31,16 +31,16 @@ class RateController extends JController
         );
     }
 
-    public function update($req)
+    public function update($ctx)
     {
-        return DB::table("RateGroup")->where("RateGroupID", $req["post"]["RateGroupID"])->update([
-            "RateGroupName" => $req["post"]["RateGroupName"],
+        return DB::table("RateGroup")->where("RateGroupID", $ctx["post"]["RateGroupID"])->update([
+            "RateGroupName" => $ctx["post"]["RateGroupName"],
         ]);
     }
 
-    public function delete($req)
+    public function delete($ctx)
     {
-        $reatGroupIDs = $req["post"]["RateGroupIDs"];
+        $reatGroupIDs = $ctx["post"]["RateGroupIDs"];
         if (count($reatGroupIDs) > 0) {
             DB::transaction(function () use ($reatGroupIDs) {
                 DB::table("RateGroup")->whereIn("RateGroupID", $reatGroupIDs)->delete();

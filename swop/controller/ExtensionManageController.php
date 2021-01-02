@@ -4,9 +4,9 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class ExtensionManageController extends JController
 {
-	private function buildWhere($db, $req)
+	private function buildWhere($db, $ctx)
 	{
-		["session" => $session, "post" => $post] = $req;
+		["session" => $session, "post" => $post] = $ctx;
 		if (!empty($post["UserID"])) {
 			$db->where("CustomerLists.UserID", $post["UserID"]);
 		}
@@ -20,10 +20,10 @@ class ExtensionManageController extends JController
 		return $db->whereIn("CustomerLists.UserID", $session["current_sub_emp"]);
 	}
 
-	public function list($req)
+	public function list($ctx)
 	{
 		return
-			$this->buildWhere(DB::table("CustomerLists"), $req)
+			$this->buildWhere(DB::table("CustomerLists"), $ctx)
 			->select(
 				'CustomerLists.UserID',
 				'CustomerLists.ExtName',
@@ -43,14 +43,14 @@ class ExtensionManageController extends JController
 			->leftJoin("RegisteredLogs", "CustomerLists.ExtensionNo", "=", "RegisteredLogs.CustomerNO")->get();
 	}
 
-	public function total($req)
+	public function total($ctx)
 	{
-		return $this->buildWhere(DB::table("CustomerLists"), $req)->count();
+		return $this->buildWhere(DB::table("CustomerLists"), $ctx)->count();
 	}
 
-	public function delete($req)
+	public function delete($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		if (!count($post["datas"])) {
 			throw new Exception("無資料");
 		}
@@ -73,9 +73,9 @@ class ExtensionManageController extends JController
 		return true;
 	}
 
-	public function detail($req)
+	public function detail($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		return
 			DB::table("CustomerLists as a")
 			->select("a.UserID", "a.ExtensionNo", "a.ExtName", "a.CustomerPwd", "a.StartRecorder", "a.Suspend", "a.UseState", "b.CalloutGroupID", "a.OffNetCli")
@@ -85,9 +85,9 @@ class ExtensionManageController extends JController
 			->first();
 	}
 
-	public function create($req)
+	public function create($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		$insertBody1 = collect(range($post["ExtensionNo"], $post["ExtensionNos"]))
 			->map(function ($x) use ($post) {
 				return [
@@ -119,9 +119,9 @@ class ExtensionManageController extends JController
 		return true;
 	}
 
-	public function update($req)
+	public function update($ctx)
 	{
-		["post" => $post, "session" => $session] = $req;
+		["post" => $post, "session" => $session] = $ctx;
 		$updateBody = [
 			"ExtName" => $post["ExtName"],
 			"CustomerPwd" => $post["CustomerPwd"],

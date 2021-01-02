@@ -9,28 +9,28 @@ class UserRouteController extends JController
 		$this->service = new UserRouteService("AsRouting");
 	}
 
-	public function list($req)
+	public function list($ctx)
 	{
-		return $this->service->list($req);
+		return $this->service->list($ctx);
 	}
 
-	public function create($req)
+	public function create($ctx)
 	{
-		return $this->service->create($req);
+		return $this->service->create($ctx);
 	}
 
-	public function update($req)
+	public function update($ctx)
 	{
-		return $this->service->update($req);
+		return $this->service->update($ctx);
 	}
 
-	public function delete($req)
+	public function delete($ctx)
 	{
-		return $this->service->delete($req);
+		return $this->service->delete($ctx);
 	}
 
-	public function createBatch($req)
+	public function createBatch($ctx)
 	{
-		return $this->service->createBatch($req);
+		return $this->service->createBatch($ctx);
 	}
 }

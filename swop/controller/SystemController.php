@@ -4,14 +4,14 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class SystemController extends JController
 {
-	public function bulletinBoardDetail($req)
+	public function bulletinBoardDetail($ctx)
 	{
 		return DB::table("BulletinBoard")->first();
 	}
 
-	public function bulletinBoardInsertOrUpdate($req)
+	public function bulletinBoardInsertOrUpdate($ctx)
 	{
-		["post" => $post] = $req;
+		["post" => $post] = $ctx;
 		$modify = [
 			"Content" => $post["Content"],
 			"Status" => $post["Status"] ?? 0,

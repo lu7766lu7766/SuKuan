@@ -16,10 +16,10 @@ class UserRouteService
     $this->tableName = $tableName;
   }
 
-  public function list($req)
+  public function list($ctx)
   {
     $db = DB::table($this->tableName);
-    ["session" => $session] = $req;
+    ["session" => $session] = $ctx;
     if (!$session["isRoot"]) {
       $db->where("UserID", $session["choice"]);
     }
@@ -39,9 +39,9 @@ class UserRouteService
     }
   }
 
-  public function create($req)
+  public function create($ctx)
   {
-    ["post" => $post] = $req;
+    ["post" => $post] = $ctx;
     $this->validate($post);
 
     if (
@@ -61,9 +61,9 @@ class UserRouteService
     ]);
   }
 
-  public function update($req)
+  public function update($ctx)
   {
-    ["post" => $post] = $req;
+    ["post" => $post] = $ctx;
     $this->validate($post);
 
     return DB::table($this->tableName)
@@ -79,18 +79,18 @@ class UserRouteService
       ]);
   }
 
-  public function delete($req)
+  public function delete($ctx)
   {
-    ["post" => $post] = $req;
+    ["post" => $post] = $ctx;
     return DB::table($this->tableName)
       ->where("UserID", $post["UserID"])
       ->where("PrefixCode", $post["PrefixCode"])
       ->delete();
   }
 
-  public function createBatch($req)
+  public function createBatch($ctx)
   {
-    ["post" => $post] = $req;
+    ["post" => $post] = $ctx;
     return DB::table($this->tableName)->insert(
       collect($post["datas"])->map(function ($x) {
         return [

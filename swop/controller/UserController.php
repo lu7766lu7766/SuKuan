@@ -9,9 +9,9 @@ use Tightenco\Collect\Support\Collection;
 
 class UserController extends JController
 {
-	public function echoPassword($req)
+	public function echoPassword($ctx)
 	{
-		$get = $req["get"];
+		$get = $ctx["get"];
 		$user = $get["user"];
 		$password = \lib\Hash::encode($get["password"]);
 
@@ -24,9 +24,9 @@ class UserController extends JController
 	/**
 	 * 使用者列表
 	 */
-	public function list($req)
+	public function list($ctx)
 	{
-		["session" => $session] = $req;
+		["session" => $session] = $ctx;
 		$db = DB::table("SysUser")
 			->select(
 				"UserID",
@@ -39,7 +39,7 @@ class UserController extends JController
 				DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
 			);
 		if (!$session["isRoot"]) {
-			$db = $db->whereIn("UserID", $req["session"]["current_sub_emp"]);
+			$db = $db->whereIn("UserID", $ctx["session"]["current_sub_emp"]);
 		}
 		return $db->get();
 	}
@@ -47,26 +47,26 @@ class UserController extends JController
 	/**
 	 * delete users
 	 */
-	public function delete($req)
+	public function delete($ctx)
 	{
 		return DB::table("SysUser")
-			->whereIn("UserID", $req["post"]["deleteUserID"])
+			->whereIn("UserID", $ctx["post"]["deleteUserID"])
 			->delete();
 	}
 
-	public function detail($req)
+	public function detail($ctx)
 	{
 		$userRepostory = new UserRepostory();
-		$user = $userRepostory->getDetail($req["post"]["userID"]);
+		$user = $userRepostory->getDetail($ctx["post"]["userID"]);
 		$user->UserPassword = \lib\Hash::decode($user->UserPassword);
 		$user->MenuList = explode(",", $user->MenuList);
 
 		return $user;
 	}
 
-	public function create($req)
+	public function create($ctx)
 	{
-		["post" => $post, "session" => $session] = $req;
+		["post" => $post, "session" => $session] = $ctx;
 		$this->validate($post);
 		$repo = new UserRepostory();
 		if ($repo->checkExists([$post["UserID"]])) {
@@ -110,9 +110,9 @@ class UserController extends JController
 		}
 	}
 
-	public function createBatch($req)
+	public function createBatch($ctx)
 	{
-		["post" => $post, "session" => $session] = $req;
+		["post" => $post, "session" => $session] = $ctx;
 		$repo = new UserRepostory();
 		if ($repo->checkExists(array_column($post["datas"], "UserID"))) {
 			throw new Exception("帳號有重複，無法新增。");
@@ -149,9 +149,9 @@ class UserController extends JController
 		return true;
 	}
 
-	public function update($req)
+	public function update($ctx)
 	{
-		["post" => $post, "session" => $session] = $req;
+		["post" => $post, "session" => $session] = $ctx;
 		$this->validate($post);
 		$repo = new UserRepostory();
 		if ($session["isRoot"]) {
@@ -208,9 +208,9 @@ class UserController extends JController
 		}
 	}
 
-	public function menus($req)
+	public function menus($ctx)
 	{
-		["session" => $session] = $req;
+		["session" => $session] = $ctx;
 		if ($session["isRoot"]) {
 			return Menu::getAllMenus();
 		} else if ($session["choice"] == $session["login"]["UserID"]) {
