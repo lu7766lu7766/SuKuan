@@ -216,17 +216,25 @@ class Router
      */
     public function matched($func, $context, $path)
     {
-        $funcResult = $func($context);
-        $funcResult = $this->procMiddleware($funcResult, $path);
+        $funcResult = $this->procMiddleware(
+            function () use ($func, $context) {
+                return $func($context);
+            },
+            $path
+        );
         echo $funcResult;
     }
 
-    public function procMiddleware($funcResult, $path)
+    public function procMiddleware($func, $path)
     {
         foreach ($this->map[$path]["middleware"] as $middleware) {
-            $funcResult = Middleware::$middleware($funcResult);
+            $func = Middleware::wrap($middleware, 
+                function () use ($func) {
+                    return $func();
+                }
+            );
         }
-        return $funcResult;
+        return $func();
     }
 
     /**
