@@ -15,7 +15,7 @@ class UserController extends JController
 		$user = $get["user"];
 		$password = \lib\Hash::encode($get["password"]);
 
-		ReturnMessage::success([
+		echo ReturnMessage::success([
 			"user" => $user,
 			"password" => $password
 		], JSON_UNESCAPED_SLASHES);

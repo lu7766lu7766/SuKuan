@@ -8,19 +8,17 @@ class ReturnMessage
 {
     static function success($data, $config = JSON_PRETTY_PRINT)
     {
-        self::print(0, $data, $config);
-        exit();
+        return self::format(0, $data, $config);
     }
 
     static function error($data, $config = JSON_PRETTY_PRINT)
     {
-        self::print(-1, $data, $config);
-        exit();
+        return self::format(-1, $data, $config);
     }
 
-    static function print($code, $data, $config)
+    static function format($code, $data, $config)
     {
-        echo json_encode([
+        return json_encode([
             "query" => getenv2("ENV") == "development" ? DB::getQueryLog() : null,
             "code" => $code,
             "data" => $data

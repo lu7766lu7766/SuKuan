@@ -2,9 +2,7 @@
 
 namespace comm;
 
-use setting\Config;
 use Exception;
-use lib\ReturnMessage;
 
 /**
  * Class Route
@@ -96,9 +94,11 @@ class Router
     }
 
     /** 尚未有功能 */
-    public function middleware($key)
+    public function middleware(...$keys)
     {
-        $this->map[$this->path]["middleware"][] = $key;
+        foreach ($keys as $key) {
+            $this->map[$this->path]["middleware"][] = $key;
+        }
         return $this;
     }
 
@@ -112,11 +112,11 @@ class Router
     public function procRoute()
     {
         if ($result = $this->checkedIsMatched()) {
-            [$params, $match, $method, $args] = $result;
+            [$params, $match, $method, $args, $path] = $result;
             $context = $this->buildContext($params, $match, $method, $args);
             /** @var callback $func */
             $func = $this->procFunc($args["callback"]);
-            $this->matched($func, $context);
+            $this->matched($func, $context, $path);
         } else {
             $this->notMatched();
         }
@@ -157,18 +157,18 @@ class Router
 
             $wheres = array_merge($pregvar, is_array($wheres) ? $wheres : []);
             /** 先將路徑全部加上跳脫字元，含頭尾 */
-            $path = "/" . strtr($path, ["/" => "\\/",]) . "/";
+            $tmpPath = "/" . strtr($tmpPath, ["/" => "\\/",]) . "/";
             foreach ($wheres as $var => $where) {
-                $path = strtr($path, ["{" . $var . "}" => "(" . $where . ")"]);
+                $tmpPath = strtr($tmpPath, ["{" . $var . "}" => "(" . $where . ")"]);
                 $params[$var] = "";
             }
             /** 取出所有的變數 */
-            preg_match($path, $this->requestUri, $match);
+            preg_match($tmpPath, $this->requestUri, $match);
 
             if ($len != count($match) - 1) {
                 continue;
             }
-            return [$params, $match, $method, $args];
+            return [$params, $match, $method, $args, $path];
         }
     }
 
@@ -214,13 +214,19 @@ class Router
     /**
      * route had matched
      */
-    public function matched($func, $context)
+    public function matched($func, $context, $path)
     {
-        try {
-            ReturnMessage::success($func($context));
-        } catch (Exception $err) {
-            ReturnMessage::error($err->getMessage());
-        };
+        $funcResult = $func($context);
+        $funcResult = $this->procMiddleware($funcResult, $path);
+        echo $funcResult;
+    }
+
+    public function procMiddleware($funcResult, $path)
+    {
+        foreach ($this->map[$path]["middleware"] as $middleware) {
+            $funcResult = Middleware::$middleware($funcResult);
+        }
+        return $funcResult;
     }
 
     /**
