@@ -53,8 +53,8 @@ class Route
         }
         self::$router->setPath($args[0]);
         self::$router->map[$args[0]] = [
-            'method' => $method,
-            'callback' => $args[1]
+            "method" => $method,
+            "callback" => $args[1]
         ];
 
         return self::$router;
@@ -99,54 +99,60 @@ class Router
     /** 尚未有功能 */
     public function middleware($key)
     {
-        $this->map[$this->path]["middleware"] = $key;
+        $this->map[$this->path]["middleware"][] = $key;
         return $this;
     }
 
-    /** 設定環境變數 */
+    /** 設定全域變數 */
     public function __construct()
     {
-        $this->requestUri = explode('?', str_replace(config("folder"), "/", $_SERVER['REQUEST_URI']))[0];
+        $this->requestUri = explode("?", str_replace(config("folder"), "/", $_SERVER["REQUEST_URI"]))[0];
         $this->base_hierarchy = explode("/", $this->requestUri);
     }
 
-    private $_isMatched = false;
-
     public function procRoute()
+    {
+        if ($result = $this->checkedIsMatched()) {
+            [$params, $match, $method, $args] = $result;
+            $context = $this->buildContext($params, $match, $method, $args);
+            /** @var callback $func */
+            $func = $this->procFunc($args["callback"]);
+            $this->matched($func, $context);
+        } else {
+            $this->notMatched();
+        }
+    }
+
+    public function checkedIsMatched()
     {
         /** 開始mapping */
         foreach ($this->map as $path => $args) {
-            if ($this->_isMatched) {
-                break;
-            }
-
             /** 路徑長度檢測 */
-            if (count($this->base_hierarchy) != count(explode('/', $path))) continue;
+            if (count($this->base_hierarchy) != count(explode("/", $path))) continue;
 
-
-            $method = $args['method'];
+            $method = $args["method"];
             /** method檢測，any沒有檢查必要 */
             if (
                 $method !== Method::ANY &&
-                !($_SERVER['REQUEST_METHOD'] === Method::POST && $_POST["_method"] === strtoupper($method) || // delete or put
-                    $_SERVER['REQUEST_METHOD'] === $method) // get or post
+                !($_SERVER["REQUEST_METHOD"] === Method::POST && $_POST["_method"] === strtoupper($method) || // delete or put
+                    $_SERVER["REQUEST_METHOD"] === $method) // get or post
             ) {
                 continue;
             }
 
             $pregvar = [];
-            $req = [];
+            $params = [];
             $len = 0;
-            $wheres = $args['where'];
+            $wheres = $args["where"];
 
             /** 找到所有的變數名稱 */
             $tmpPath = $path;
-            preg_match_all('/\/{([a-zA-Z0-9]+)}/', $tmpPath, $match);
+            preg_match_all("/\/{([a-zA-Z0-9]+)}/", $tmpPath, $match);
 
             if ($match) {
                 $len = count($match[1]);
                 for ($i = 0; $i < $len; $i++) {
-                    $pregvar[$match[1][$i]] = '[^\/]+';
+                    $pregvar[$match[1][$i]] = "[^\/]+";
                 }
             }
 
@@ -154,62 +160,68 @@ class Router
             /** 先將路徑全部加上跳脫字元，含頭尾 */
             $path = "/" . strtr($path, ["/" => "\\/",]) . "/";
             foreach ($wheres as $var => $where) {
-                $path = strtr($path, ['{' . $var . '}' => '(' . $where . ')']);
-                $req[$var] = '';
+                $path = strtr($path, ["{" . $var . "}" => "(" . $where . ")"]);
+                $params[$var] = "";
             }
             /** 取出所有的變數 */
             preg_match($path, $this->requestUri, $match);
 
-            if ($len == count($match) - 1) {
-
-                array_shift($match);
-                foreach ($req as $var => $val) {
-                    $val = array_shift($match);
-                    $req[$var] = $val;
-                }
-                /** 取method變數 */
-                switch ($method) {
-                    case Method::GET:
-                        $data["get"] = $this->collectMethod(Method::GET);
-                        break;
-                    case Method::POST:
-                    case Method::PUT:
-                    case Method::DELETE:
-                        $data["post"] = $this->collectMethod(Method::POST);
-                        break;
-                    case Method::ANY:
-                        $data["get"] = $this->collectMethod(Method::GET);
-                        $data["post"] = $this->collectMethod(Method::POST);
-                        break;
-                }
-                /** 塞入共用變數 */
-                $controller = config("default_controller");
-                $action = config("default_action");
-                if (is_string($args['callback']) && strpos($args['callback'], "@") !== false) {
-                    list($controller, $action) = explode("@", $args['callback']);
-                }
-                $data['submit_link'] = config('folder') . $controller . "/" . $action;
-                $data["controller"] = $controller;
-                $data["action"] = $action;
-                $data["top_layout"] = "shared/top.php";
-                $data["layout"] = $action;
-                $data["bottom_layout"] = "shared/bottom.php";
-                $data["params"] = $req;
-                $data["session"] = $_SESSION[config('folder')];
-
-                /** @var callback $func */
-                $func = $this->procFunc($args['callback']);
-                try {
-                    ReturnMessage::success($func($data));
-                } catch (Exception $err) {
-                    ReturnMessage::error($err->getMessage());
-                };
-                $this->_isMatched = true;
-                break;
+            if ($len != count($match) - 1) {
+                continue;
             }
+            return [$params, $match, $method, $args];
         }
-        // return true;
-        $this->notMatched();
+    }
+
+    public function buildContext($params, $match, $method, $args)
+    {
+        array_shift($match);
+        foreach ($params as $var => $val) {
+            $val = array_shift($match);
+            $params[$var] = $val;
+        }
+        /** 取method變數 */
+        switch ($method) {
+            case Method::GET:
+                $context["get"] = $this->collectMethod(Method::GET);
+                break;
+            case Method::POST:
+            case Method::PUT:
+            case Method::DELETE:
+                $context["post"] = $this->collectMethod(Method::POST);
+                break;
+            case Method::ANY:
+                $context["get"] = $this->collectMethod(Method::GET);
+                $context["post"] = $this->collectMethod(Method::POST);
+                break;
+        }
+        /** 塞入共用變數 */
+        $controller = config("default_controller");
+        $action = config("default_action");
+        if (is_string($args["callback"]) && strpos($args["callback"], "@") !== false) {
+            list($controller, $action) = explode("@", $args["callback"]);
+        }
+        $context["submit_link"] = config("folder") . $controller . "/" . $action;
+        $context["controller"] = $controller;
+        $context["action"] = $action;
+        $context["top_layout"] = "shared/top.php";
+        $context["layout"] = $action;
+        $context["bottom_layout"] = "shared/bottom.php";
+        $context["params"] = $params;
+        $context["session"] = $_SESSION[config("folder")];
+        return $context;
+    }
+
+    /**
+     * route had matched
+     */
+    public function matched($func, $context)
+    {
+        try {
+            ReturnMessage::success($func($context));
+        } catch (Exception $err) {
+            ReturnMessage::error($err->getMessage());
+        };
     }
 
     /**
@@ -219,7 +231,7 @@ class Router
     {
         // 因為是/開頭，所以第一個元素是null，走路徑要先移掉
         array_shift($this->base_hierarchy);
-        $filePath = config('controller_dir') . $this->base_hierarchy[0] . ".php";
+        $filePath = config("controller_dir") . $this->base_hierarchy[0] . ".php";
         $store_pos = 2;
 
         if (file_exists($filePath)) // 驗證 controller 是否存在
@@ -227,12 +239,12 @@ class Router
             $controller = $this->base_hierarchy[0];
         } else {
             $controller = config("default_controller");
-            $filePath = config('controller_dir') . config("default_controller") . ".php";
+            $filePath = config("controller_dir") . config("default_controller") . ".php";
             $store_pos--;
         }
         $controller_class = $controller . "_Controller";
         require_once $filePath;
-        $swop = new $controller_class(); 
+        $swop = new $controller_class();
 
         if (isset($this->base_hierarchy[1]) && method_exists($swop, $this->base_hierarchy[1])) //驗證 controller 與 action 是否存在
         {
@@ -243,12 +255,12 @@ class Router
             $store_pos--;
         }
 
-        $data['submit_link'] = config('folder') . $controller . "/" . $action;
-        $data["controller"] = $controller;
-        $data["action"] = $action;
-        $data["top_layout"] = "shared/top.php";
-        $data["layout"] = $action;
-        $data["bottom_layout"] = "shared/bottom.php";
+        $context["submit_link"] = config("folder") . $controller . "/" . $action;
+        $context["controller"] = $controller;
+        $context["action"] = $action;
+        $context["top_layout"] = "shared/top.php";
+        $context["layout"] = $action;
+        $context["bottom_layout"] = "shared/bottom.php";
         $a_get = [];
         $len = count($this->base_hierarchy);
         for ($i = $store_pos; $i < $len; $i += 2) {
@@ -259,13 +271,13 @@ class Router
         foreach ($_GET as $key => $val) {
             $a_get[$key] = $val;
         }
-        $data["get"] = $a_get;
+        $context["get"] = $a_get;
         $a_post = [];
         foreach ($_POST as $key => $val) {
             $a_post[$key] = $val;
         }
-        $data["post"] = $a_post;
-        $swop->getData($data);
+        $context["post"] = $a_post;
+        $swop->getData($context);
 
         $swop->{$action}();
     }
@@ -280,9 +292,9 @@ class Router
         if (is_callable($arg)) {
             return $arg;
         } else if (is_string($arg)) {
-            $map = explode('@', $arg);
+            $map = explode("@", $arg);
 
-            $file_path = dirname(__DIR__) . "/" . config('controller') . $map[0] . ".php";
+            $file_path = dirname(__DIR__) . "/" . config("controller") . $map[0] . ".php";
 
             if (file_exists($file_path)) {
                 require_once($file_path);
@@ -335,9 +347,9 @@ class Router
 
 class Method
 {
-    const  ANY = 'ANY';
-    const  GET = 'GET';
-    const  POST = 'POST';
-    const  PUT = 'PUT';
-    const  DELETE = 'DELETE';
+    const  ANY = "ANY";
+    const  GET = "GET";
+    const  POST = "POST";
+    const  PUT = "PUT";
+    const  DELETE = "DELETE";
 }
