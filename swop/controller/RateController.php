@@ -1,20 +1,20 @@
 <?php
 
 use Illuminate\Database\Capsule\Manager as DB;
-use Tightenco\Collect\Support\Collection;
 
 class RateController extends JController
 {
-    public function list($ctx)
+    public function list()
     {
         return DB::table("RateGroup")->select(["RateGroupID", "RateGroupName"])->where("UseState", "1")->orderBy("RateGroupID", "desc")->get();
     }
 
     public function create($ctx)
     {
+        ["post" => $post] = $ctx;
         return DB::table("RateGroup")->insert([
-            "RateGroupID" => $ctx["post"]["RateGroupID"],
-            "RateGroupName" => $ctx["post"]["RateGroupName"],
+            "RateGroupID" => $post["RateGroupID"],
+            "RateGroupName" => $post["RateGroupName"],
         ]);
     }
 
@@ -33,14 +33,16 @@ class RateController extends JController
 
     public function update($ctx)
     {
-        return DB::table("RateGroup")->where("RateGroupID", $ctx["post"]["RateGroupID"])->update([
-            "RateGroupName" => $ctx["post"]["RateGroupName"],
+        ["post" => $post] = $ctx;
+        return DB::table("RateGroup")->where("RateGroupID", $post["RateGroupID"])->update([
+            "RateGroupName" => $post["RateGroupName"],
         ]);
     }
 
     public function delete($ctx)
     {
-        $reatGroupIDs = $ctx["post"]["RateGroupIDs"];
+        ["post" => $post] = $ctx;
+        $reatGroupIDs = $post["RateGroupIDs"];
         if (count($reatGroupIDs) > 0) {
             DB::transaction(function () use ($reatGroupIDs) {
                 DB::table("RateGroup")->whereIn("RateGroupID", $reatGroupIDs)->delete();
