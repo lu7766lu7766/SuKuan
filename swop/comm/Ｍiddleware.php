@@ -21,7 +21,7 @@ class Middleware
     } else {
       $next = $this->next;
       $this->next = function () use ($key, $next) {
-        return $this->map[$key]::handle($next);
+        return (new $this->map[$key])->handle($next);
       };
     }
   }

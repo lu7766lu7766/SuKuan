@@ -7,7 +7,7 @@ use \Exception;
 
 class Api
 {
-  static function handle($next)
+  function handle($next)
   {
     try {
       return ReturnMessage::success($next());
