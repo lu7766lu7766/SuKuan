@@ -2,36 +2,32 @@
 
 namespace comm;
 
-use \lib\ReturnMessage;
-use \Exception;
-
 class Middleware
 {
-  function api($next)
+  public function __construct()
   {
-    try {
-      return ReturnMessage::success($next());
-    } catch (Exception $err) {
-      return ReturnMessage::error($err->getMessage());
+    $this->next = function () {
     };
   }
 
-  function use($fn)
+  private $map = [
+    "api" => \middleware\Api::class
+  ];
+
+  function use($key)
   {
-    if (!$this->next) {
-      $this->next = function () {
+    if ($key instanceof \Closure) {
+      $this->next = $key;
+    } else {
+      $next = $this->next;
+      $this->next = function () use ($key, $next) {
+        return $this->map[$key]::handle($next);
       };
     }
-    $next = $this->next;
-    $this->next = function () use ($fn, $next) {
-      return $fn($next);
-    };
   }
 
   function go()
   {
-    if ($this->next) {
-      return ($this->next)();
-    }
+    return ($this->next)();
   }
 }

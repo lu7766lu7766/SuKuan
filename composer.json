@@ -20,7 +20,8 @@
 			"swop/comm",
 			"swop/library",
 			"swop/repostory/",
-			"swop/service/"
+			"swop/service/",
+			"swop/middleware/"
 		],
 		"files": [
 			"swop/setting/config.php",

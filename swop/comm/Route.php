@@ -226,10 +226,8 @@ class Router
         $middleware->use(function () use ($func, $context) {
             return $func($context);
         });
-        foreach ($this->map[$path]["middleware"] as $middlewareMethod) {
-            $middleware->use(function ($next) use ($middleware, $middlewareMethod) {
-                return $middleware->$middlewareMethod($next);
-            });
+        foreach ($this->map[$path]["middleware"] as $middlewareKey) {
+            $middleware->use($middlewareKey);
         }
         return $middleware->go();
     }
