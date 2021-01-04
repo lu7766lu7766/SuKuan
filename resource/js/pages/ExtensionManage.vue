@@ -87,7 +87,11 @@
         <Switcher disabled on="0" off="1" :value="data.Suspend" />
       </template>
       <template v-slot:ETime="{ data }">
-        <Switcher disabled :value="moment(data.ETime).isAfter(moment())" />
+        <Switcher
+          disabled
+          :on="true"
+          :value="moment(data.ETime).isAfter(moment()).toString()"
+        />
       </template>
       <template v-slot:UseState="{ data }">
         <Switcher v-if="canSwitchExtension" disabled :value="data.UseState" />
