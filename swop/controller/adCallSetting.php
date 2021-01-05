@@ -29,7 +29,7 @@ class AdCallSetting_Controller extends JController
      */
     private function getVoiceFileList()
     {
-        return lib\VoiceRecord::getFilesName($this->model->session["choice"]);
+        return lib\VoiceRecord::getFilesName(session("choice"));
     }
 
     /**
@@ -70,7 +70,7 @@ class AdCallSetting_Controller extends JController
      */
     public function downloadVoiceFile()
     {
-        $filePath = config("voiceManage") . $this->model->session['choice'] . "/" . $this->model->fileName;
+        $filePath = config("voiceManage") . session("choice") . "/" . $this->model->fileName;
         if (file_exists($filePath)) {
             $this->downloadFile($filePath);
         } else {
@@ -162,7 +162,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCalledCount()
     {
         $this->model->getDownloadCalledCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     /**
@@ -172,7 +172,7 @@ class AdCallSetting_Controller extends JController
     {
         $this->model->getDownloadWaitCall();
         // echo json_encode($this->model->data);
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     /**
@@ -181,7 +181,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCalloutCount()
     {
         $this->model->getDownloadCalloutCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     /**
@@ -190,7 +190,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCallConCount()
     {
         $this->model->getDownloadCallConCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     /**
@@ -199,7 +199,7 @@ class AdCallSetting_Controller extends JController
     public function downloadUnRecieveWaitCall()
     {
         $this->model->getDownloadUnRecieveWaitCall();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     /**
@@ -208,7 +208,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCallUnavailable()
     {
         $this->model->getDownloadCallUnavailable();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{$this->model->session["choice"]}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -227,16 +227,16 @@ class AdCallSetting_Controller extends JController
 
         $this->model->getAdCommunicationSearch();
         //echo json_encode($this->model->data);
-        $this->exportExcel("AdCommunication_" . $this->model->session["choice"] . ".xls");
+        $this->exportExcel("AdCommunication_" . session("choice") . ".xls");
         $title = ["ID", "目的碼", "撥打時間", "接通時間", "掛斷時間", "通話秒數", "按鍵", "傳真"];
         $colspans = count($title);
-//        $title = array_map(function ($data) {
-//            return iconv("UTF-8","Big5",$data);
-//        }, $title);
-//        echo join("\t",$title)."\n";
-//        array_map(function ($data, $index) {
-//            echo join("\t",[$index+1,  "=T(\"{$data['OrgCalledId']}\")" , $data['CalledCalloutDate'], $data[CallStartBillingDateTime], $data[CallLeaveDateTime], $data[CallDuration]])."\n";
-//        }, $this->model->data, array_keys($this->model->data));
+        //        $title = array_map(function ($data) {
+        //            return iconv("UTF-8","Big5",$data);
+        //        }, $title);
+        //        echo join("\t",$title)."\n";
+        //        array_map(function ($data, $index) {
+        //            echo join("\t",[$index+1,  "=T(\"{$data['OrgCalledId']}\")" , $data['CalledCalloutDate'], $data[CallStartBillingDateTime], $data[CallLeaveDateTime], $data[CallDuration]])."\n";
+        //        }, $this->model->data, array_keys($this->model->data));
         $html = "
         <html>
             <head>
@@ -245,12 +245,13 @@ class AdCallSetting_Controller extends JController
             <body>
                 <table border=\"1\">";
         $html .= "<tr>" . join("", array_map(function ($data) {
-                return "<th>" . $data . "</th>";
-            }, $title)) . "</tr>";
+            return "<th>" . $data . "</th>";
+        }, $title)) . "</tr>";
         $html .= join("", array_map(function ($data, $index) {
             return
                 "<tr>" .
-                join("",
+                join(
+                    "",
                     array_map(
                         function ($subData) {
                             return "<td>" . $subData . "</td>";

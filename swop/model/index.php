@@ -32,14 +32,14 @@ class Index_Model extends JModel
         $times = 300;
         while ($times-- > 0) {
             $sql = "select * from SysUser;select * from SysUser;";
-            $params = [$this->session["choice"]];
+            $params = [session("choice")];
             print_r($dba->getAll($sql));
             $sql = "select MaxRoutingCalls, MaxCalls, CallWaitingTime, Suspend from SysUser with (nolock) where UserID=?;
 
                 select count(1) as totalCalls
                 from CustomerLists as a WITH (NOLOCK)
                 left join RegisteredLogs as c WITH (NOLOCK) on a.ExtensionNo=c.CustomerNO
-                where a.UserID='{$this->session['choice']}' AND
+                where a.UserID='{session("choice")}' AND
                 c.ETime > GETDATE() and
                 c.ETime is not null;
 
@@ -54,5 +54,3 @@ class Index_Model extends JModel
         }
     }
 }
-
-?>

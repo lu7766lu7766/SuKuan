@@ -12,9 +12,11 @@ class DownloadFile_Model extends JModel
             $emps[] = $user["UserID"];
         }
         $db = DB::table('CallOutCDR')->select('UserID', 'CallStartBillingDate', 'RecordFile');
-        $db->whereBetween('cast(CallStartBillingDate as datetime)',
-            [$this->callStartBillingDate, $this->callStopBillingDate]);
-//        $db->andWhere('RecordFile', '<>', '');
+        $db->whereBetween(
+            'cast(CallStartBillingDate as datetime)',
+            [$this->callStartBillingDate, $this->callStopBillingDate]
+        );
+        //        $db->andWhere('RecordFile', '<>', '');
         $db->addRaw("and RecordFile <> ''");
         $db->whereIn('UserID', $emps);
         if (!empty($this->extensionNo)) {
@@ -28,17 +30,17 @@ class DownloadFile_Model extends JModel
         }
         $result = $db->get();
         if (!count($result)) {
-            $this->warning = "條件範圍，找不到任何資料！！";//$dba->mergeSQL($sql,$params).
+            $this->warning = "條件範圍，找不到任何資料！！"; //$dba->mergeSQL($sql,$params).
             return;
         }
         //include_once config("comm_dir")."phpzip.php";
         //$zip = new PHPZip("test.zip");
-        //$tmpFolder = "tmp/".$this->session["choice"]."/";
+        //$tmpFolder = "tmp/".session("choice")."/";
         //@mkdir("tmp");
         //$this->delete_files($tmpFolder);
         //@mkdir($tmpFolder);
         //@mkdir("download");
-        $this->targetFile = $this->session["choice"] . "RecordFile.zip";
+        $this->targetFile = session("choice") . "RecordFile.zip";
         $zip = new ZipArchive();
         if ($zip->open($this->targetFile, ZIPARCHIVE::CREATE) !== true) {
             throw new \Exception("Cannot open <$this->targetFile>\n", 500);
@@ -53,7 +55,7 @@ class DownloadFile_Model extends JModel
                 //copy($filePath,$tmpFolder.$fileName);
                 //$zip->addFile($tmpFolder.$fileName, basename($fileName));
                 $zip->addFile($filePath, basename($fileName));
-//				$zip->setCompressionIndex($file_count, ZipArchive::CM_STORE); // 不壓縮，但時間好像沒什麼差
+                //				$zip->setCompressionIndex($file_count, ZipArchive::CM_STORE); // 不壓縮，但時間好像沒什麼差
                 $file_count++;
             }
         }

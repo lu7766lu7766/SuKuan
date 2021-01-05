@@ -5,7 +5,7 @@ class SysSweep_Model extends JModel
     public function sweepStatus()
     {
         $dba = $this->dba;
-        $params = [$this->session["choice"]];
+        $params = [session("choice")];
         $sql = "select
                   MaxRoutingCalls, MaxSearchCalls, SearchSuspend, SearchAutoStartTime, SearchAutoStopTime,
                   MaxRegularCalls, MaxCalls
@@ -26,7 +26,7 @@ class SysSweep_Model extends JModel
     public function getAjaxSweepStatusContent()
     {
         $dba = $this->dba;
-        $params = [$this->session["choice"]];
+        $params = [session("choice")];
         $sql = "select
                   UserID, CallOutID, StartDateTime, StartCalledNumber,
                   StartDateTime,CalledCount, RunTimeCount,
@@ -37,10 +37,10 @@ class SysSweep_Model extends JModel
                 order by CallOutID desc";
         $this->data3 = $dba->getAll($sql, $params);
         $this->waitExtensionNoCount = $dba->getAll("
-            SELECT count(*) as count from CallState WHERE CallDuration>0 AND (ExtensionNo is NULL OR ExtensionNo='' ) AND UserID='{$this->session["choice"]}';
+            SELECT count(*) as count from CallState WHERE CallDuration>0 AND (ExtensionNo is NULL OR ExtensionNo='' ) AND UserID='".session("choice")."';
         ")[0]["count"];
         $this->extensionNoCount = $dba->getAll("
-            SELECT count(*) as count from CallState WHERE CallDuration>0 AND (ExtensionNo is not NULL OR ExtensionNo<>'' )  AND UserID='{$this->session["choice"]}';
+            SELECT count(*) as count from CallState WHERE CallDuration>0 AND (ExtensionNo is not NULL OR ExtensionNo<>'' )  AND UserID='".session("choice")."';
         ")[0]["count"];
         $sql = "select Balance
                    from SysUser with (nolock)
@@ -130,7 +130,7 @@ class SysSweep_Model extends JModel
         return $dba->exec($sql, $params);
     }
 
-    public function getDownloadCallUnavailable()//無效
+    public function getDownloadCallUnavailable() //無效
     {
         $sql = "select CalledNumber from SearchNumberList where CallResult='1' and CallOutID=?";
         $this->createFile($sql, [$this->callOutId]);
@@ -145,7 +145,7 @@ class SysSweep_Model extends JModel
             $data[] = $val["CalledNumber"];
         }
         $txt = join("\r\n", $data);
-        $this->fileName = date("Y-m-d", time()) . "_{$this->session['choice']}{$suffix}.txt";
+        $this->fileName = date("Y-m-d", time()) . "_".session("choice")."{$suffix}.txt";
         $this->filePath = "download/" . $this->fileName;
         @mkdir(config("download"));
         @mkdir(config("sweep"));
@@ -155,13 +155,13 @@ class SysSweep_Model extends JModel
         $this->delTreePrefix(config("sweep"), $pastMonth);
     }
 
-    public function getDownloadCallAvailable()//有效
+    public function getDownloadCallAvailable() //有效
     {
         $sql = "select CalledNumber from SearchNumberList where CallResult='2' and CallOutID=?";
         $this->createFile($sql, [$this->callOutId]);
     }
 
-    public function getDownloadCallConCount()//接通
+    public function getDownloadCallConCount() //接通
     {
         $sql = "select CalledNumber from SearchNumberList where CallResult='3' and CallOutID=?";
         $this->createFile($sql, [$this->callOutId]);

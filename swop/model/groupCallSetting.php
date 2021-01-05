@@ -14,30 +14,33 @@ class GroupCallSetting_Model extends JModel
         $this->list_limit = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
     }
 
-    private function getCallPlanCount() {
+    private function getCallPlanCount()
+    {
         return DB::table('CallPlan')
             ->select('count(1) as count')
-            ->where('UserID', $this->session["choice"])
+            ->where('UserID', session("choice"))
             ->get()[0]["count"];
     }
 
     public function getEffectiveNumber()
     {
         $this->searchNumber = preg_replace("/\?/", "_", $this->searchNumber);
-//        if($this->countryCode==0) // taiwan
-//        {
-//            $result = $this->dba->getAll("select DISTINCT OrgCalledId as number from CalloutCDR with (nolock) where OrgCalledId like ? and CallBill='1';",
-//                [$this->searchNumber]);
-//        }
-//        else if($this->countryCode==1)//china
-//        {
-//        }
+        //        if($this->countryCode==0) // taiwan
+        //        {
+        //            $result = $this->dba->getAll("select DISTINCT OrgCalledId as number from CalloutCDR with (nolock) where OrgCalledId like ? and CallBill='1';",
+        //                [$this->searchNumber]);
+        //        }
+        //        else if($this->countryCode==1)//china
+        //        {
+        //        }
         $dba2 = new DBA();
         $dba2->dbHost = "125.227.84.247";
         $dba2->dbName = "NumberCollector";
         $dba2->connect();
-        $result = $dba2->getAll("select DISTINCT CalledNumber as number from AllNumberList with (nolock) where CalledNumber like ? and CallResult in ('2','3');",
-            [$this->searchNumber]);
+        $result = $dba2->getAll(
+            "select DISTINCT CalledNumber as number from AllNumberList with (nolock) where CalledNumber like ? and CallResult in ('2','3');",
+            [$this->searchNumber]
+        );
         if (count($result) > $this->phone_limit) {
             echo json_encode(["len" => -1, "status" => -1,]);
             return;
@@ -60,22 +63,22 @@ class GroupCallSetting_Model extends JModel
     {
         $list = is_string($list) ? explode(",", $list) : $list;
         $len = count($list);
-        $callOutID = DB::table('CallPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"];//確保寫入numberList的calloutid是唯一值
+        $callOutID = DB::table('CallPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"]; //確保寫入numberList的calloutid是唯一值
         $callOutID = empty($callOutID) ? "1" : $callOutID;
         DB::table('CallPlan')->insert([
-            'UserID'            => $this->session["choice"],
+            'UserID'            => session("choice"),
             'PlanName'          => $list[0],
             'StartCalledNumber' => $list[0],
             'CalledCount'       => $len,
             'CallerPresent'     => 1,
             'CallerID'          => '',
             'CalloutGroupID'    => 1, //座群
-            'Calldistribution'  => 1,//自動均配
-            'CallProgressTime'  => 20,//撥出電話等待秒數
-            'ExtProgressTime'   => 15,//轉分機等待秒數
-            'UseState'          => 0,//$this->useState??
-            'ConcurrentCalls'   => 10,//自動撥號速度
-            'NumberMode'        => 1,//名單上傳
+            'Calldistribution'  => 1, //自動均配
+            'CallProgressTime'  => 20, //撥出電話等待秒數
+            'ExtProgressTime'   => 15, //轉分機等待秒數
+            'UseState'          => 0, //$this->useState??
+            'ConcurrentCalls'   => 10, //自動撥號速度
+            'NumberMode'        => 1, //名單上傳
             'CallOutID'         => $callOutID
         ])->exec();
         while ($len-- > 0) {
@@ -91,17 +94,21 @@ class GroupCallSetting_Model extends JModel
         $this->searchNumber = preg_replace("/\?/", "_", $this->searchNumber);
         if ($this->countryCode == "0") // taiwan
         {
-            $result = $this->dba->getAll("select DISTINCT OrgCalledId as number from CalloutCDR with (nolock) where OrgCalledId like ? and CallBill='1';",
-                [$this->searchNumber]);
+            $result = $this->dba->getAll(
+                "select DISTINCT OrgCalledId as number from CalloutCDR with (nolock) where OrgCalledId like ? and CallBill='1';",
+                [$this->searchNumber]
+            );
         } else {
-            if ($this->countryCode == "1")//china
+            if ($this->countryCode == "1") //china
             {
                 $dba2 = new DBA();
                 $dba2->dbHost = "125.227.84.247";
                 $dba2->dbName = "NumberCollector";
                 $dba2->connect();
-                $result = $dba2->getAll("select DISTINCT CalledNumber as number from AllNumberList with (nolock) where CalledNumber like ? and CallResult in ('2','3');",
-                    [$this->searchNumber]);
+                $result = $dba2->getAll(
+                    "select DISTINCT CalledNumber as number from AllNumberList with (nolock) where CalledNumber like ? and CallResult in ('2','3');",
+                    [$this->searchNumber]
+                );
             }
         }
         if (count($result) > $this->phone_limit) {
@@ -111,7 +118,8 @@ class GroupCallSetting_Model extends JModel
         echo json_encode(["data" => $result, "status" => 0, "country" => $this->countryCode]);
     }
 
-    private function checkCallPlanCount() {
+    private function checkCallPlanCount()
+    {
         if (($this->getCallPlanCount() + 1) > $this->list_limit) {
             $this->warning = "排程不得超過{$this->list_limit}筆";
             return false;
@@ -119,13 +127,14 @@ class GroupCallSetting_Model extends JModel
         return true;
     }
 
-    private function postEffectiveGroupCall($result) {
-        if (!$this->checkCallPlanCount()) return ;
+    private function postEffectiveGroupCall($result)
+    {
+        if (!$this->checkCallPlanCount()) return;
         $numbers = array_splice($result, 0, $this->phone_limit);
-        $callOutID = DB::table('CallPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"];//確保寫入numberList的calloutid是唯一值
+        $callOutID = DB::table('CallPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"]; //確保寫入numberList的calloutid是唯一值
         $callOutID = empty($callOutID) ? "1" : $callOutID;
         DB::table('CallPlan')->insert([
-            'UserID'            => $this->session["choice"],
+            'UserID'            => session("choice"),
             'PlanName'          => $this->planName,
             'StartCalledNumber' => $numbers[0],
             'EndCalledNumber'   => end($numbers),
@@ -154,5 +163,3 @@ class GroupCallSetting_Model extends JModel
             : $this;
     }
 }
-
-?>

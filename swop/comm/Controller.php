@@ -44,17 +44,17 @@ class Controller
         }
         //            $this->redirect(config("default_controller")."/".config("default_action"));
         if ($controller != config("default_controller")) {
-            if ($this->checkLogin && !$this->model->session["login"]) {
+            if ($this->checkLogin && !session("login")) {
                 $this->redirect($this->defaultUrl);
             }
         }
-        if (is_array($this->model->session["model"])) {
-            foreach ($this->model->session["model"] as $key => $val) {
+        if (is_array(session("model"))) {
+            foreach (session("model") as $key => $val) {
                 if (isset($key) && isset($val)) {
                     $this->model->$key = $val;
                 }
             }
-            $this->model->session["model"] = null;
+            session("model", null);
         }
         $action = $this->action;
         if (method_exists($this->model, $action)) {
@@ -64,7 +64,7 @@ class Controller
 
     public function redirect($url = "", $model = [])
     {
-        $this->model->session["model"] = $model;
+        session("model", $model);
         if (!$url) {
             $url = $this->defaultUrl;
         }

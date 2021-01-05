@@ -8,20 +8,18 @@ class MemberInfo_Model extends JModel
     public function getMemberList()
     {
         $this->page = (!empty($this->page) ? $this->page : 0);
-        $limit = $this->per_page = (!empty($this->per_page)? $this->per_page: 100);
+        $limit = $this->per_page = (!empty($this->per_page) ? $this->per_page : 100);
         $offset = $this->page * $this->per_page + 1;
 
-        $sub_emps = [$this->session['choice']];
-        $emps = $this->getSubEmp($this->session["choice"]);
-        foreach($emps as $user)
-        {
+        $sub_emps = [session("choice")];
+        $emps = $this->getSubEmp(session("choice"));
+        foreach ($emps as $user) {
             $sub_emps[] = $user["UserID"];
         }
 
         $query = DB::table('MemberList')->select('ID', 'LastName', 'FirstName', 'Cellphone', 'Telephone', 'City', 'Address');
         $query2 = DB::table('MemberList')->select('count(1) as count');
-        if(!empty($this->search))
-        {
+        if (!empty($this->search)) {
             $where = [
                 ['LastName', 'like', "%$this->search%"],
                 ['FirstName', 'like', "%$this->search%"],
@@ -57,8 +55,7 @@ class MemberInfo_Model extends JModel
     public function deleteMemberList()
     {
         $ids = $this->ids;
-        if (count($ids))
-        {
+        if (count($ids)) {
             DB::table('MemberList')->delete()->whereIn('ID', $ids)->exec();
             DB::table('MemberCustom')->delete()->whereIn('MemberID', $ids)->exec();
         }
@@ -73,11 +70,10 @@ class MemberInfo_Model extends JModel
             'Telephone' => $this->Telephone,
             'City' => $this->City,
             'Address' => $this->Address,
-            'UserID' => $this->session['choice']
+            'UserID' => session("choice")
         ])->insertID();
         $custInsert = [];
-        foreach($this->CustomName as $index => $value)
-        {
+        foreach ($this->CustomName as $index => $value) {
             $custInsert[] = [
                 'MemberID' => $member_id,
                 'Name' => $this->CustomName[$index],
@@ -99,8 +95,7 @@ class MemberInfo_Model extends JModel
         ])->where('ID', $this->ID)->exec();
         $stmt1 = DB::table('MemberCustom')->delete()->where('MemberID', $this->ID)->exec();
         $custInsert = [];
-        foreach($this->CustomName as $index => $value)
-        {
+        foreach ($this->CustomName as $index => $value) {
             $custInsert[] = [
                 'MemberID' => $this->ID,
                 'Name' => $this->CustomName[$index],
@@ -111,5 +106,3 @@ class MemberInfo_Model extends JModel
         return $stmt0 && $stmt1 && $stmt2;
     }
 }
-
-?>

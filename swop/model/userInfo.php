@@ -124,8 +124,8 @@ class UserInfo_Model extends JModel
             select UserID,PrefixCode,AddPrefix,RouteCLI,TrunkIP,TrunkPort,RouteName,SubNum,InspectMode
             from SearchRouting
         ";
-        if ($this->session["choice"] != "root") {
-            $sql .= " where UserID='{$this->session['choice']}'";
+        if (session("isRoot")) {
+            $sql .= " where UserID='".session("choice")."'";
         }
         $this->userRoute = $dba->getAll($sql);
         return $this;

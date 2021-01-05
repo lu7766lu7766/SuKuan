@@ -1,4 +1,5 @@
 <?php
+
 use comm\DB;
 
 class JModel extends Model
@@ -6,10 +7,10 @@ class JModel extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->user = $this->session["login"];
-        $this->subEmp = $this->session["sub_emp"];
-        $this->choice = $this->session["choice"];//被選中的使用者
-        $this->permission = $this->session["permission"];
+        $this->user = session("login");
+        $this->subEmp = session("sub_emp");
+        $this->choice = session("choice"); //被選中的使用者
+        $this->permission = session("permission");
     }
 
     public function delTreePrefix($dir, $prefix = "")

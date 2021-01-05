@@ -12,7 +12,7 @@ class AdCallSetting_Model extends JModel
      */
     public function uploadFileAndConvert($fieldName = "voiceFile")
     {
-        return lib\VoiceRecord::uploadFile($this->session['choice'], $fieldName);
+        return lib\VoiceRecord::uploadFile(session("choice"), $fieldName);
     }
 
     /**
@@ -32,7 +32,7 @@ class AdCallSetting_Model extends JModel
      */
     public function deleteVoiceFile($fileName)
     {
-        lib\VoiceRecord::delFile($this->session['choice'], $fileName);
+        lib\VoiceRecord::delFile(session("choice"), $fileName);
     }
 
     /**
@@ -76,7 +76,7 @@ class AdCallSetting_Model extends JModel
         $callOutID = DB::table('AdPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"];
         $callOutID = empty($callOutID) ? "1" : $callOutID;
         DB::table('AdPlan')->insert([
-            'UserID'            => $this->session["choice"],
+            'UserID'            => session("choice"),
             'PlanName'          => $this->planName,
             'StartCalledNumber' => $this->startCalledNumber,
             'CalledCount'       => $this->calledCount,
@@ -103,7 +103,7 @@ class AdCallSetting_Model extends JModel
         $phone_len = strlen($this->startCalledNumber);
         $body = [];
         switch ($this->numberMode) {
-            case "0"://range
+            case "0": //range
                 while ($this->calledCount-- > 0) {
                     $body[] = [
                         'CallOutID'    => $callOutID,
@@ -111,7 +111,7 @@ class AdCallSetting_Model extends JModel
                     ];
                 }
                 break;
-            case "1"://list
+            case "1": //list
                 while ($len-- > 0) {
                     $body[] = [
                         'CallOutID'    => $callOutID,
@@ -120,7 +120,7 @@ class AdCallSetting_Model extends JModel
                 }
                 break;
         }
-//        \lib\QueueSQL::write($sql);
+        //        \lib\QueueSQL::write($sql);
         $this->chunkInsertDB2('AdNumberList', $body);
         return $this;
     }
@@ -133,7 +133,7 @@ class AdCallSetting_Model extends JModel
     {
         $this->data = DB::table('AdPlan')
             ->select('UserID', 'CallOutID', 'PlanName', 'StartCalledNumber', 'CalledCount', 'UseState')
-            ->where('UserID', $this->session["choice"])
+            ->where('UserID', session("choice"))
             ->orderBy('CallOutID', 'desc')
             ->get();
     }
@@ -231,7 +231,7 @@ class AdCallSetting_Model extends JModel
             DB::table('AdNumberList')->delete()->where('CallOutID', $this->callOutId)->exec();
             $phone_len = strlen($this->startCalledNumber);
             switch ($this->numberMode) {
-                case "0"://range
+                case "0": //range
                     while ($this->calledCount-- > 0) {
                         DB::table('AdNumberList')->insert([
                             'CallOutID'    => $this->callOutId,
@@ -251,14 +251,16 @@ class AdCallSetting_Model extends JModel
     public function getAdCallStatus()
     {
         $user = DB::table('SysUser')
-            ->select('MaxRoutingCalls',
+            ->select(
+                'MaxRoutingCalls',
                 'MaxCalls',
                 'PlanDistribution',
                 'AdSuspend',
                 'MaxRegularCalls',
                 'MaxSearchCalls',
-                'AdNote')
-            ->where('UserID', $this->session["choice"])->get()[0];
+                'AdNote'
+            )
+            ->where('UserID', session("choice"))->get()[0];
         $this->is_suspend = $user["AdSuspend"] != '1';
         $this->maxRoutingCalls = $user["MaxRoutingCalls"];
         $this->maxCalls = $user["MaxCalls"];
@@ -280,26 +282,29 @@ class AdCallSetting_Model extends JModel
                 from AdPlan with (nolock)
                 where UserID=?
                 order by CallOutID desc";
-        $params = [$this->session["choice"]];
+        $params = [session("choice")];
         $this->data3 = $this->dba->getAll($sql, $params);
         $db = DB::table('CallState')
             ->select('count(*) as count')
             ->where('CallDuration', '>', 0)
-            ->andWhere('UserID', $this->session['choice']);
+            ->andWhere('UserID', session("choice"));
         $db2 = clone $db;
         $this->waitExtensionNoCount = $db->andWhere([
             ['ExtensionNo', SQL::IS, null],
             ['ExtensionNo', '']
-        ], SQL:: OR)
+        ], SQL::OR)
             ->get()['count'];
         $this->extensionNoCount = $db2->andWhere([
             ['ExtensionNo', SQL::IS, null],
             ['ExtensionNo', '<>', '']
-        ], SQL:: OR)
+        ], SQL::OR)
             ->get()['count'];
         $this->balance = number_format(
-            DB::table('SysUser')->select('Balance')->where('UserID', $this->session["choice"])->get()[0]["Balance"]
-            , 2, ".", "");
+            DB::table('SysUser')->select('Balance')->where('UserID', session("choice"))->get()[0]["Balance"],
+            2,
+            ".",
+            ""
+        );
     }
 
     public function updateAdSuspend()
@@ -437,8 +442,8 @@ class AdCallSetting_Model extends JModel
             'CallDuration',
             'RecvDTMF',
             'FaxCall'
-        ])->where('UserID', $this->session['choice']);
-        if ($this->CalledCalloutDateStart)// getdate()
+        ])->where('UserID', session("choice"));
+        if ($this->CalledCalloutDateStart) // getdate()
         {
             $query->andWhere('cast(CalledCalloutDate as datetime)', '>=', $this->CalledCalloutDateStart);
         }
@@ -467,18 +472,18 @@ class AdCallSetting_Model extends JModel
                   OrgCalledId, CalledCalloutDate,
                   CallStartBillingDate+' '+CallStartBillingTime as CallStartBillingDateTime,
                   CallLeaveDateTime, CallDuration
-                from AdCDR with (nolock) where UserID='{$this->session['choice']}' and ";
+                from AdCDR with (nolock) where UserID='{session("choice")}' and ";
         $sql2 = "select count(1) as count ,
                   sum(CallDuration) as TotalTime,
                   sum(cast(BillValue as float)) as TotalMoney
                   from AdCDR with (nolock)
-                  where UserID='{$this->session['choice']}' and ";
+                  where UserID='{session("choice")}' and ";
         $sql3 = "select count(1) as TotalConnected
                   from AdCDR with (nolock)
-                  where UserID='{$this->session['choice']}' and CallDuration is not null and CallDuration > 0 and ";
+                  where UserID='{session("choice")}' and CallDuration is not null and CallDuration > 0 and ";
         $condition = [];
         $params = [];
-        if ($this->CalledCalloutDateStart)// getdate()
+        if ($this->CalledCalloutDateStart) // getdate()
         {
             $condition[] = " cast(CalledCalloutDate as datetime) >= ? ";
             $params[] = $this->CalledCalloutDateStart;
@@ -521,5 +526,3 @@ class AdCallSetting_Model extends JModel
         $this->data = $dba->getAllLimit($sql, $params, $this->offset, $this->limit);
     }
 }
-
-?>
