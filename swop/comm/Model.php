@@ -10,16 +10,6 @@ class Model
         $this->session = $this->getSession();
     }
 
-    public function __destruct()
-    {
-        $this->setSession($this->session);
-    }
-
-    private function setSession($session)
-    {
-        $_SESSION[config("folder")] = $session;
-    }
-
     private function getSession()
     {
         return $_SESSION[config("folder")];

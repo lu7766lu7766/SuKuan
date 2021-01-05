@@ -1,5 +1,6 @@
 <?php
 
+use comm\Session;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class Index_Controller extends JController
@@ -21,25 +22,25 @@ class Index_Controller extends JController
 
     public function logout()
     {
-        $this->model->session = null;
+        Session::clear();
         $this->redirect("main/main");
     }
 
     public function changeUser()
     {
         $user = json_decode(json_encode(DB::table("SysUser")->where("UserID", $this->model->choice)->first()), true);
-        $this->model->session["choicer"] = $user;
-        $this->model->session["permission"] = $user["MenuList"];
-        $this->model->session["choice"] = $this->model->choice;
-        $this->model->session["isRoot"] = $this->model->session["choice"] == "root";
-        $this->model->session["sub_emp"] = $this->model->getSubEmp($this->model->session["login"]["UserID"]);
-        $this->model->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp(
-            $this->model->session["sub_emp"],
-            $this->model->session["choice"]
-        );
-        $this->model->session["permission_control"] =
-            $this->model->session["choice"] == $this->model->session["login"]["UserID"] ? $this->model->session["login"]["PermissionControl"] :
-            EmpHelper::getPermissionControl($this->model->session["sub_emp"], $this->model->session["choice"]);
+        session("choicer", $user);
+        session("permission", $user["MenuList"]);
+        session("choice", $this->model->choice);
+        session("isRoot", session("choice") == "root");
+        session("sub_emp", $this->model->getSubEmp(session("login")["UserID"]));
+        session("current_sub_emp", EmpHelper::getCurrentSubEmp(
+            session("sub_emp"),
+            session("choice")
+        ));
+        session("permission_control", session("choice") == session("login")["UserID"]
+            ? session("login")["PermissionControl"]
+            : EmpHelper::getPermissionControl(session("sub_emp"), session("choice")));
     }
 
     public function update_pwd()

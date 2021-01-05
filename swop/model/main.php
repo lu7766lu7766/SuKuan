@@ -26,28 +26,21 @@ class Main_Model extends JModel
         $result = $dba->getAll($sql, [$username, $username, $password]);
 
         if (count($result)) {
-            $this->session["login"] = $result[0];
-            $this->session["choicer"] = $result[0];
-            $this->session["choice"] = $this->session["login"]["UserID"];
-            $this->session["isRoot"] = $this->session["choice"] == "root";
-            $this->session["permission"] = $this->session["login"]["MenuList"]; //$this->session["login"]["UserGroup"];
-            $this->session["sub_emp"] = $this->getSubEmp($this->session["login"]["UserID"]);
-            //uasort($this->session["sub_emp"],function($a,$b){ return $a["class"] <=> $b["class"];});//照層級
-            uasort($this->session["sub_emp"], function ($a, $b) {
+            session("login", $result[0]);
+            session("choicer", $result[0]);
+            session("choice", $result[0]["UserID"]);
+            session("isRoot", $result[0]["UserID"] == "root");
+            session("permission", $result[0]["MenuList"]);
+            $subEmp = $this->getSubEmp($result[0]["UserID"]);
+            uasort($subEmp, function ($a, $b) {
                 return $a["UserID"] <=> $b["UserID"];
-            }); //ＩＤ
-            $this->session["current_sub_emp"] = EmpHelper::getCurrentSubEmp(
-                $this->session["sub_emp"],
-                $this->session["choice"]
-            );
-            $this->session["permission_control"] = $this->session["login"]["PermissionControl"];
-            //            uasort($_SESSION["sub_emp"],"my_sort"
-            ////                function($a,$b){
-            ////                return  $a["class"]<=> $b["class"];
-            //////                return $a["class"] == $b["class"]? 0:
-            //////                    $a["class"] < $b["class"]? -1: 1;
-            ////            }
-            //            );
+            });
+            session("sub_emp", $subEmp);
+            session("current_sub_emp", EmpHelper::getCurrentSubEmp(
+                session("sub_emp"),
+                session("choice")
+            ));
+            session("permission_control", $result[0]["PermissionControl"]);
             return true;
         }
         return false;

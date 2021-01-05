@@ -1,4 +1,7 @@
 <?php
+
+use comm\Session;
+
 function nl2br2($string)
 {
     $string = str_replace(["\r\n", "\r", "\n"], "<br />", $string);
@@ -14,8 +17,6 @@ function getenv2(...$args)
     return $env[$key] ?? $default;
 }
 
-use setting\Config;
-
 function getApiUrl($uri): String
 {
     $currentHost = getenv2('API_HOST')
@@ -26,7 +27,19 @@ function getApiUrl($uri): String
 
 function config($key)
 {
-    return Config::get($key);
+    return \setting\Config::get($key);
+}
+
+function session(...$params)
+{
+    $len = count($params);
+    if ($len == 1) {
+        return Session::get($params[0]);
+    } else if ($len == 2) {
+        Session::set($params[0], $params[1]);
+    } else {
+        throw new Exception("not defined too much params");
+    }
 }
 
 function GUID(): String
