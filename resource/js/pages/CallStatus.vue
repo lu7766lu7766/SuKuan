@@ -100,7 +100,7 @@
                 v-for="(data, index) in subData.data1.concat(subData.data2)"
                 :key="index"
               >
-                <td>{{ index }}</td>
+                <td>{{ index + 1 }}</td>
                 <td>
                   <span>{{ data.CalledId }}</span>
                   <span v-if="data.NormalCall" class="label label-danger">
