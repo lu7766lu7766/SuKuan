@@ -42,6 +42,11 @@ function session(...$params)
     }
 }
 
+function isDev()
+{
+    return getenv2("ENV") == "development";
+}
+
 function GUID(): String
 {
     if (function_exists('com_create_guid') === true) {

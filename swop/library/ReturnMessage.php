@@ -19,7 +19,7 @@ class ReturnMessage
     static function format($code, $data, $config)
     {
         return json_encode([
-            "query" => getenv2("ENV") == "development" ? DB::getQueryLog() : null,
+            "query" => isDev() ? DB::getQueryLog() : null,
             "code" => $code,
             "data" => $data
         ], $config);

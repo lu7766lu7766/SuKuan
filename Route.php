@@ -48,7 +48,7 @@ Route::post("/api/callStatus/modify/calloutGroupID", "CallStatusController@callo
 Route::post("/api/callStatus/modify/useState", "CallStatusController@useState")->middleware("api");
 Route::post("/api/callStatus/delete/callPlan", "CallStatusController@deleteCallPlan")->middleware("api");
 Route::post("/api/callStatus/update/suspend", "CallStatusController@switchSuspend")->middleware("api");
-Route::post("/api/callStatus/update/maxRoutingCalls", "CallStatusController@updateMaxRoutingCalls")->middleware("api");
+Route::post("/api/callStatus/update/maxCalls", "CallStatusController@updateMaxCalls")->middleware("api");
 Route::post("/api/callStatus/update/concurrentCallsAmp", "CallStatusController@updateConcurrentCallsAmp")->middleware("api");
 Route::post("/api/callStatus/update/callWaitingTime", "CallStatusController@updateCallWaitingTime")->middleware("api");
 Route::post("/api/callStatus/update/planDistribution", "CallStatusController@updatePlanDistribution")->middleware("api");

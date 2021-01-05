@@ -16,8 +16,6 @@
 	Bundle::echoLink("default");
 	echo Bundle::$allLink;
 
-	$choice_id = $model->session["choice"];
-	$isRoot = $model->session["isRoot"];
 	?>
 
 	<script>
@@ -26,11 +24,11 @@
 		var controller = "<?php echo $this->controller ?>";
 		var ctrl_uri = folder + controller + "/";
 		var action = "<?php echo $this->action ?>";
-		var choice = "<?php echo $choice_id ?>";
-		var isRoot = <?php echo $isRoot ? 'true' : 'false' ?>;
-		var permission = <?php echo $model->session["permission_control"] ?>;
-		var isLoginRoot = <?php echo $model->session['login']['UserID'] == 'root' ? 'true' : 'false' ?>;
-		var current_sub_emp = <?php echo json_encode($model->session["current_sub_emp"]) ?>;
+		var choice = "<?php echo session("choice") ?>";
+		var isRoot = <?php echo session("isRoot") ? 'true' : 'false' ?>;
+		var permission = <?php echo session("permission_control") ?>;
+		var current_sub_emp = <?php echo json_encode(session("current_sub_emp")) ?>;
+		var isDev = <?php echo isDev() ? "true" : "false" ?>;
 
 		function callApi() {
 
@@ -50,7 +48,7 @@
 							}
 						},
 						error(xhr, errorType, error) {
-							alert("系統錯誤，請稍後在試，或聯繫管理員。")
+							!isDev && alert("系統錯誤，請稍後在試，或聯繫管理員。") 
 							reject(error)
 						}
 					}
@@ -78,7 +76,7 @@
 							}
 						},
 						error(xhr, errorType, error) {
-							alert("系統錯誤，請稍後在試或聯繫管理員。")
+							!isDev && alert("系統錯誤，請稍後在試或聯繫管理員。")
 							reject(error)
 						}
 					})
@@ -193,13 +191,15 @@
 					<ul class="nav navbar-nav navbar-left">
 						<li><a href="<?php echo config("folder") . "index/index" ?>">首頁</a></li>
 						<!--<li><a href="<?php echo config("folder") . "index/service" ?>">服務</a></li>-->
-						<?php if ($isRoot) { ?>
-							<li><a class="shotdown_btn" href="javascript:;">關機</a><?php } ?>
-							<!-- -->
-							<?php if ($isRoot) { ?>
-							<li><a class="reboot_btn" href="javascript:;">重啟</a><?php } ?>
-							<li><a href="<?php echo config("folder") . "index/password" ?>">密碼</a></li>
-							<li><a href="<?php echo config("folder") . "index/logout" ?>">登出</a></li>
+						<?php if (session("isRoot")) { ?>
+						<li><a class="shotdown_btn" href="javascript:;">關機</a>
+						<?php } ?>
+						<!-- -->
+						<?php if (session("isRoot")) { ?>
+						<li><a class="reboot_btn" href="javascript:;">重啟</a>
+						<?php } ?>
+						<li><a href="<?php echo config("folder") . "index/password" ?>">密碼</a></li>
+						<li><a href="<?php echo config("folder") . "index/logout" ?>">登出</a></li>
 					</ul>
 				</div>
 
@@ -208,7 +208,7 @@
 	</nav>
 	<div id="wrapper">
 		<div id="sidebar-wrapper">
-			<?php echo $this->menu->CreateMenu($model->permission, $choice_id); ?>
+			<?php echo $this->menu->CreateMenu($model->permission, session("choice")); ?>
 		</div>
 		<div id="page-content-wrapper">
 			<div id="main-content" class="container-fluid">

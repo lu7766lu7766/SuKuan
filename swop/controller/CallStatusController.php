@@ -59,11 +59,11 @@ class CallStatusController extends JController
     ]);
   }
 
-  public function updateMaxRoutingCalls($ctx)
+  public function updateMaxCalls($ctx)
   {
     ["post" => $post, "session" => $session] = $ctx;
     return $this->buildUserWhere($session["choice"])->update([
-      "MaxRoutingCalls" => $post["MaxRoutingCalls"]
+      "MaxCalls" => $post["MaxCalls"]
     ]);
   }
 
@@ -101,7 +101,7 @@ class CallStatusController extends JController
 
   public function buildNumberListWhere($CallOutID)
   {
-    return DB::table("NumberList")->select("CalledNumber")->where("CallOutID", $CallOutID);
+    return DB::table("NumberList")->select("CalledNumber")->where("CallOutID", $CallOutID)->orderBy("OrderKey");
   }
 
   public function numberList($ctx)

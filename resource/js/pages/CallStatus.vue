@@ -2,14 +2,14 @@
   <section>
     <div class="form-inline">
       <div class="form-group">
-        <label>自動撥號線數上限:</label>
+        <label>自動撥號路由線數:</label>
         <input
           type="text"
           size="5"
           :class="{ 'form-control': true, 'num-only': true, readonly: !isRoot }"
-          v-model="maxCallsLimit"
+          v-model="user.MaxCalls"
           @focus="setTmpValue"
-          @change="(e) => changeMaxCallsLimit(e)"
+          @change="(e) => changeMaxCalls(e)"
         />
       </div>
       <div class="form-group">
@@ -154,9 +154,9 @@
           <tr v-for="(data, index) in subData.data3" :key="index">
             <td>{{ index + 1 }}</td>
             <!--編號-->
-            <td v-text="data.PlanName"></td>
+            <td>{{ data.PlanName }}</td>
             <!--群呼名稱-->
-            <td v-text="data.StartCalledNumber_txt"></td>
+            <td>{{ data.StartCalledNumber_txt }}</td>
             <!--號碼區段-->
             <td>
               <a
@@ -243,6 +243,8 @@
             <td>
               <Switcher
                 v-model="data.UseState"
+                :on="true"
+                :off="false"
                 @change="changeUseState(subData.data3[index])"
               />
             </td>
@@ -287,13 +289,13 @@ export default {
     updateSuccess() {
       alertify.alert("已成功修改!");
     },
-    async changeMaxCallsLimit(e) {
+    async changeMaxCalls(e) {
       if (!this.countCondition) {
-        this.maxCallsLimit = this.tmp;
+        this.user.MaxCalls = this.tmp;
         alert(this.alert_txt);
       } else {
-        await $.callApi.post("api/callStatus/update/maxRoutingCalls", {
-          MaxRoutingCalls: e.target.value,
+        await $.callApi.post("api/callStatus/update/maxCalls", {
+          MaxCalls: e.target.value,
         });
         this.updateSuccess();
       }
@@ -396,22 +398,22 @@ export default {
       res.data3.forEach(function (x) {
         var WaitCall = x.CalledCount - x.CalloutCount;
         x.WaitCall = WaitCall > 0 ? WaitCall : 0;
-        x.StartCalledNumber_txt = x.StartCalledNumber;
+
         x.ConcurrentCalls = +x.ConcurrentCalls;
         x.CalloutGroupID = +x.CalloutGroupID;
         if (x.NumberMode == 0 && x.CalledCount > 1) {
-          x.StartCalledNumber_txt +=
-            "~" +
-            (+x.StartCalledNumber + x.CalledCount)
-              .toString()
-              .padLeft("0", x.StartCalledNumber.length);
-        }
-        if (x.NumberMode === 3 && x.EndCalledNumber) {
+          const endNumber = (+x.StartCalledNumber + x.CalledCount)
+            .toString()
+            .padLeft("0", x.StartCalledNumber.length);
+          x.StartCalledNumber_txt = `${x.StartCalledNumber}~${endNumber}`;
+        } else if (x.NumberMode === 3) {
           if (x.EndCalledNumber) {
-            x.StartCalledNumber_txt += "~" + x.EndCalledNumber + "(有效)";
+            x.StartCalledNumber_txt = `${x.StartCalledNumber}~${x.EndCalledNumber}(有效)`;
           } else {
-            x.StartCalledNumber_txt += "(有效)";
+            x.StartCalledNumber_txt = `${x.StartCalledNumber}(有效)`;
           }
+        } else {
+          x.StartCalledNumber_txt = x.StartCalledNumber;
         }
 
         x.CallConCount_txt =
@@ -471,19 +473,6 @@ export default {
           +this.user.MaxRegularCalls +
           +this.user.MaxCalls
       );
-    },
-    maxCallsLimit: {
-      get() {
-        return +this.user.MaxRoutingCalls
-          ? +this.user.MaxRoutingCalls -
-              +this.user.MaxSearchCalls -
-              +this.user.MaxRegularCalls
-          : 0;
-      },
-      set(newValue) {
-        this.user.MaxRoutingCalls =
-          +newValue + +this.user.MaxSearchCalls + +this.user.MaxRegularCalls;
-      },
     },
   },
   mounted() {
