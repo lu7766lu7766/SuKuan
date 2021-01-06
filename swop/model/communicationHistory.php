@@ -249,7 +249,7 @@ class CommunicationHistory_Model extends JModel
             $data[] = $val["CalledNumber"];
         }
         $txt = join("\r\n", $data);
-        $this->fileName = date("Y-m-d", time()) . "_{session("choice")}{$suffix}.txt";
+        $this->fileName = date("Y-m-d", time()) . "_" . session("choice") . "{$suffix}.txt";
         $this->filePath = "download/" . $this->fileName;
         @mkdir(config("download"));
         @mkdir(config("callStatus"));
@@ -340,7 +340,7 @@ class CommunicationHistory_Model extends JModel
         }
         $numbers = explode(",", $this->calledNumber);
         foreach ($numbers as $i => $number) {
-            if (count($this->dba->getAll("select 1 from Blacklist with (nolock) where UserID='".session("choice")."' and CalledNumber='$number'"))) {
+            if (count($this->dba->getAll("select 1 from Blacklist with (nolock) where UserID='" . session("choice") . "' and CalledNumber='$number'"))) {
                 $this->result[] = $number;
                 unset($numbers[$i]);
             }

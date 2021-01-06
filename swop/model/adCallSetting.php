@@ -472,15 +472,15 @@ class AdCallSetting_Model extends JModel
                   OrgCalledId, CalledCalloutDate,
                   CallStartBillingDate+' '+CallStartBillingTime as CallStartBillingDateTime,
                   CallLeaveDateTime, CallDuration
-                from AdCDR with (nolock) where UserID='{session("choice")}' and ";
+                from AdCDR with (nolock) where UserID='" . session("choice") . "' and ";
         $sql2 = "select count(1) as count ,
                   sum(CallDuration) as TotalTime,
                   sum(cast(BillValue as float)) as TotalMoney
                   from AdCDR with (nolock)
-                  where UserID='{session("choice")}' and ";
+                  where UserID='" . session("choice") . "' and ";
         $sql3 = "select count(1) as TotalConnected
                   from AdCDR with (nolock)
-                  where UserID='{session("choice")}' and CallDuration is not null and CallDuration > 0 and ";
+                  where UserID='" . session("choice") . "' and CallDuration is not null and CallDuration > 0 and ";
         $condition = [];
         $params = [];
         if ($this->CalledCalloutDateStart) // getdate()

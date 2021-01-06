@@ -162,7 +162,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCalledCount()
     {
         $this->model->getDownloadCalledCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     /**
@@ -172,7 +172,7 @@ class AdCallSetting_Controller extends JController
     {
         $this->model->getDownloadWaitCall();
         // echo json_encode($this->model->data);
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     /**
@@ -181,7 +181,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCalloutCount()
     {
         $this->model->getDownloadCalloutCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     /**
@@ -190,7 +190,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCallConCount()
     {
         $this->model->getDownloadCallConCount();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     /**
@@ -199,7 +199,7 @@ class AdCallSetting_Controller extends JController
     public function downloadUnRecieveWaitCall()
     {
         $this->model->getDownloadUnRecieveWaitCall();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     /**
@@ -208,7 +208,7 @@ class AdCallSetting_Controller extends JController
     public function downloadCallUnavailable()
     {
         $this->model->getDownloadCallUnavailable();
-        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_{session("choice")}.txt");
+        $this->arrayDownload($this->model->data, date("Y-m-d", time()) . "_" . session("choice") . ".txt");
     }
 
     ////////////////////////////////////////////////////////////////////////////////

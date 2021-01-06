@@ -39,7 +39,7 @@ class Index_Model extends JModel
                 select count(1) as totalCalls
                 from CustomerLists as a WITH (NOLOCK)
                 left join RegisteredLogs as c WITH (NOLOCK) on a.ExtensionNo=c.CustomerNO
-                where a.UserID='{session("choice")}' AND
+                where a.UserID='".session("choice")."' AND
                 c.ETime > GETDATE() and
                 c.ETime is not null;
 
