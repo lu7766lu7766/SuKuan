@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use service\UserRouteService;
 
 class UserRouteController extends JController
@@ -9,28 +10,28 @@ class UserRouteController extends JController
 		$this->service = new UserRouteService("AsRouting");
 	}
 
-	public function list($ctx)
+	public function list(Request $request)
 	{
-		return $this->service->list($ctx);
+		return $this->service->list($request);
 	}
 
-	public function create($ctx)
+	public function create(Request $request)
 	{
-		return $this->service->create($ctx);
+		return $this->service->create($request);
 	}
 
-	public function update($ctx)
+	public function update(Request $request)
 	{
-		return $this->service->update($ctx);
+		return $this->service->update($request);
 	}
 
-	public function delete($ctx)
+	public function delete(Request $request)
 	{
-		return $this->service->delete($ctx);
+		return $this->service->delete($request);
 	}
 
-	public function createBatch($ctx)
+	public function createBatch(Request $request)
 	{
-		return $this->service->createBatch($ctx);
+		return $this->service->createBatch($request);
 	}
 }

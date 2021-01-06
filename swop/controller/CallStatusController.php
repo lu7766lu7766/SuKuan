@@ -1,11 +1,12 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 use Tightenco\Collect\Support\Collection;
 
 class CallStatusController extends JController
 {
-  public function base($ctx)
+  public function base()
   {
     $user = DB::table("SysUser")->where("UserID", session("choice"))->first();
     $user->isSuspend = $user->Suspend != "1";
@@ -19,29 +20,26 @@ class CallStatusController extends JController
       ->where("CallOutID", $callOutID);
   }
 
-  public function calloutGroupID($ctx)
+  public function calloutGroupID(Request $request)
   {
-    ["post" => $post] = $ctx;
-    return $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->update([
-      "CalloutGroupID" => $post["CalloutGroupID"]
+    return $this->buildCallPlanWhere(session("choice"), $request->input("CallOutID"))->update([
+      "CalloutGroupID" => $request->input("CalloutGroupID")
     ]);
   }
 
-  public function deleteCallPlan($ctx)
+  public function deleteCallPlan(Request $request)
   {
-    ["post" => $post] = $ctx;
-    DB::transaction(function () use ($post) {
-      $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->delete();
-      DB::table("NumberList")->where("CallOutID", $post["CallOutID"])->delete();
+    DB::transaction(function () use ($request) {
+      $this->buildCallPlanWhere(session("choice"), $request->input("CallOutID"))->delete();
+      DB::table("NumberList")->where("CallOutID", $request->input("CallOutID"))->delete();
     });
     return true;
   }
 
-  public function useState($ctx)
+  public function useState(Request $request)
   {
-    ["post" => $post] = $ctx;
-    return $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->update([
-      "UseState" => $post["UseState"]
+    return $this->buildCallPlanWhere(session("choice"), $request->input("CallOutID"))->update([
+      "UseState" => $request->input("UseState")
     ]);
   }
 
@@ -50,49 +48,44 @@ class CallStatusController extends JController
     return DB::table("SysUser")->where("UserID", $userID);
   }
 
-  public function switchSuspend($ctx)
+  public function switchSuspend(Request $request)
   {
     return $this->buildUserWhere(session("choice"))->update([
       "Suspend" => DB::raw("abs(Suspend-1)")
     ]);
   }
 
-  public function updateMaxCalls($ctx)
+  public function updateMaxCalls(Request $request)
   {
-    ["post" => $post] = $ctx;
     return $this->buildUserWhere(session("choice"))->update([
-      "MaxCalls" => $post["MaxCalls"]
+      "MaxCalls" => $request->input("MaxCalls")
     ]);
   }
 
-  public function updateConcurrentCallsAmp($ctx)
+  public function updateConcurrentCallsAmp(Request $request)
   {
-    ["post" => $post] = $ctx;
     return $this->buildUserWhere(session("choice"))->update([
-      "ConcurrentCallsAmp" => $post["ConcurrentCallsAmp"]
+      "ConcurrentCallsAmp" => $request->input("ConcurrentCallsAmp")
     ]);
   }
 
-  public function updateCallWaitingTime($ctx)
+  public function updateCallWaitingTime(Request $request)
   {
-    ["post" => $post] = $ctx;
     return $this->buildUserWhere(session("choice"))->update([
-      "CallWaitingTime" => $post["CallWaitingTime"]
+      "CallWaitingTime" => $request->input("CallWaitingTime")
     ]);
   }
 
-  public function updatePlanDistribution($ctx)
+  public function updatePlanDistribution(Request $request)
   {
-    ["post" => $post] = $ctx;
     return $this->buildUserWhere(session("choice"))->update([
-      "PlanDistribution" => $post["PlanDistribution"]
+      "PlanDistribution" => $request->input("PlanDistribution")
     ]);
   }
 
-  public function callRelease($ctx)
+  public function callRelease(Request $request)
   {
-    ["post" => $post] = $ctx;
-    $url = "http://127.0.0.1:60/CallRelease.atp?Seat=" . $post["Seat"] . "&CalledID=" . $post["CalledID"];
+    $url = "http://127.0.0.1:60/CallRelease.atp?Seat=" . $request->input("Seat") . "&CalledID=" . $request->input("CalledID");
     comm\Http::get($url);
     return true;
   }
@@ -102,55 +95,49 @@ class CallStatusController extends JController
     return DB::table("NumberList")->select("CalledNumber")->where("CallOutID", $CallOutID)->orderBy("OrderKey");
   }
 
-  public function numberList($ctx)
+  public function numberList(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])->get()
+      $this->buildNumberListWhere($request->input("CallOutID"))->get()
     )
       ->pluck("CalledNumber");
   }
 
-  public function waitCall($ctx)
+  public function waitCall(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])
+      $this->buildNumberListWhere($request->input("CallOutID"))
         ->where("CallResult", 0)
         ->get()
     )
       ->pluck("CalledNumber");
   }
 
-  public function callOut($ctx)
+  public function callOut(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", "<>", 0)->get()
+      $this->buildNumberListWhere($request->input("CallOutID"))->where("CallResult", "<>", 0)->get()
     )->pluck("CalledNumber");
   }
 
-  public function callCon($ctx)
+  public function callCon(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 3)->get()
+      $this->buildNumberListWhere($request->input("CallOutID"))->where("CallResult", 3)->get()
     )->pluck("CalledNumber");
   }
 
-  public function callFaild($ctx)
+  public function callFaild(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 1)->get()
+      $this->buildNumberListWhere($request->input("CallOutID"))->where("CallResult", 1)->get()
     )->pluck("CalledNumber")->toArray();
   }
 
-  public function callMissed($ctx)
+  public function callMissed(Request $request)
   {
-    ["post" => $post] = $ctx;
     return collect(
-      $this->buildNumberListWhere($post["CallOutID"])->where("CallResult", 2)->get()
+      $this->buildNumberListWhere($request->input("CallOutID"))->where("CallResult", 2)->get()
     )->pluck("CalledNumber");
   }
 

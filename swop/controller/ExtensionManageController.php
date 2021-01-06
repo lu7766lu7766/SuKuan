@@ -1,29 +1,29 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class ExtensionManageController extends JController
 {
-	private function buildWhere($db, $ctx)
+	private function buildWhere($db, $request)
 	{
-		["post" => $post] = $ctx;
-		if (!empty($post["UserID"])) {
-			$db->where("CustomerLists.UserID", $post["UserID"]);
+		if (!empty($request->input("UserID"))) {
+			$db->where("CustomerLists.UserID", $request->input("UserID"));
 		}
-		if (!empty($post["SearchContent"])) {
-			$db->where(function ($sdb) use ($post) {
+		if (!empty($request->input("SearchContent"))) {
+			$db->where(function ($sdb) use ($request) {
 				return $sdb
-					->orWhere("CustomerLists.UserID", $post["SearchContent"])
-					->orWhere("CustomerLists.ExtensionNo", $post["SearchContent"]);
+					->orWhere("CustomerLists.UserID", $request->input("SearchContent"))
+					->orWhere("CustomerLists.ExtensionNo", $request->input("SearchContent"));
 			});
 		}
 		return $db->whereIn("CustomerLists.UserID", session("current_sub_emp"));
 	}
 
-	public function list($ctx)
+	public function list(Request $request)
 	{
 		return
-			$this->buildWhere(DB::table("CustomerLists"), $ctx)
+			$this->buildWhere(DB::table("CustomerLists"), $request)
 			->select(
 				'CustomerLists.UserID',
 				'CustomerLists.ExtName',
@@ -43,21 +43,20 @@ class ExtensionManageController extends JController
 			->leftJoin("RegisteredLogs", "CustomerLists.ExtensionNo", "=", "RegisteredLogs.CustomerNO")->get();
 	}
 
-	public function total($ctx)
+	public function total(Request $request)
 	{
-		return $this->buildWhere(DB::table("CustomerLists"), $ctx)->count();
+		return $this->buildWhere(DB::table("CustomerLists"), $request)->count();
 	}
 
-	public function delete($ctx)
+	public function delete(Request $request)
 	{
-		["post" => $post] = $ctx;
-		if (!count($post["datas"])) {
+		if (!count($request->input("datas"))) {
 			throw new Exception("無資料");
 		}
-		DB::transaction(function () use ($post) {
+		DB::transaction(function () use ($request) {
 			$db1 = DB::table("ExtensionGroup");
 			$db2 = DB::table("CustomerLists");
-			foreach ($post["datas"] as $data) {
+			foreach ($request->input("datas") as $data) {
 				$where = function ($sdb) use ($data) {
 					return $sdb->where([
 						["UserID", $data["UserID"]],
@@ -73,32 +72,30 @@ class ExtensionManageController extends JController
 		return true;
 	}
 
-	public function detail($ctx)
+	public function detail(Request $request)
 	{
-		["post" => $post] = $ctx;
 		return
 			DB::table("CustomerLists as a")
 			->select("a.UserID", "a.ExtensionNo", "a.ExtName", "a.CustomerPwd", "a.StartRecorder", "a.Suspend", "a.UseState", "b.CalloutGroupID", "a.OffNetCli")
 			->leftJoin("ExtensionGroup as b", [["a.UserID", "b.UserID"], ["a.CustomerNO", "b.CustomerNO"]])
-			->where("a.UserID", $post["UserID"])
-			->where("a.ExtensionNo", $post["ExtensionNo"])
+			->where("a.UserID", $request->input("UserID"))
+			->where("a.ExtensionNo", $request->input("ExtensionNo"))
 			->first();
 	}
 
-	public function create($ctx)
+	public function create(Request $request)
 	{
-		["post" => $post] = $ctx;
-		$extensions = range($post["ExtensionNo"], $post["ExtensionNos"] ?? $post["ExtensionNo"]);
+		$extensions = range($request->input("ExtensionNo"), $request->input("ExtensionNos") ?? $request->input("ExtensionNo"));
 		$insertBody1 = collect($extensions)
-			->map(function ($x) use ($post) {
+			->map(function ($x) use ($request) {
 				return [
 					"CustomerNO" => $x,
-					"UserID" => $post["UserID"],
+					"UserID" => $request->input("UserID"),
 					"ExtensionNo" => $x,
 					"UserName" => $x,
-					"ExtName" => $post["ExtName"],
-					"OffNetCli" => $post["OffNetCli"],
-					"CustomerPwd" => $post["CustomerPwd"],
+					"ExtName" => $request->input("ExtName"),
+					"OffNetCli" => $request->input("OffNetCli"),
+					"CustomerPwd" => $request->input("CustomerPwd"),
 				];
 			});
 		$db =	DB::table("CustomerLists")->select("CustomerNO")->whereIn("CustomerNO", $insertBody1->pluck("CustomerNO")->toArray())->get();
@@ -106,10 +103,10 @@ class ExtensionManageController extends JController
 			throw new Exception($db->pluck("CustomerNO")->join(",") . "分機已存在，請避開這些分機");
 		}
 		$insertBody2 = collect($extensions)
-			->map(function ($x) use ($post) {
+			->map(function ($x) use ($request) {
 				return [
-					"UserID" => $post["UserID"],
-					"CalloutGroupID" => $post["CalloutGroupID"],
+					"UserID" => $request->input("UserID"),
+					"CalloutGroupID" => $request->input("CalloutGroupID"),
 					"CustomerNO" => $x,
 				];
 			});
@@ -120,29 +117,28 @@ class ExtensionManageController extends JController
 		return true;
 	}
 
-	public function update($ctx)
+	public function update(Request $request)
 	{
-		["post" => $post] = $ctx;
 		$updateBody = [
-			"ExtName" => $post["ExtName"],
-			"CustomerPwd" => $post["CustomerPwd"],
-			"StartRecorder" => $post["StartRecorder"],
-			"Suspend" => $post["Suspend"],
-			"UseState" => $post["UseState"],
+			"ExtName" => $request->input("ExtName"),
+			"CustomerPwd" => $request->input("CustomerPwd"),
+			"StartRecorder" => $request->input("StartRecorder"),
+			"Suspend" => $request->input("Suspend"),
+			"UseState" => $request->input("UseState"),
 		];
 		if (session("isRoot")) {
-			$updateBody["OffNetCli"] = $post["OffNetCli"];
+			$updateBody["OffNetCli"] = $request->input("OffNetCli");
 		}
-		DB::transaction(function () use ($post, $updateBody) {
+		DB::transaction(function () use ($request, $updateBody) {
 			DB::table("CustomerLists")
-				->where("UserID", $post["UserID"])
-				->where("ExtensionNo", $post["ExtensionNo"])
+				->where("UserID", $request->input("UserID"))
+				->where("ExtensionNo", $request->input("ExtensionNo"))
 				->update($updateBody);
 			DB::table("ExtensionGroup")
-				->where("UserID", $post["UserID"])
-				->where("CustomerNO", $post["ExtensionNo"])
+				->where("UserID", $request->input("UserID"))
+				->where("CustomerNO", $request->input("ExtensionNo"))
 				->update([
-					"CalloutGroupID" => $post["CalloutGroupID"]
+					"CalloutGroupID" => $request->input("CalloutGroupID")
 				]);
 		});
 		return true;

@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use \lib\ReturnMessage;
 use Illuminate\Database\Capsule\Manager as DB;
 use Rakit\Validation\Validator;
@@ -9,22 +10,18 @@ use Tightenco\Collect\Support\Collection;
 
 class UserController extends JController
 {
-	public function echoPassword($ctx)
+	public function echoPassword(Request $request)
 	{
-		$get = $ctx["get"];
-		$user = $get["user"];
-		$password = \lib\Hash::encode($get["password"]);
-
 		echo ReturnMessage::success([
-			"user" => $user,
-			"password" => $password
+			"user" => $request->input("user"),
+			"password" => \lib\Hash::encode($request->input("password"))
 		], JSON_UNESCAPED_SLASHES);
 	}
 
 	/**
 	 * 使用者列表
 	 */
-	public function list($ctx)
+	public function list(Request $request)
 	{
 		$db = DB::table("SysUser")
 			->select(
@@ -38,7 +35,7 @@ class UserController extends JController
 				DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
 			);
 		if (!session("isRoot")) {
-			$db = $db->whereIn("UserID", $ctx["session"]["current_sub_emp"]);
+			$db = $db->whereIn("UserID", session("current_sub_emp"));
 		}
 		return $db->get();
 	}
@@ -46,83 +43,81 @@ class UserController extends JController
 	/**
 	 * delete users
 	 */
-	public function delete($ctx)
+	public function delete(Request $request)
 	{
 		return DB::table("SysUser")
-			->whereIn("UserID", $ctx["post"]["deleteUserID"])
+			->whereIn("UserID", $request->input("deleteUserID"))
 			->delete();
 	}
 
-	public function detail($ctx)
+	public function detail(Request $request)
 	{
 		$userRepostory = new UserRepostory();
-		$user = $userRepostory->getDetail($ctx["post"]["userID"]);
+		$user = $userRepostory->getDetail($request->input("userID"));
 		$user->UserPassword = \lib\Hash::decode($user->UserPassword);
 		$user->MenuList = explode(",", $user->MenuList);
 
 		return $user;
 	}
 
-	public function create($ctx)
+	public function create(Request $request)
 	{
-		["post" => $post] = $ctx;
-		$this->validate($post);
+		$this->validate($request);
 		$repo = new UserRepostory();
-		if ($repo->checkExists([$post["UserID"]])) {
+		if ($repo->checkExists([$request->input("UserID")])) {
 			throw new Exception("登入帳號已存在，無法新增。");
 		} else {
-			DB::transaction(function () use ($repo, $post) {
+			DB::transaction(function () use ($repo, $request) {
 				$repo->create(
-					$post["UserID"],
-					$post["UseState"] ? 1 : 0,
-					$post["UserName"],
-					$post["NoteText"],
-					$post["RateGroupID"],
-					$post["AddBalance"],
-					$post["StartTime"],
-					$post["StopTime"],
-					$post["CallWaitingTime"],
-					$post["ParentID"],
-					join(",", $post["MenuList"]),
-					$post["MaxRoutingCalls"],
-					$post["MaxCalls"],
-					$post["UserInfo"],
-					$post["Distributor"],
-					$post["AutoStartTime"],
-					$post["AutoStopTime"],
-					$post["Overdraft"],
-					$post["SearchStartTime"],
-					$post["SearchAutoStartTime"],
-					$post["SearchAutoStopTime"],
-					$post["SearchStopTime"],
-					$post["MaxSearchCalls"],
-					$post["MaxRegularCalls"],
-					$post["PermissionControl"] ? 1 : 0,
-					$post["UserID2"],
-					$post["CanSwitchExtension"] ? 1 : 0
+					$request->input("UserID"),
+					$request->input("UseState") ? 1 : 0,
+					$request->input("UserName"),
+					$request->input("NoteText"),
+					$request->input("RateGroupID"),
+					$request->input("AddBalance"),
+					$request->input("StartTime"),
+					$request->input("StopTime"),
+					$request->input("CallWaitingTime"),
+					$request->input("ParentID"),
+					join(",", $request->input("MenuList")),
+					$request->input("MaxRoutingCalls"),
+					$request->input("MaxCalls"),
+					$request->input("UserInfo"),
+					$request->input("Distributor"),
+					$request->input("AutoStartTime"),
+					$request->input("AutoStopTime"),
+					$request->input("Overdraft"),
+					$request->input("SearchStartTime"),
+					$request->input("SearchAutoStartTime"),
+					$request->input("SearchAutoStopTime"),
+					$request->input("SearchStopTime"),
+					$request->input("MaxSearchCalls"),
+					$request->input("MaxRegularCalls"),
+					$request->input("PermissionControl") ? 1 : 0,
+					$request->input("UserID2"),
+					$request->input("CanSwitchExtension") ? 1 : 0
 				);
-				if ($post["AddBalance"] && $post["AddBalance"] != 0) {
-					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), session("choice"));
+				if ($request->input("AddBalance") && $request->input("AddBalance") != 0) {
+					$repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 			return true;
 		}
 	}
 
-	public function createBatch($ctx)
+	public function createBatch(Request $request)
 	{
-		["post" => $post] = $ctx;
 		$repo = new UserRepostory();
-		if ($repo->checkExists(array_column($post["datas"], "UserID"))) {
+		if ($repo->checkExists(array_column($request->input("datas"), "UserID"))) {
 			throw new Exception("帳號有重複，無法新增。");
 		}
-		if (count($post["datas"]) > 100) {
+		if (count($request->input("datas")) > 100) {
 			throw new Exception("新增比數超過100筆，請減少筆數。");
 		}
 
-		DB::transaction(function () use ($post) {
+		DB::transaction(function () use ($request) {
 			DB::table("SysUser")->insert(
-				collect($post["datas"])->map(function ($x) {
+				collect($request->input("datas"))->map(function ($x) {
 					return [
 						"UserID" => $x["UserID"],
 						"UserName" => $x["UserName"],
@@ -136,7 +131,7 @@ class UserController extends JController
 					];
 				})->toArray()
 			);
-			DB::table("RechargeLog")->insert(collect($post["datas"])->map(function ($x) {
+			DB::table("RechargeLog")->insert(collect($request->input("datas"))->map(function ($x) {
 				return [
 					"UserID" => $x["UserID"],
 					"AddValue" => $x["Balance"],
@@ -148,56 +143,55 @@ class UserController extends JController
 		return true;
 	}
 
-	public function update($ctx)
+	public function update(Request $request)
 	{
-		["post" => $post] = $ctx;
-		$this->validate($post);
+		$this->validate($request);
 		$repo = new UserRepostory();
 		if (session("isRoot")) {
-			DB::transaction(function () use ($repo, $post) {
+			DB::transaction(function () use ($repo, $request) {
 				$repo->update(
-					$post["UserID"],
-					$post["UseState"] ? 1 : 0,
-					$post["UserName"],
-					$post["NoteText"],
-					$post["RateGroupID"],
-					floor($post["Balance"]) + floor($post["AddBalance"]),
-					$post["StartTime"],
-					$post["StopTime"],
-					$post["CallWaitingTime"],
-					$post["ParentID"],
-					join(",", $post["MenuList"]),
-					$post["MaxRoutingCalls"],
-					$post["MaxCalls"],
-					$post["UserInfo"],
-					$post["Distributor"],
-					$post["AutoStartTime"],
-					$post["AutoStopTime"],
-					$post["Overdraft"],
-					$post["SearchStartTime"],
-					$post["SearchAutoStartTime"],
-					$post["SearchAutoStopTime"],
-					$post["SearchStopTime"],
-					$post["MaxSearchCalls"],
-					$post["MaxRegularCalls"],
-					$post["PermissionControl"] ? 1 : 0,
-					$post["UserID2"],
-					$post["CanSwitchExtension"] ? 1 : 0
+					$request->input("UserID"),
+					$request->input("UseState") ? 1 : 0,
+					$request->input("UserName"),
+					$request->input("NoteText"),
+					$request->input("RateGroupID"),
+					floor($request->input("Balance")) + floor($request->input("AddBalance")),
+					$request->input("StartTime"),
+					$request->input("StopTime"),
+					$request->input("CallWaitingTime"),
+					$request->input("ParentID"),
+					join(",", $request->input("MenuList")),
+					$request->input("MaxRoutingCalls"),
+					$request->input("MaxCalls"),
+					$request->input("UserInfo"),
+					$request->input("Distributor"),
+					$request->input("AutoStartTime"),
+					$request->input("AutoStopTime"),
+					$request->input("Overdraft"),
+					$request->input("SearchStartTime"),
+					$request->input("SearchAutoStartTime"),
+					$request->input("SearchAutoStopTime"),
+					$request->input("SearchStopTime"),
+					$request->input("MaxSearchCalls"),
+					$request->input("MaxRegularCalls"),
+					$request->input("PermissionControl") ? 1 : 0,
+					$request->input("UserID2"),
+					$request->input("CanSwitchExtension") ? 1 : 0
 				);
-				if ($post["AddBalance"] && $post["AddBalance"] != 0) {
-					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), session("choice"));
+				if ($request->input("AddBalance") && $request->input("AddBalance") != 0) {
+					$repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 		} else {
-			$repo->updateMenuList($post["UserID"], join(",", $post["MenuList"]));
+			$repo->updateMenuList($request->input("UserID"), join(",", $request->input("MenuList")));
 		}
 		return true;
 	}
 
-	private function validate($post)
+	private function validate($request)
 	{
 		$validator = new Validator();
-		$validation = $validator->validate($post, [
+		$validation = $validator->validate($request->all(), [
 			'UserID'                 => 'required',
 			// 'StartTime'             => 'required',
 			// 'StopTime'              => 'required',
@@ -207,7 +201,7 @@ class UserController extends JController
 		}
 	}
 
-	public function menus($ctx)
+	public function menus(Request $request)
 	{
 		if (session("isRoot")) {
 			return Menu::getAllMenus();

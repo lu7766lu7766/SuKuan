@@ -1,20 +1,20 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class SystemController extends JController
 {
-	public function bulletinBoardDetail($ctx)
+	public function bulletinBoardDetail(Request $request)
 	{
 		return DB::table("BulletinBoard")->first();
 	}
 
-	public function bulletinBoardInsertOrUpdate($ctx)
+	public function bulletinBoardInsertOrUpdate(Request $request)
 	{
-		["post" => $post] = $ctx;
 		$modify = [
-			"Content" => $post["Content"],
-			"Status" => $post["Status"] ?? 0,
+			"Content" => $request->input("Content"),
+			"Status" => $request->input("Status", 0),
 		];
 		$db = DB::table("BulletinBoard");
 		return $db->count()

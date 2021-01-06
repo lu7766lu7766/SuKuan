@@ -1,53 +1,51 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 use service\PaginateService;
 
 class PointController extends JController
 {
-    public function total($ctx)
+    public function total(Request $request)
     {
         $db = DB::table("RechargeLog");
-        $db = $this->buildWhere($db, $ctx);
+        $db = $this->buildWhere($db, $request);
         return $db->count();
     }
 
-    public function list($ctx)
+    public function list(Request $request)
     {
-        ["post" => $post] = $ctx;
         $db = DB::table("RechargeLog");
-        $db = $this->buildWhere($db, $ctx);
-        $db = (new PaginateService)->proccess($db, $post["page"], $post["per_page"]);
+        $db = $this->buildWhere($db, $request);
+        $db = (new PaginateService)->proccess($db, $request->input("page"), $request->input("per_page"));
         return $db->get();
     }
 
-    public function buildWhere($db, $ctx)
+    public function buildWhere($db, $request)
     {
-        ["post" => $post] = $ctx;
-        if (!empty($post["UserID"])) {
-            $db->where("UserID", $post["UserID"]);
+        if (!empty($request->input("UserID"))) {
+            $db->where("UserID", $request->input("UserID"));
         } else {
             $db->whereIn("UserID", session("current_sub_emp"));
         }
-        if (!empty($post["StartDate"])) {
-            $db->whereRaw("cast(AddTime as datetime) > ?", [$post["StartDate"] . " 00:00:00"]);
+        if (!empty($request->input("StartDate"))) {
+            $db->whereRaw("cast(AddTime as datetime) > ?", [$request->input("StartDate") . " 00:00:00"]);
         }
-        if (!empty($post["EndDate"])) {
-            $db->whereRaw("cast(AddTime as datetime) < ?", [$post["EndDate"] . " 23:59:59"]);
+        if (!empty($request->input("EndDate"))) {
+            $db->whereRaw("cast(AddTime as datetime) < ?", [$request->input("EndDate") . " 23:59:59"]);
         }
-        if (!empty($post["Memo"])) {
-            $db->setParameter("Memo", "%{$post["Memo"]}%");
+        if (!empty($request->input("Memo"))) {
+            $db->setParameter("Memo", "%{$request->input("Memo")}%");
         }
         return $db;
     }
 
-    public function update($ctx)
+    public function update(Request $request)
     {
-        ["post" => $post] = $ctx;
         return DB::table("RechargeLog")
-            ->where("LogID", $post["LogID"])
+            ->where("LogID", $request->input("LogID"))
             ->update([
-                "Memo" => $post["Memo"]
+                "Memo" => $request->input("Memo")
             ]);
     }
 }

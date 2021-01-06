@@ -35,4 +35,14 @@ class Request
   {
     return new FileUploader($key);
   }
+
+  public function setParams($params)
+  {
+    return $this->params = $params;
+  }
+
+  public function param($key)
+  {
+    return $this->params[$key];
+  }
 }

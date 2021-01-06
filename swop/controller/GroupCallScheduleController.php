@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 use Rakit\Validation\Validator;
 use service\GroupCallScheduleService;
@@ -27,23 +28,22 @@ class GroupCallScheduleController extends JController
 			->get();
 	}
 
-	public function detail($ctx)
+	public function detail(Request $request)
 	{
-		["post" => $post] = $ctx;
 		$result = DB::table("CallPlan")
-			->where("UserID", $post["userID"])
-			->where("CallOutID", $post["callOutID"])
+			->where("UserID", $request->input("userID"))
+			->where("CallOutID", $request->input("callOutID"))
 			->first();
 		$result->User = DB::table("SysUser")
-			->where("UserID", $post["userID"])
+			->where("UserID", $request->input("userID"))
 			->first();
 		return $result;
 	}
 
-	private function validate($post)
+	private function validate($request)
 	{
 		$validator = new Validator();
-		$validation = $validator->validate($post, [
+		$validation = $validator->validate($request->all(), [
 			"NumberMode"               => "required",
 			"StartCalledNumber"        => "required_if:NumberMode,0,2",
 			"CalledCount"              => "required_if:NumberMode,0,2|numeric",
@@ -53,53 +53,52 @@ class GroupCallScheduleController extends JController
 		}
 	}
 
-	public function create($ctx)
+	public function create(Request $request)
 	{
-		["post" => $post] = $ctx;
-		$this->validate($post);
+		$this->validate($request);
 		$this->service->valideCallPlanMaxLimit(session("choice"));
-		if ($post["NumberMode"] == self::LIST) {
+		if ($request->input("NumberMode") == self::LIST) {
 			$list = $this->service->getListAndValide();
-			$post["StartCalledNumber"] = $list[0];
-			$post["CalledCount"] = count($list);
-		} else if ($post["NumberMode"] == self::VALID) {
-			$list = $this->service->getValidListAndValide($post["StartCalledNumber"], $post["CalledCount"]);
-			$post["StartCalledNumber"] = $list[0];
+			$StartCalledNumber = $list[0];
+			$CalledCount = count($list);
+		} else if ($request->input("NumberMode") == self::VALID) {
+			$list = $this->service->getValidListAndValide($request->input("StartCalledNumber"), $request->input("CalledCount"));
+			$StartCalledNumber = $list[0];
 		}
 
-		$this->service->valideCallOnceLimit($post["CalledCount"]);
+		$this->service->valideCallOnceLimit($request->input("CalledCount"));
 		$callOutID = DB::table("CallPlan")->select(DB::raw("max(CallOutID)+1 as count"))->first()->count ?? "1";
-		switch ($post["NumberMode"]) {
+		switch ($request->input("NumberMode")) {
 			case self::RANGE:
-				$numberCollection = $this->service->buildRangeNumberList($callOutID, $post["StartCalledNumber"], $post["CalledCount"]);
+				$numberCollection = $this->service->buildRangeNumberList($callOutID, $request->input("StartCalledNumber"), $request->input("CalledCount"));
 				break;
 			case self::LIST:
 			case self::VALID:
 				$numberCollection = $this->service->buildListNumberList($callOutID, $list);
 				break;
 			case self::SAME:
-				$numberCollection = $this->service->buildSameNumberList($callOutID, $post["StartCalledNumber"], $post["CalledCount"]);
+				$numberCollection = $this->service->buildSameNumberList($callOutID, $request->input("StartCalledNumber"), $request->input("CalledCount"));
 				break;
 		}
-		if ($post["random"]) {
+		if ($request->input("random")) {
 			$numberCollection = $numberCollection->shuffle();
 		}
 
-		DB::transaction(function () use ($post, $callOutID, $numberCollection) {
+		DB::transaction(function () use ($request, $callOutID, $numberCollection, $StartCalledNumber, $CalledCount) {
 			DB::table("CallPlan")->insert([
 				"UserID"            => session("choice"),
-				"PlanName"          => $post["PlanName"],
-				"StartCalledNumber" => $post["StartCalledNumber"],
+				"PlanName"          => $request->input("PlanName"),
+				"StartCalledNumber" => $StartCalledNumber,
 				'EndCalledNumber'   => $numberCollection->last()["CalledNumber"],
-				"CalledCount"       => $post["CalledCount"],
+				"CalledCount"       => $CalledCount,
 				"CallerPresent"     => 1,
 				"CallerID"          => "",
-				"CalloutGroupID"    => $post["CalloutGroupID"],
-				"Calldistribution"  => $post["Calldistribution"],
-				"CallProgressTime"  => $post["CallProgressTime"],
-				"ExtProgressTime"   => $post["ExtProgressTime"],
+				"CalloutGroupID"    => $request->input("CalloutGroupID"),
+				"Calldistribution"  => $request->input("Calldistribution"),
+				"CallProgressTime"  => $request->input("CallProgressTime"),
+				"ExtProgressTime"   => $request->input("ExtProgressTime"),
 				"UseState"          => 0,
-				"NumberMode"        => $post["NumberMode"],
+				"NumberMode"        => $request->input("NumberMode"),
 				"CallOutID"         => $callOutID
 			]);
 			$numberCollection->chunk(100)->each(function ($chunk) {
@@ -109,30 +108,28 @@ class GroupCallScheduleController extends JController
 		return true;
 	}
 
-	public function update($ctx)
+	public function update(Request $request)
 	{
-		["post" => $post] = $ctx;
 		return DB::table("CallPlan")
 			->where([
-				["UserID", $post["UserID"]],
-				["CallOutID", $post["CallOutID"]]
+				["UserID", $request->input("UserID")],
+				["CallOutID", $request->input("CallOutID")]
 			])->update([
-				"PlanName"          => $post["PlanName"],
-				"CallerPresent"     => $post["CallerPresent"],
-				"CallerID"          => $post["CallerID"],
-				"CalloutGroupID"    => $post["CalloutGroupID"],
-				"Calldistribution"  => $post["Calldistribution"],
-				"CallProgressTime"  => $post["CallProgressTime"],
-				"ExtProgressTime"   => $post["ExtProgressTime"],
-				"UseState"          => $post["UseState"] ?? 0
+				"PlanName"          => $request->input("PlanName"),
+				"CallerPresent"     => $request->input("CallerPresent"),
+				"CallerID"          => $request->input("CallerID"),
+				"CalloutGroupID"    => $request->input("CalloutGroupID"),
+				"Calldistribution"  => $request->input("Calldistribution"),
+				"CallProgressTime"  => $request->input("CallProgressTime"),
+				"ExtProgressTime"   => $request->input("ExtProgressTime"),
+				"UseState"          => $request->input("UseState") ?? 0
 			]);
 	}
 
-	public function delete($ctx)
+	public function delete(Request $request)
 	{
-		["post" => $post] = $ctx;
-		DB::transaction(function () use ($post) {
-			foreach ($post["datas"] as $data) {
+		DB::transaction(function () use ($request) {
+			foreach ($request->input("datas") as $data) {
 				DB::table("CallPlan")->where("UserID", $data["UserID"])->where("CallOutID", $data["CallOutID"])->delete();
 				DB::table("NumberList")->where("CallOutID", $data["CallOutID"])->delete();
 			}

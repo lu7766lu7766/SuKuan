@@ -2,6 +2,7 @@
 
 namespace service;
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 use Rakit\Validation\Validator;
 use Exception;
@@ -16,7 +17,7 @@ class UserRouteService
     $this->tableName = $tableName;
   }
 
-  public function list($ctx)
+  public function list(Request $request)
   {
     $db = DB::table($this->tableName);
     if (!session("isRoot")) {
@@ -25,10 +26,10 @@ class UserRouteService
     return $db->get();
   }
 
-  private function validate($post)
+  private function validate($request)
   {
     $validator = new Validator();
-    $validation = $validator->validate($post, [
+    $validation = $validator->validate($request->all(), [
       'UserID'                 => 'required',
       'PrefixCode'             => 'required',
       'TrunkPort'              => 'required|min:1|max:65535',
@@ -38,60 +39,60 @@ class UserRouteService
     }
   }
 
-  public function create($ctx)
+  public function create(Request $request)
   {
-    ["post" => $post] = $ctx;
-    $this->validate($post);
+
+    $this->validate($request);
 
     if (
-      DB::table($this->tableName)->where("UserID", $post["UserID"])->where("PrefixCode", $post["PrefixCode"])->count()
+      DB::table($this->tableName)->where("UserID", $request->input("UserID"))->where("PrefixCode", $request->input("PrefixCode"))->count()
     ) {
       throw new Exception("用戶與前置碼重複，無法新增。");
     }
     return DB::table($this->tableName)->insert([
-      "UserID" => $post["UserID"],
-      "PrefixCode" => $post["PrefixCode"],
-      "AddPrefix" => $post["AddPrefix"],
-      "RouteCLI" => $post["RouteCLI"],
-      "TrunkIP" => $post["TrunkIP"],
-      "TrunkPort" => $post["TrunkPort"],
-      "RouteName" => $post["RouteName"],
-      "SubNum" => $post["SubNum"]
+      "UserID" => $request->input("UserID"),
+      "PrefixCode" => $request->input("PrefixCode"),
+      "AddPrefix" => $request->input("AddPrefix"),
+      "RouteCLI" => $request->input("RouteCLI"),
+      "TrunkIP" => $request->input("TrunkIP"),
+      "TrunkPort" => $request->input("TrunkPort"),
+      "RouteName" => $request->input("RouteName"),
+      "SubNum" => $request->input("SubNum")
     ]);
   }
 
-  public function update($ctx)
+  public function update(Request $request)
   {
-    ["post" => $post] = $ctx;
-    $this->validate($post);
+
+    $this->validate($request);
 
     return DB::table($this->tableName)
-      ->where("UserID", $post["UserID"])
-      ->where("PrefixCode", $post["PrefixCode"])
+      ->where("UserID", $request->input("UserID"))
+      ->where("PrefixCode", $request->input("PrefixCode"))
       ->update([
-        "AddPrefix" => $post["AddPrefix"],
-        "RouteCLI" => $post["RouteCLI"],
-        "TrunkIP" => $post["TrunkIP"],
-        "TrunkPort" => $post["TrunkPort"],
-        "RouteName" => $post["RouteName"],
-        "SubNum" => $post["SubNum"]
+        "AddPrefix" => $request->input("AddPrefix"),
+        "RouteCLI" => $request->input("RouteCLI"),
+        "TrunkIP" => $request->input("TrunkIP"),
+        "TrunkPort" => $request->input("TrunkPort"),
+        "RouteName" => $request->input("RouteName"),
+        "SubNum" => $request->input("SubNum")
       ]);
   }
 
-  public function delete($ctx)
+  public function delete(Request $request)
   {
-    ["post" => $post] = $ctx;
+
     return DB::table($this->tableName)
-      ->where("UserID", $post["UserID"])
-      ->where("PrefixCode", $post["PrefixCode"])
+      ->where("UserID", $request->input("UserID"))
+      ->where("PrefixCode", $request->input("PrefixCode"))
       ->delete();
   }
 
-  public function createBatch($ctx)
+  public function createBatch(Request $request)
   {
-    ["post" => $post] = $ctx;
+
     return DB::table($this->tableName)->insert(
-      collect($post["datas"])->map(function ($x) {
+      collect($request->input("datas"))->map(function ($x) {
         return [
           "UserID" => $x["UserID"],
           "PrefixCode" => $x["PrefixCode"],

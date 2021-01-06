@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class RateController extends JController
@@ -9,20 +10,18 @@ class RateController extends JController
         return DB::table("RateGroup")->select(["RateGroupID", "RateGroupName"])->where("UseState", "1")->orderBy("RateGroupID", "desc")->get();
     }
 
-    public function create($ctx)
+    public function create(Request $request)
     {
-        ["post" => $post] = $ctx;
         return DB::table("RateGroup")->insert([
-            "RateGroupID" => $post["RateGroupID"],
-            "RateGroupName" => $post["RateGroupName"],
+            "RateGroupID" => $request->input("RateGroupID"),
+            "RateGroupName" => $request->input("RateGroupName"),
         ]);
     }
 
-    public function createBatch($ctx)
+    public function createBatch(Request $request)
     {
-        ["post" => $post] = $ctx;
         return DB::table("RateGroup")->insert(
-            collect($post["datas"])->map(function ($x) {
+            collect($request->input("datas"))->map(function ($x) {
                 return [
                     "RateGroupID" => $x["RateGroupID"],
                     "RateGroupName" => $x["RateGroupName"],
@@ -31,18 +30,16 @@ class RateController extends JController
         );
     }
 
-    public function update($ctx)
+    public function update(Request $request)
     {
-        ["post" => $post] = $ctx;
-        return DB::table("RateGroup")->where("RateGroupID", $post["RateGroupID"])->update([
-            "RateGroupName" => $post["RateGroupName"],
+        return DB::table("RateGroup")->where("RateGroupID", $request->input("RateGroupID"))->update([
+            "RateGroupName" => $request->input("RateGroupName"),
         ]);
     }
 
-    public function delete($ctx)
+    public function delete(Request $request)
     {
-        ["post" => $post] = $ctx;
-        $reatGroupIDs = $post["RateGroupIDs"];
+        $reatGroupIDs = $request->input("RateGroupIDs");
         if (count($reatGroupIDs) > 0) {
             DB::transaction(function () use ($reatGroupIDs) {
                 DB::table("RateGroup")->whereIn("RateGroupID", $reatGroupIDs)->delete();

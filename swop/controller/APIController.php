@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 
 /**
@@ -11,7 +12,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 class APIController extends JController
 {
 
-    public function getTaskRankingList($ctx)
+    public function getTaskRankingList(Request $request)
     {
         $selectRaw = DB::raw("
             sum(cast(CallOutCDR.CallDuration as float)) as CallDuration,
@@ -21,19 +22,19 @@ class APIController extends JController
         $query = DB::table("CallOutCDR")
             ->leftJoin("SysUser", "CallOutCDR.UserID", "=", "SysUser.UserID")
             ->orderBy("CallOutCDR.UserID");
-        if (!empty($ctx["post"]["userID"])) {
-            $query->where("CallOutCDR.UserID", $ctx["post"]["userID"]);
+        if (!empty($request->input("userID"))) {
+            $query->where("CallOutCDR.UserID", $request->input("userID"));
         } else {
-            $query->whereIn("CallOutCDR.UserID", $ctx["session"]["current_sub_emp"]);
+            $query->whereIn("CallOutCDR.UserID", session("current_sub_emp"));
         }
-        if (!empty($ctx["post"]["callStopBillingDate"])) {
-            $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$ctx["post"]["callStopBillingDate"] . "  23:59:59"]);
+        if (!empty($request->input("callStopBillingDate"))) {
+            $query->whereRaw("cast((CallOutCDR.CallStartBillingDate+' '+CallOutCDR.CallStartBillingTime) as datetime) < ?", [$request->input("callStopBillingDate") . "  23:59:59"]);
         }
-        if (!empty($ctx["post"]["callStartBillingDate"])) {
-            $query->whereRaw("cast((CallOutCDR.CallStopBillingDate+' '+CallOutCDR.CallStopBillingTime) as datetime) > ?", [$ctx["post"]["callStartBillingDate"] . " 00:00:00"]);
+        if (!empty($request->input("callStartBillingDate"))) {
+            $query->whereRaw("cast((CallOutCDR.CallStopBillingDate+' '+CallOutCDR.CallStopBillingTime) as datetime) > ?", [$request->input("callStartBillingDate") . " 00:00:00"]);
         }
 
-        switch ($ctx["post"]["display_mode"]) {
+        switch ($request->input("display_mode")) {
             case "0":
                 return $query
                     ->select("CallOutCDR.UserID", "CallOutCDR.ExtensionNo", "SysUser.UserName", $selectRaw)

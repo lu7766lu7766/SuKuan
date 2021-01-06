@@ -1,20 +1,20 @@
 <?php
 
+use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
 use service\PaginateService;
 
 class CommunicationController
 {
-  public function common($ctx)
+  public function common(Request $request)
   {
-    $post = $ctx["post"];
     $db = DB::table("CallOutCDR")
       ->select(
         DB::raw("count(1) as rows"),
         DB::raw("sum(CallDuration) as totalTime"),
         DB::raw("sum(cast(BillValue as float)) as totalMoney")
       );
-    $db = $this->buildWhere($db, $ctx);
+    $db = $this->buildWhere($db, $request);
     $res = $db->first();
     return [
       "rows" => $res->rows,
@@ -23,69 +23,66 @@ class CommunicationController
     ];
   }
 
-  public function list($ctx)
+  public function list(Request $request)
   {
-    $post = $ctx["post"];
     $db = DB::table("CallOutCDR");
-    $db = $this->buildWhere($db, $ctx);
-    $db = (new PaginateService())->proccess($db, $post["page"], $post["per_page"]);
-    $db = $this->buildOrderBy($db, $post["sortKey"], $post["sortType"]);
+    $db = $this->buildWhere($db, $request);
+    $db = (new PaginateService())->proccess($db, $request->input("page"), $request->input("per_page"));
+    $db = $this->buildOrderBy($db, $request->input("sortKey"), $request->input("sortType"));
     return $db->get();
   }
 
-  public function delete($ctx)
+  public function delete(Request $request)
   {
-    $post = $ctx["post"];
-    if (!is_array($post["id"]) || !count($post["id"])) {
+    if (!is_array($request->input("id")) || !count($request->input("id"))) {
       return false;
     } else {
       return DB::table("CallOutCDR")
-        ->whereIn('LogID', $post["id"])
+        ->whereIn('LogID', $request->input("id"))
         ->update([
           "DeletedAt" => date('Y-m-d H:i:s', time())
         ]);
     }
   }
 
-  private function buildWhere($db, $ctx)
+  private function buildWhere($db, $request)
   {
-    $post = $ctx["post"];
-    if (!empty($post["userId"])) {
-      $db->where("UserID", $post["userId"]);
+    if (!empty($request->input("userId"))) {
+      $db->where("UserID", $request->input("userId"));
     } else {
       $db->whereIn("UserID", session("current_sub_emp"));
     }
-    if (!empty($post["callStartBillingDate"])) {
-      $post["callStartBillingTime"] = $post["callStartBillingTime"] ?? '00:00:00';
+    if (!empty($request->input("callStartBillingDate"))) {
+      $callStartBillingTime = $request->input("callStartBillingTime", "00:00:00");
       $db->whereRaw(
         "cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) > ?",
-        ["{$post["callStartBillingDate"]} {$post["callStartBillingTime"]}"]
+        ["{$request->input("callStartBillingDate")} {$callStartBillingTime }"]
       );
     }
-    if (!empty($post["callStopBillingDate"])) {
-      $post["callStopBillingTime"] = $post["callStopBillingTime"] ?? '00:00:00';
+    if (!empty($request->input("callStopBillingDate"))) {
+      $callStopBillingTime = $request->input("callStopBillingTime", "00:00:00");
       $db->whereRaw(
         "cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) < ?",
-        ["{$post["callStopBillingDate"]} {$post["callStopBillingTime"]}"]
+        ["{$request->input("callStopBillingDate")} {$callStopBillingTime}"]
       );
     }
-    if (!empty($post["extensionNo"])) {
-      $db->where("ExtensionNo", $post["extensionNo"]);
+    if (!empty($request->input("extensionNo"))) {
+      $db->where("ExtensionNo", $request->input("extensionNo"));
     }
-    if (!empty($post["orgCalledId"])) {
-      $db->where("OrgCalledId", $post["orgCalledId"]);
+    if (!empty($request->input("orgCalledId"))) {
+      $db->where("OrgCalledId", $request->input("orgCalledId"));
     }
-    if (!empty($post["customerLevel"])) {
-      $db->where("CustomerLevel", $post["customerLevel"]);
+    if (!empty($request->input("customerLevel"))) {
+      $db->where("CustomerLevel", $request->input("customerLevel"));
     }
-    if ($post["searchSec"] !== "") {
-      $db->where("CallDuration", ">=", $post["searchSec"]);
+    if ($request->input("searchSec") !== "") {
+      $db->where("CallDuration", ">=", $request->input("searchSec"));
     }
-    if ($post["searchSec2"] !== "") {
-      $db->where("CallDuration", "<=", $post["searchSec2"]);
+    if ($request->input("searchSec2") !== "") {
+      $db->where("CallDuration", "<=", $request->input("searchSec2"));
     }
-    if ($post["callType"] !== "") {
-      $db->where("CallType", $post["callType"]);
+    if ($request->input("callType") !== "") {
+      $db->where("CallType", $request->input("callType"));
     }
     if (!session("isRoot")) {
       $db->whereNull("DeletedAt");

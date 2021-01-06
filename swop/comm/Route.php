@@ -113,10 +113,10 @@ class Router
     {
         if ($result = $this->checkedIsMatched()) {
             [$params, $match, $method, $args, $path] = $result;
-            $context = $this->buildContext($params, $match, $method, $args);
+            $this->setParams($params, $match);
             /** @var callback $func */
             $func = $this->procFunc($args["callback"]);
-            $this->matched($func, $context, $path);
+            $this->matched($func, $path);
         } else {
             $this->notMatched();
         }
@@ -172,58 +172,30 @@ class Router
         }
     }
 
-    public function buildContext($params, $match, $method, $args)
+    public function setParams($params, $match)
     {
         array_shift($match);
         foreach ($params as $var => $val) {
             $val = array_shift($match);
             $params[$var] = $val;
         }
-        /** 取method變數 */
-        switch ($method) {
-            case Method::GET:
-                $context["get"] = $this->collectMethod(Method::GET);
-                break;
-            case Method::POST:
-            case Method::PUT:
-            case Method::DELETE:
-                $context["post"] = $this->collectMethod(Method::POST);
-                break;
-            case Method::ANY:
-                $context["get"] = $this->collectMethod(Method::GET);
-                $context["post"] = $this->collectMethod(Method::POST);
-                break;
-        }
-        /** 塞入共用變數 */
-        $controller = config("default_controller");
-        $action = config("default_action");
-        if (is_string($args["callback"]) && strpos($args["callback"], "@") !== false) {
-            list($controller, $action) = explode("@", $args["callback"]);
-        }
-        $context["submit_link"] = config("folder") . $controller . "/" . $action;
-        $context["controller"] = $controller;
-        $context["action"] = $action;
-        $context["top_layout"] = "shared/top.php";
-        $context["layout"] = $action;
-        $context["bottom_layout"] = "shared/bottom.php";
-        $context["params"] = $params;
-        return $context;
+        request()->setParams($params);
     }
 
     /**
      * route had matched
      */
-    public function matched($func, $context, $path)
+    public function matched($func, $path)
     {
-        $funcResult = $this->procMiddleware($func, $context, $path);
+        $funcResult = $this->procMiddleware($func, $path);
         echo $funcResult;
     }
 
-    public function procMiddleware($func, $context, $path)
+    public function procMiddleware($func, $path)
     {
         $middleware = new Middleware();
-        $middleware->use(function () use ($func, $context) {
-            return $func($context);
+        $middleware->use(function () use ($func) {
+            return $func(request());
         });
         foreach ($this->map[$path]["middleware"] as $middlewareKey) {
             $middleware->use($middlewareKey);

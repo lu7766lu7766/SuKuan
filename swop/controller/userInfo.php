@@ -109,7 +109,7 @@ class UserInfo_Controller extends JController
 
     public function userDetail()
     {
-        $name = $this->model->userId ? '編輯' : '新增';
+        $name = $this->model->userID ? '編輯' : '新增';
         $this->menu->currentName = "用戶" . $name;
         return parent::render();
     }
