@@ -6,7 +6,7 @@ class Request
 {
   static private $instance;
 
-  static public function getInstance()
+  static public function getInstance(): Request
   {
     if (!isset(self::$instance)) {
       self::$instance = new Request();
@@ -14,31 +14,32 @@ class Request
     return self::$instance;
   }
 
-  public function input($key, $defaultValue = null)
+  public function input(string $key, $defaultValue = null)
   {
     return $_GET[$key] ?? $_POST[$key] ?? $defaultValue;
   }
 
-  public function only($keys)
+  public function only(array $keys): array
   {
-    return collect($keys)->map(function ($key) {
-      return $this->input($key);
-    })->toArray();
+    return collect($keys)->reduce(function ($result, $key) {
+      $result[$key] = $this->input($key);
+      return $result;
+    }, []);
   }
 
-  public function all()
+  public function all(): array
   {
     return collect($_GET)->merge($_POST)->all();
   }
 
-  public function file($key)
+  public function file(string $key): FileUploader
   {
     return new FileUploader($key);
   }
 
-  public function setParams($params)
+  public function setParams($params): void
   {
-    return $this->params = $params;
+    $this->params = $params;
   }
 
   public function param($key)

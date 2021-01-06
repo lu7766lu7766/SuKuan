@@ -126,40 +126,4 @@ class GroupCallSetting_Model extends JModel
         }
         return true;
     }
-
-    private function postEffectiveGroupCall($result)
-    {
-        if (!$this->checkCallPlanCount()) return;
-        $numbers = array_splice($result, 0, $this->phone_limit);
-        $callOutID = DB::table('CallPlan')->select('max(CallOutID)+1 as count')->get()[0]["count"]; //確保寫入numberList的calloutid是唯一值
-        $callOutID = empty($callOutID) ? "1" : $callOutID;
-        DB::table('CallPlan')->insert([
-            'UserID'            => session("choice"),
-            'PlanName'          => $this->planName,
-            'StartCalledNumber' => $numbers[0],
-            'EndCalledNumber'   => end($numbers),
-            'CalledCount'       => count($numbers),
-            'CallerPresent'     => 1,
-            'CallerID'          => '',
-            'CalloutGroupID'    => $this->calloutGroupID,
-            'Calldistribution'  => $this->calldistribution,
-            'CallProgressTime'  => $this->callProgressTime,
-            'ExtProgressTime'   => $this->extProgressTime,
-            'UseState'          => 0,
-            'ConcurrentCalls'   => $this->concurrentCalls,
-            'NumberMode'        => $this->numberMode,
-            'CallOutID'         => $callOutID
-        ])->exec();
-        $body = [];
-        while ($number = array_shift($numbers)) {
-            $body[] = [
-                'CallOutID'    => $callOutID,
-                'CalledNumber' => $number
-            ];
-        }
-        $this->chunkInsertDB2('NumberList', $body);
-        return count($result) > 0
-            ? $this->postEffectiveGroupCall($result)
-            : $this;
-    }
 }

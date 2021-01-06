@@ -14,7 +14,7 @@ class Middleware
     "api" => \middleware\Api::class
   ];
 
-  function use($key)
+  function use($key): void
   {
     if ($key instanceof \Closure) {
       $this->next = $key;

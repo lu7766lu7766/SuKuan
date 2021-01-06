@@ -12,6 +12,7 @@ class UserController extends JController
 {
 	public function echoPassword(Request $request)
 	{
+		dd($request->only(["user", "password"]));
 		echo ReturnMessage::success([
 			"user" => $request->input("user"),
 			"password" => \lib\Hash::encode($request->input("password"))
