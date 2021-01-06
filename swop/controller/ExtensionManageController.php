@@ -85,7 +85,7 @@ class ExtensionManageController extends JController
 
 	public function create(Request $request)
 	{
-		$extensions = range($request->input("ExtensionNo"), $request->input("ExtensionNos") ?? $request->input("ExtensionNo"));
+		$extensions = range($request->input("ExtensionNo"), $request->input("ExtensionNos", $request->input("ExtensionNo")));
 		$insertBody1 = collect($extensions)
 			->map(function ($x) use ($request) {
 				return [

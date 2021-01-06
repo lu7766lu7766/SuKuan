@@ -122,7 +122,7 @@ class GroupCallScheduleController extends JController
 				"Calldistribution"  => $request->input("Calldistribution"),
 				"CallProgressTime"  => $request->input("CallProgressTime"),
 				"ExtProgressTime"   => $request->input("ExtProgressTime"),
-				"UseState"          => $request->input("UseState") ?? 0
+				"UseState"          => $request->input("UseState", 0)
 			]);
 	}
 
