@@ -31,11 +31,7 @@ class Main_Model extends JModel
             session("choice", $result[0]["UserID"]);
             session("isRoot", $result[0]["UserID"] == "root");
             session("permission", $result[0]["MenuList"]);
-            $subEmp = $this->getSubEmp($result[0]["UserID"]);
-            uasort($subEmp, function ($a, $b) {
-                return $a["UserID"] <=> $b["UserID"];
-            });
-            session("sub_emp", $subEmp);
+            session("sub_emp", collect($this->getSubEmp($result[0]["UserID"]))->sortBy("UserID")->toArray());
             session("current_sub_emp", EmpHelper::getCurrentSubEmp(
                 session("sub_emp"),
                 session("choice")
