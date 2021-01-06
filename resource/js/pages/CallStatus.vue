@@ -96,10 +96,7 @@
                 <th>Ping</th>
                 <th>掛</th>
               </tr>
-              <tr
-                v-for="(data, index) in subData.data1.concat(subData.data2)"
-                :key="index"
-              >
+              <tr v-for="(data, index) in subData.data1" :key="index">
                 <td>{{ index + 1 }}</td>
                 <td>
                   <span>{{ data.CalledId }}</span>
@@ -107,7 +104,9 @@
                     節費
                   </span>
                 </td>
-                <td>{{ data.status == 0 ? "撥號中" : "通話中" }}</td>
+                <td>
+                  {{ data.status == Const.DIALING ? "撥號中" : "通話中" }}
+                </td>
                 <td>{{ data.ExtensionNo }}</td>
                 <td>{{ data.CalloutGroupID }}</td>
                 <td>{{ data.CallDuration }}</td>
@@ -117,14 +116,7 @@
                     type="button"
                     value="掛"
                     class="btn btn-info"
-                    @click="
-                      (e) =>
-                        doHangUp(
-                          data.status ? subData.data1 : subData.data2,
-                          index,
-                          e
-                        )
-                    "
+                    @click="(e) => doHangUp(index, e)"
                   />
                 </td>
               </tr>
@@ -276,7 +268,11 @@ export default {
     user: {},
     alert_txt:
       "總路由線路數必須 >= 掃號路由線數 + 節費路由線數 +自動撥號當前線數",
-    subData: { data1: [], data2: [], data3: [] },
+    subData: { data1: [], data3: [] },
+    Const: {
+      DIALING: 0,
+      TALKING: 1,
+    },
   }),
   methods: {
     async getBaseData() {
@@ -345,16 +341,16 @@ export default {
         this.startUpdate();
       }
     },
-    async doHangUp(datas, index, e) {
+    async doHangUp(index, e) {
       this.stopUpdate();
       try {
-        const item = datas[index];
+        const item = this.subData.data1[index];
         await this.$confirm("刪除掛斷");
         await $.callApi.post("api/callStatus/callRelease", {
           Seat: item.Seat,
           CalledID: item.CalledId,
         });
-        datas.splice(index, 1);
+        this.subData.data1.splice(index, 1);
       } catch (err) {
       } finally {
         this.startUpdate();
@@ -382,19 +378,17 @@ export default {
       this.timer = setInterval(this.update, UPDATE_TIME);
     },
     async update() {
-      // let callApiTimes = 0;
-      // const RELOAD_TIMES = 2000;
-
-      // if (++callApiTimes > RELOAD_TIMES) {
-      //   this.saveScrollTop();
-      //   window.history.go(0);
-      //   return;
-      // }
       const res = await $.callApi.go("sysLookout/ajaxCallStatusContent2", {
         userId: this.choice,
       });
-      res.data1 = res.data1.map((x) => ({ ...x, status: 0 }));
-      res.data2 = res.data2.map((x) => ({ ...x, status: 1 }));
+
+      res.data1 = _(res.data1)
+        .map((x) => ({
+          ...x,
+          status: !x.ExtensionNo ? this.Const.DIALING : this.Const.TALKING,
+        }))
+        .orderBy("status")
+        .value();
       res.data3.forEach(function (x) {
         var WaitCall = x.CalledCount - x.CalloutCount;
         x.WaitCall = WaitCall > 0 ? WaitCall : 0;

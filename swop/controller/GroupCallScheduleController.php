@@ -19,7 +19,7 @@ class GroupCallScheduleController extends JController
 		$this->LIST_LIMIT = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
 	}
 
-	public function list($ctx)
+	public function list()
 	{
 		return DB::table("CallPlan")
 			->where("UserID", session("choice"))
