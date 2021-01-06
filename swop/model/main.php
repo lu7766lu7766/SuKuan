@@ -12,31 +12,27 @@ class Main_Model extends JModel
 
     public function login_in()
     {
-        $dba = $this->dba;
-        $username = $this->username;
-        if (empty($username)) {
-            return false;
+        $db = DB::table("SysUser")
+            ->where(function ($db) {
+                return $db->where("UserID", request()->input("username"))->orWhere("UserID2", request()->input("username"));
+            });
+        if (!isDev()) {
+            $db->where("UserPassword", \lib\Hash::encode(request()->input("password")));
         }
-        $password = $this->password;
-        $password = \lib\Hash::encode($password);
-
-        $sql = "select UserID,UserName,UserGroup,MenuList,PermissionControl,CanSwitchExtension from SysUser
-                      where (UserID=? or UserID2=?) AND
-                      UserPassword=?";
-        $result = $dba->getAll($sql, [$username, $username, $password]);
-
-        if (count($result)) {
-            session("login", $result[0]);
-            session("choicer", $result[0]);
-            session("choice", $result[0]["UserID"]);
-            session("isRoot", $result[0]["UserID"] == "root");
-            session("permission", $result[0]["MenuList"]);
-            session("sub_emp", collect($this->getSubEmp($result[0]["UserID"]))->sortBy("UserID")->toArray());
+        $result = $db->first();
+        if ($result) {
+            $user = \lib\ArrayUtils::toArray($result);
+            session("login", $user);
+            session("choicer", $user);
+            session("choice", $user["UserID"]);
+            session("isRoot", $user["UserID"] == "root");
+            session("permission", $user["MenuList"]);
+            session("sub_emp", collect($this->getSubEmp($user["UserID"]))->sortBy("UserID")->toArray());
             session("current_sub_emp", EmpHelper::getCurrentSubEmp(
                 session("sub_emp"),
                 session("choice")
             ));
-            session("permission_control", $result[0]["PermissionControl"]);
+            session("permission_control", $user["PermissionControl"]);
             return true;
         }
         return false;

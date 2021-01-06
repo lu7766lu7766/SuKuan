@@ -7,7 +7,7 @@ class Main_Controller extends Controller
         $model = $this->model;
         if ($model->submit) {
 //            if(true)
-            if (strtolower($model->captcha) == strtolower($_SESSION["code_login"])) {
+            if (strtolower($model->captcha) == strtolower($_SESSION["code_login"]) || isDev()) {
                 if ($model->login_in()) {
                     $this->redirect("index/index");
                 } else {
