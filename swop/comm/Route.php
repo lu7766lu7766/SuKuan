@@ -207,7 +207,6 @@ class Router
         $context["layout"] = $action;
         $context["bottom_layout"] = "shared/bottom.php";
         $context["params"] = $params;
-        $context["session"] = $_SESSION[config("folder")];
         return $context;
     }
 

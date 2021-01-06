@@ -1,5 +1,6 @@
 <?php
 
+use comm\Request;
 use comm\Session;
 
 function nl2br2($string)
@@ -45,6 +46,11 @@ function session(...$params)
 function isDev()
 {
     return getenv2("ENV") == "development";
+}
+
+function request()
+{
+    return Request::getInstance();
 }
 
 function GUID(): String

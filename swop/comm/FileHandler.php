@@ -15,7 +15,7 @@ class FileHandler
 	{
 		$fp = fopen($path, "rb");
 		if (!$fp) {
-			throw new Exception("Cannot read from file.");
+			throw new \Exception("Cannot read from file.");
 		}
 		flock($fp, LOCK_SH);
 		rewind($fp);

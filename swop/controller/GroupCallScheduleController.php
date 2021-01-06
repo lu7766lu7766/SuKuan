@@ -45,8 +45,8 @@ class GroupCallScheduleController extends JController
 		$validator = new Validator();
 		$validation = $validator->validate($post, [
 			"NumberMode"               => "required",
-			"StartCalledNumber"        => "required",
-			"CalledCount"              => "required|numeric",
+			"StartCalledNumber"        => "required_if:NumberMode,0,2",
+			"CalledCount"              => "required_if:NumberMode,0,2|numeric",
 		]);
 		if ($validation->fails()) {
 			throw new Exception("驗證失敗，請確認欄位");

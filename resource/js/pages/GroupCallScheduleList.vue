@@ -245,7 +245,6 @@ export default {
     },
     onFileChange(e) {
       this.editData.list = e.target.files[0];
-      evt.target.value = "";
     },
     async doCreate() {
       await $.callApi.post(

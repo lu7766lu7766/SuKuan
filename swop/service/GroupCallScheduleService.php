@@ -32,8 +32,7 @@ class GroupCallScheduleService
 
   public function getListAndValide()
   {
-    $modal = new \JModel();
-    $result = $modal->readUploadList();
+    $result = request()->file("list")->readList();
     $len = count($result);
     if (!$len) {
       throw new Exception("筆數異常，請重新檢查檔案");
