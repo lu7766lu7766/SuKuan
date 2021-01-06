@@ -211,7 +211,7 @@ export default {
       StartCalledNumber: "",
       ExtProgressTime: "15",
       CallProgressTime: "30",
-      Calldistribution: "0",
+      Calldistribution: "1",
       CalloutGroupID: 1,
       random: true,
     },

@@ -66,7 +66,7 @@
         { key: 'CalloutGroupID', name: '座席' },
         { key: 'Suspend', name: '狀態' },
         { key: 'ETime', name: '註冊' },
-        { key: 'UseState', name: '啟用' },
+        { key: 'UseState', name: '啟用', show: canSwitchExtension },
         { key: 'PingTime', name: 'Ping' },
         { key: 'action', name: '操作' },
       ]"
@@ -94,8 +94,7 @@
         />
       </template>
       <template v-slot:UseState="{ data }">
-        <Switcher v-if="canSwitchExtension" disabled :value="data.UseState" />
-        <span v-else></span>
+        <Switcher disabled :value="data.UseState" />
       </template>
       <template v-slot:action="{ data }">
         <button type="button" class="btn btn-info" @click="toEdit(data)">
@@ -161,7 +160,7 @@ export default {
       };
     },
     canSwitchExtension() {
-      return this.isRoot || +this.options.choicer.CanSwitchExtension;
+      return !!(this.isRoot || +this.options.choicer.CanSwitchExtension);
     },
   },
   mounted() {
