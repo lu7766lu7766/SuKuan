@@ -23,11 +23,11 @@ class PointController extends JController
 
     public function buildWhere($db, $ctx)
     {
-        ["post" => $post, "session" => $session] = $ctx;
+        ["post" => $post] = $ctx;
         if (!empty($post["UserID"])) {
             $db->where("UserID", $post["UserID"]);
         } else {
-            $db->whereIn("UserID", $session["current_sub_emp"]);
+            $db->whereIn("UserID", session("current_sub_emp"));
         }
         if (!empty($post["StartDate"])) {
             $db->whereRaw("cast(AddTime as datetime) > ?", [$post["StartDate"] . " 00:00:00"]);

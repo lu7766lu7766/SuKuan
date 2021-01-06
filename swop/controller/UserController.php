@@ -26,7 +26,6 @@ class UserController extends JController
 	 */
 	public function list($ctx)
 	{
-		["session" => $session] = $ctx;
 		$db = DB::table("SysUser")
 			->select(
 				"UserID",
@@ -38,7 +37,7 @@ class UserController extends JController
 				"NoteText",
 				DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
 			);
-		if (!$session["isRoot"]) {
+		if (!session("isRoot")) {
 			$db = $db->whereIn("UserID", $ctx["session"]["current_sub_emp"]);
 		}
 		return $db->get();
@@ -66,13 +65,13 @@ class UserController extends JController
 
 	public function create($ctx)
 	{
-		["post" => $post, "session" => $session] = $ctx;
+		["post" => $post] = $ctx;
 		$this->validate($post);
 		$repo = new UserRepostory();
 		if ($repo->checkExists([$post["UserID"]])) {
 			throw new Exception("登入帳號已存在，無法新增。");
 		} else {
-			DB::transaction(function () use ($repo, $post, $session) {
+			DB::transaction(function () use ($repo, $post) {
 				$repo->create(
 					$post["UserID"],
 					$post["UseState"] ? 1 : 0,
@@ -103,7 +102,7 @@ class UserController extends JController
 					$post["CanSwitchExtension"] ? 1 : 0
 				);
 				if ($post["AddBalance"] && $post["AddBalance"] != 0) {
-					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), $session["choice"]);
+					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 			return true;
@@ -112,7 +111,7 @@ class UserController extends JController
 
 	public function createBatch($ctx)
 	{
-		["post" => $post, "session" => $session] = $ctx;
+		["post" => $post] = $ctx;
 		$repo = new UserRepostory();
 		if ($repo->checkExists(array_column($post["datas"], "UserID"))) {
 			throw new Exception("帳號有重複，無法新增。");
@@ -121,9 +120,9 @@ class UserController extends JController
 			throw new Exception("新增比數超過100筆，請減少筆數。");
 		}
 
-		DB::transaction(function () use ($post, $session) {
+		DB::transaction(function () use ($post) {
 			DB::table("SysUser")->insert(
-				collect($post["datas"])->map(function ($x) use ($session) {
+				collect($post["datas"])->map(function ($x) {
 					return [
 						"UserID" => $x["UserID"],
 						"UserName" => $x["UserName"],
@@ -131,18 +130,18 @@ class UserController extends JController
 						"RateGroupID" => $x["RateGroupID"],
 						"Balance" => $x["Balance"],
 						"NoteText" => $x["NoteText"],
-						"ParentID" => $session["choice"],
+						"ParentID" => session("choice"),
 						"StartTime" => "08:00",
 						"StopTime" => "21:00"
 					];
 				})->toArray()
 			);
-			DB::table("RechargeLog")->insert(collect($post["datas"])->map(function ($x) use ($session) {
+			DB::table("RechargeLog")->insert(collect($post["datas"])->map(function ($x) {
 				return [
 					"UserID" => $x["UserID"],
 					"AddValue" => $x["Balance"],
 					"AddTime" => date("Y-m-d H:i:s", time()),
-					"SaveUserID" => $session["choice"]
+					"SaveUserID" => session("choice")
 				];
 			})->toArray());
 		});
@@ -151,11 +150,11 @@ class UserController extends JController
 
 	public function update($ctx)
 	{
-		["post" => $post, "session" => $session] = $ctx;
+		["post" => $post] = $ctx;
 		$this->validate($post);
 		$repo = new UserRepostory();
-		if ($session["isRoot"]) {
-			DB::transaction(function () use ($repo, $post, $session) {
+		if (session("isRoot")) {
+			DB::transaction(function () use ($repo, $post) {
 				$repo->update(
 					$post["UserID"],
 					$post["UseState"] ? 1 : 0,
@@ -186,7 +185,7 @@ class UserController extends JController
 					$post["CanSwitchExtension"] ? 1 : 0
 				);
 				if ($post["AddBalance"] && $post["AddBalance"] != 0) {
-					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), $session["choice"]);
+					$repo->createChargeLog($post["UserID"], $post["AddBalance"], date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 		} else {
@@ -210,13 +209,12 @@ class UserController extends JController
 
 	public function menus($ctx)
 	{
-		["session" => $session] = $ctx;
-		if ($session["isRoot"]) {
+		if (session("isRoot")) {
 			return Menu::getAllMenus();
-		} else if ($session["choice"] == $session["login"]["UserID"]) {
-			$result = $session["login"]["MenuList"];
+		} else if (session("choice") == session("login")["UserID"]) {
+			$result = session("login")["MenuList"];
 		} else {
-			$result = EmpHelper::getMenuList($session["sub_emp"], $session["choice"]);
+			$result = EmpHelper::getMenuList(session("sub_emp"), session("choice"));
 		}
 
 		return

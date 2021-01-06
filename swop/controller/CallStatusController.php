@@ -7,8 +7,7 @@ class CallStatusController extends JController
 {
   public function base($ctx)
   {
-    ["session" => $session] = $ctx;
-    $user = DB::table("SysUser")->where("UserID", $session["choice"])->first();
+    $user = DB::table("SysUser")->where("UserID", session("choice"))->first();
     $user->isSuspend = $user->Suspend != "1";
     return $user;
   }
@@ -22,17 +21,17 @@ class CallStatusController extends JController
 
   public function calloutGroupID($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->update([
       "CalloutGroupID" => $post["CalloutGroupID"]
     ]);
   }
 
   public function deleteCallPlan($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    DB::transaction(function () use ($session, $post) {
-      $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->delete();
+    ["post" => $post] = $ctx;
+    DB::transaction(function () use ($post) {
+      $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->delete();
       DB::table("NumberList")->where("CallOutID", $post["CallOutID"])->delete();
     });
     return true;
@@ -40,8 +39,8 @@ class CallStatusController extends JController
 
   public function useState($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildCallPlanWhere($session["choice"], $post["CallOutID"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildCallPlanWhere(session("choice"), $post["CallOutID"])->update([
       "UseState" => $post["UseState"]
     ]);
   }
@@ -53,40 +52,39 @@ class CallStatusController extends JController
 
   public function switchSuspend($ctx)
   {
-    ["session" => $session] = $ctx;
-    return $this->buildUserWhere($session["choice"])->update([
+    return $this->buildUserWhere(session("choice"))->update([
       "Suspend" => DB::raw("abs(Suspend-1)")
     ]);
   }
 
   public function updateMaxCalls($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildUserWhere($session["choice"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildUserWhere(session("choice"))->update([
       "MaxCalls" => $post["MaxCalls"]
     ]);
   }
 
   public function updateConcurrentCallsAmp($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildUserWhere($session["choice"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildUserWhere(session("choice"))->update([
       "ConcurrentCallsAmp" => $post["ConcurrentCallsAmp"]
     ]);
   }
 
   public function updateCallWaitingTime($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildUserWhere($session["choice"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildUserWhere(session("choice"))->update([
       "CallWaitingTime" => $post["CallWaitingTime"]
     ]);
   }
 
   public function updatePlanDistribution($ctx)
   {
-    ["post" => $post, "session" => $session] = $ctx;
-    return $this->buildUserWhere($session["choice"])->update([
+    ["post" => $post] = $ctx;
+    return $this->buildUserWhere(session("choice"))->update([
       "PlanDistribution" => $post["PlanDistribution"]
     ]);
   }

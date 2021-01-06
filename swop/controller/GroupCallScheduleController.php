@@ -21,9 +21,8 @@ class GroupCallScheduleController extends JController
 
 	public function list($ctx)
 	{
-		["session" => $session] = $ctx;
 		return DB::table("CallPlan")
-			->where("UserID", $session["choice"])
+			->where("UserID", session("choice"))
 			->orderBy("CallOutID", "desc")
 			->get();
 	}
@@ -56,9 +55,9 @@ class GroupCallScheduleController extends JController
 
 	public function create($ctx)
 	{
-		["session" => $session, "post" => $post] = $ctx;
+		["post" => $post] = $ctx;
 		$this->validate($post);
-		$this->service->valideCallPlanMaxLimit($session["choice"]);
+		$this->service->valideCallPlanMaxLimit(session("choice"));
 		if ($post["NumberMode"] == self::LIST) {
 			$list = $this->service->getListAndValide();
 			$post["StartCalledNumber"] = $list[0];
@@ -86,9 +85,9 @@ class GroupCallScheduleController extends JController
 			$numberCollection = $numberCollection->shuffle();
 		}
 
-		DB::transaction(function () use ($session, $post, $callOutID, $numberCollection) {
+		DB::transaction(function () use ($post, $callOutID, $numberCollection) {
 			DB::table("CallPlan")->insert([
-				"UserID"            => $session["choice"],
+				"UserID"            => session("choice"),
 				"PlanName"          => $post["PlanName"],
 				"StartCalledNumber" => $post["StartCalledNumber"],
 				'EndCalledNumber'   => $numberCollection->last()["CalledNumber"],

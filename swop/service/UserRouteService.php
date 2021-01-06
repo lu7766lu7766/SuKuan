@@ -19,9 +19,8 @@ class UserRouteService
   public function list($ctx)
   {
     $db = DB::table($this->tableName);
-    ["session" => $session] = $ctx;
-    if (!$session["isRoot"]) {
-      $db->where("UserID", $session["choice"]);
+    if (!session("isRoot")) {
+      $db->where("UserID", session("choice"));
     }
     return $db->get();
   }

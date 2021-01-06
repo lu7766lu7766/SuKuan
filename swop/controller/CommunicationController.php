@@ -50,11 +50,10 @@ class CommunicationController
   private function buildWhere($db, $ctx)
   {
     $post = $ctx["post"];
-    $session = $ctx["session"];
     if (!empty($post["userId"])) {
       $db->where("UserID", $post["userId"]);
     } else {
-      $db->whereIn("UserID", $session["current_sub_emp"]);
+      $db->whereIn("UserID", session("current_sub_emp"));
     }
     if (!empty($post["callStartBillingDate"])) {
       $post["callStartBillingTime"] = $post["callStartBillingTime"] ?? '00:00:00';
@@ -88,7 +87,7 @@ class CommunicationController
     if ($post["callType"] !== "") {
       $db->where("CallType", $post["callType"]);
     }
-    if (!$session["isRoot"]) {
+    if (!session("isRoot")) {
       $db->whereNull("DeletedAt");
     }
     return $db;

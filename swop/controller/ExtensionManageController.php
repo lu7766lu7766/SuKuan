@@ -6,7 +6,7 @@ class ExtensionManageController extends JController
 {
 	private function buildWhere($db, $ctx)
 	{
-		["session" => $session, "post" => $post] = $ctx;
+		["post" => $post] = $ctx;
 		if (!empty($post["UserID"])) {
 			$db->where("CustomerLists.UserID", $post["UserID"]);
 		}
@@ -17,7 +17,7 @@ class ExtensionManageController extends JController
 					->orWhere("CustomerLists.ExtensionNo", $post["SearchContent"]);
 			});
 		}
-		return $db->whereIn("CustomerLists.UserID", $session["current_sub_emp"]);
+		return $db->whereIn("CustomerLists.UserID", session("current_sub_emp"));
 	}
 
 	public function list($ctx)
@@ -122,7 +122,7 @@ class ExtensionManageController extends JController
 
 	public function update($ctx)
 	{
-		["post" => $post, "session" => $session] = $ctx;
+		["post" => $post] = $ctx;
 		$updateBody = [
 			"ExtName" => $post["ExtName"],
 			"CustomerPwd" => $post["CustomerPwd"],
@@ -130,7 +130,7 @@ class ExtensionManageController extends JController
 			"Suspend" => $post["Suspend"],
 			"UseState" => $post["UseState"],
 		];
-		if ($session["isRoot"]) {
+		if (session("isRoot")) {
 			$updateBody["OffNetCli"] = $post["OffNetCli"];
 		}
 		DB::transaction(function () use ($post, $updateBody) {
