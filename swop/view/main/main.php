@@ -8,7 +8,7 @@ Bundle::echoLink("default");
 
 $top_view_path = "";
 $this->partialView($top_view_path);
-$imageUrl = config("folder") . "createImg.php";
+$imageUrl = config("folder") . "main/code_login";
 ?>
 
 <body class="container-fluid" style="background-color: #666">

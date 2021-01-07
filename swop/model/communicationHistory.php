@@ -13,107 +13,6 @@ class CommunicationHistory_Model extends JModel
         $this->black_list_once_limit = getenv2("BLACK_LIST_ONCE_LIMIT", 10000);
     }
 
-    public function getCommunicationSearch()
-    {
-        $dba = $this->dba;
-        $page = $this->page = $this->page ?? 0;
-        $per_page = $this->per_page = (!empty($this->per_page) ? $this->per_page : 100);
-        $offset = $per_page * $page + 1;
-        $limit = $per_page;
-        $orderBy = " order by cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) desc";
-        $sql1 = " select count(1) as count from CallOutCDR where"; //,sum(cast(BillValue as int)) as totalMoney
-        $sql2 = " select sum(CallDuration) as totalTime,sum(cast(BillValue as float)) as totalMoney from CallOutCDR where BillValue<>''  and";
-        $sql = "select ROW_NUMBER() over ({$orderBy}) rownum,
-                LogID,UserID, CallStartBillingDate, CallStartBillingTime, CallStopBillingDate, CallStopBillingTime,
-                ExtensionNo, OrgCalledId, CallDuration, BillValue, RecordFile, CustomerLevel, CallType
-                from CallOutCDR
-                where";
-        $params = [];
-        if (!empty($this->userId)) {
-            $sql1 .= " UserID = ?  and";
-            $sql2 .= " UserID = ?  and";
-            $sql .= " UserID = ?  and";
-            $params[] = $this->userId;
-        } else {
-            $sql1 .= " UserID in (" . join(",", array_map(function ($v) {
-                return "'" . $v . "'";
-            }, session("current_sub_emp"))) . ")  and";
-            $sql2 .= " UserID in (" . join(",", array_map(function ($v) {
-                return "'" . $v . "'";
-            }, session("current_sub_emp"))) . ")  and";
-            $sql .= " UserID in (" . join(",", array_map(function ($v) {
-                return "'" . $v . "'";
-            }, session("current_sub_emp"))) . ")  and";
-        }
-        if (!empty($this->callStartBillingDate)) {
-            $sql1 .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) < ?  and";
-            $sql2 .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) < ?  and";
-            $sql .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) < ?  and";
-            $params[] = $this->callStopBillingDate . " " . ($this->callStopBillingTime ?? "00:00:00");
-        }
-        if (!empty($this->callStopBillingDate)) {
-            //            $sql1 .= " cast((CallStopBillingDate+' '+CallStopBillingTime) as datetime) > ?  and";
-            //            $sql2 .= " cast((CallStopBillingDate+' '+CallStopBillingTime) as datetime) > ?  and";
-            //            $sql .= " cast((CallStopBillingDate+' '+CallStopBillingTime) as datetime) > ?  and";
-            $sql1 .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) > ?  and";
-            $sql2 .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) > ?  and";
-            $sql .= " cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) > ?  and";
-            $params[] = $this->callStartBillingDate . " " . ($this->callStartBillingTime ?? "00:00:00");
-        }
-        if (!empty($this->extensionNo)) {
-            $sql1 .= " ExtensionNo = ?  and";
-            $sql2 .= " ExtensionNo = ?  and";
-            $sql .= " ExtensionNo = ?  and";
-            $params[] = $this->extensionNo;
-        }
-        if (!empty($this->orgCalledId)) {
-            $sql1 .= " OrgCalledId = ?  and";
-            $sql2 .= " OrgCalledId = ?  and";
-            $sql .= " OrgCalledId = ?  and";
-            $params[] = $this->orgCalledId;
-        }
-        if (!empty($this->customerLevel)) {
-            $sql1 .= " CustomerLevel = ?  and";
-            $sql2 .= " CustomerLevel = ?  and";
-            $sql .= " CustomerLevel = ?  and";
-            $params[] = $this->customerLevel;
-        }
-        if (!empty($this->searchSec)) {
-            $sql1 .= " CallDuration >= ?  and";
-            $sql2 .= " CallDuration >= ?  and";
-            $sql .= " CallDuration >= ?  and";
-            $params[] = $this->searchSec;
-        }
-        if ($this->callType !== "") {
-            $sql1 .= " CallType = ?  and";
-            $sql2 .= " CallType = ?  and";
-            $sql .= " CallType = ?  and";
-            $params[] = $this->callType;
-        }
-        $sql1 = substr($sql1, 0, -5);
-        $sql2 = substr($sql2, 0, -5);
-        $sql = substr($sql, 0, -5); //and 前面兩個空白，防止沒有參數進來，清除where五個字
-        //$sql .= " order by cast((CallStartBillingDate+' '+CallStartBillingTime) as datetime) desc";
-        $result = $dba->getAll($sql1, $params)[0];
-        $this->rows = $result["count"];
-        //echo $this->rows."^^".$per_page;
-        $this->last_page = ceil($this->rows / $per_page);
-        $result = $dba->getAll($sql2, $params)[0];
-        $this->totalTime = $result["totalTime"];
-        $this->totalMoney = $result["totalMoney"];
-        //echo $this->totalTime."^^".$this->totalMoney;
-        //		Console::log($dba->mergeSQL($sql, $params));
-        //		Console::log($dba->mergeSQL($sql1, $params));
-        //		Console::log($dba->mergeSQL($sql2, $params));
-        // $tmp_data = $dba->getAll($sql2,$params);
-        // $this->totalTime = $tmp_data["totalTime"];
-        // $this->totalMoney = $tmp_data["totalMoney"];
-        //echo $offset."&^".$limit;
-        $this->data = $dba->getAllLimit($sql, $params, $offset, $limit);
-        session("tmp_sql", $dba->mergeSQL($sql, $params));
-        //echo $dba->mergeSQL($sql,$params)."^^";
-    }
-
     public function getCommunicationSearchDownload()
     {
         $this->writeCommunicationSearch($this->dba->getAll(session("tmp_sql")));
@@ -180,13 +79,7 @@ class CommunicationHistory_Model extends JModel
             $this->warning = "條件範圍，找不到任何資料！！"; //$dba->mergeSQL($sql,$params).
             return;
         }
-        //include_once config("comm_dir")."phpzip.php";
-        //$zip = new PHPZip("test.zip");
-        //$tmpFolder = "tmp/".session("choice")."/";
-        //@mkdir("tmp");
-        //$this->delete_files($tmpFolder);
-        //@mkdir($tmpFolder);
-        //@mkdir("download");
+        
         $this->targetFile = session("choice") . "RecordFile.zip";
         $zip = new ZipArchive();
         if ($zip->open($this->targetFile, ZIPARCHIVE::CREATE) !== true) {

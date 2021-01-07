@@ -12,7 +12,7 @@ class UserController extends JController
 {
 	public function echoPassword(Request $request)
 	{
-		echo ReturnMessage::success([
+		return ReturnMessage::success([
 			"user" => $request->input("user"),
 			"password" => \lib\Hash::encode($request->input("password"))
 		], JSON_UNESCAPED_SLASHES);

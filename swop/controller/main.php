@@ -6,7 +6,7 @@ class Main_Controller extends Controller
     {
         $model = $this->model;
         if ($model->submit) {
-//            if(true)
+            //            if(true)
             if (strtolower($model->captcha) == strtolower($_SESSION["code_login"]) || isDev()) {
                 if ($model->login_in()) {
                     $this->redirect("index/index");
@@ -23,23 +23,21 @@ class Main_Controller extends Controller
                 }
             }
         }
-        
+
         return $this->render();
     }
 
     public function code_login()
     {
-        require_once config("comm_dir") . "verification.php";;
-        $vert = new Library_Verification();
-        $vert->kernel();
-        $_SESSION["code_login"] = $vert->code;
-        echo $_SESSION["code_login"] . "^^";
+        require_once config("comm_dir") . "Verification.php";;
+        $vert = new Verification(4);
+        $_SESSION["code_login"] = $vert->getCode();
+        $vert->draw();
     }
 
     public function server_restart()
     {
         $this->model->dba->server_restart();
         $this->redirect($this->defaultUrl);
-//        echo $this->defaultUrl . "^^";
     }
 }

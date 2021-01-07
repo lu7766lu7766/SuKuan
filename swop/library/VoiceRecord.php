@@ -61,10 +61,7 @@ class VoiceRecord
 			"string" => base64_encode($fileData)
 		];
 
-		$res = \comm\Http::post($url, $data);
-//		\comm\Console::dd(json_decode($res, true));
-//		echo $res . "^^";
-//		die();
+		\comm\Http::post($url, $data);
 
 		return $fileName;
 	}

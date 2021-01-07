@@ -13,7 +13,7 @@ Route::post("/user/detail", "UserController@detail")->middleware("api");
 
 // rate manage
 Route::post("/rate/list", "RateController@list")->middleware("api");
-Route::post("/rate/create", "RateController@create");
+Route::post("/rate/create", "RateController@create")->middleware("api");
 Route::post("/rate/create/batch", "RateController@createBatch")->middleware("api");
 Route::post("/rate/update", "RateController@update")->middleware("api");
 Route::post("/rate/delete", "RateController@delete")->middleware("api");

@@ -2,39 +2,6 @@
 
 class CommunicationHistory_Controller extends JController
 {
-    public function communicationSearch()
-    {
-        $model = $this->model;
-        if ($model->submit) {
-            $model->getCommunicationSearch();
-        }
-        $model->empSelect2 = EmpHelper::getEmpSelect(
-            $model->empSelect,
-            ["selected" => $model->userId, "option" => ["value" => "", "name" => ""]]
-        );
-        foreach ($model->empSelect2["option"] as $i => $option) {
-            if (
-                $option["value"] != "" &&
-                $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])
-            ) {
-                unset($model->empSelect2["option"][$i]);
-            }
-        }
-        $model->pageSelect = PageHelper::getPageSelect($model->page, $model->last_page);
-        $model->callTypeSelect = [
-            "id"       => "callType",
-            "name"     => "callType",
-            "selected" => $model->callType,
-            "option"   => [
-                ["value" => "", "name" => "全部"],
-                ["value" => "0", "name" => "自動撥號"],
-                ["value" => "1", "name" => "手動撥號"]
-            ]
-        ];
-        return parent::render();
-    }
-
     public function communicationSearch_vue()
     {
         return parent::render();

@@ -73,11 +73,6 @@ class Rules
 				$result[] = $value;
 			}
 		}
-//		\Console::dd([
-//			'result' => $result,
-//			'filter' => $filter
-//		]);
-//		die();
 
 		return [
 			'result' => $result,

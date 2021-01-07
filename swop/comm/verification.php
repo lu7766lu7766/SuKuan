@@ -1,34 +1,37 @@
 <?php
 
-class Library_Verification
+class Verification
 {
+    private $code;
+    private $codelen;
 
-    public function __construct()
+    public function __construct($codelen)
     {
-    }
-
-    public function kernel($codelen = 4, $width = 130, $height = 50, $fontsize = 20)
-    {
-
-        $charset = "abcdefghkmnprstuvwxyzABCDEFGHKMNPRSTUVWXYZ23456789"; //驗證碼元素
-        $code = "";            //驗證碼
-        $img;            //輸出圖片
-        $font;            //字型
-        $fontcolor;        //字體顏色
-        $font = dirname(__FILE__) . "/elephant.ttf";
-
-        //繪製背景
-        $img = imagecreatetruecolor($width, $height);
-        $color = imagecolorallocate($img, mt_rand(157, 255), mt_rand(157, 255), mt_rand(157, 255));
-        imagefilledrectangle($img, 0, $height, $width, 0, $color);
-
         //產生驗證碼
+        $charset = "abcdefghkmnprstuvwxyzABCDEFGHKMNPRSTUVWXYZ23456789"; //驗證碼元素
         $_len = strlen($charset) - 1;
+        $code = "";            //驗證碼
         for ($i = 0; $i < $codelen; $i++)
         {
             $code .= $charset[mt_rand(0, $_len)];
         }
         $this->code = $code;
+        $this->codelen = $codelen;
+    }
+
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    public function draw($width = 130, $height = 50, $fontsize = 20)
+    {
+        $font = config("comm_dir") . "/elephant.ttf";
+
+        //繪製背景
+        $img = imagecreatetruecolor($width, $height);
+        $color = imagecolorallocate($img, mt_rand(157, 255), mt_rand(157, 255), mt_rand(157, 255));
+        imagefilledrectangle($img, 0, $height, $width, 0, $color);
 
         //繪製干擾
         for ($i = 0; $i < 6; $i++)
@@ -43,21 +46,12 @@ class Library_Verification
         }
 
         //繪製文字
-        $_x = $width / $codelen;
-        for ($i = 0; $i < $codelen; $i++)
+        $_x = $width / $this->codelen;
+        for ($i = 0; $i < $this->codelen; $i++)
         {
             $fontcolor = imagecolorallocate($img, mt_rand(0, 156), mt_rand(0, 156), mt_rand(0, 156));
-            imagettftext($img, $fontsize, mt_rand(-30, 30), $_x * $i + mt_rand(1, 5), $height / 1.4, $fontcolor, $font, $code[$i]);
+            imagettftext($img, $fontsize, mt_rand(-30, 30), $_x * $i + mt_rand(1, 5), $height / 1.4, $fontcolor, $font, $this->code[$i]);
         }
-
-//        $black = ImageColorAllocate($img, 0,0,0);
-//        $strx=rand(3,8);
-//        for( $i=0; $i<$codelen; $i++ )
-//        {
-//            $strpos=rand(1,8);
-//            imagestring($img,5,$strx,$strpos, $code[$i], $black);
-//            $strx+=rand(8,14);
-//        }
 
         //輸出
         header('Content-Type: image/png');

@@ -18,7 +18,12 @@ class FileUploader
     return $this->fileInfo["tmp_name"];
   }
 
-  public function exists()
+  public function getFileName()
+  {
+    return $this->fileInfo["name"];
+  }
+
+  public function exists(): bool
   {
     return file_exists($this->fileInfo['tmp_name']);
   }
@@ -33,7 +38,7 @@ class FileUploader
     return !!$this->getErrorCode();
   }
 
-  public function read()
+  public function read(): string
   {
     if ($this->hasError()) {
       throw new Exception("upload error code: {$this->getErrorCode()}!");
@@ -44,7 +49,7 @@ class FileUploader
     return file_get_contents($this->getFile());
   }
 
-  public function readList()
+  public function readList(): array
   {
     $content = $this->read();
     return collect(preg_split("/\\r\\n|\\r|\\n/", $content))
@@ -53,5 +58,14 @@ class FileUploader
       })->filter(function ($x) {
         return $x;
       })->toArray();
+  }
+
+  public function move(string $destPath, string $fileName="")
+  {
+    if (!$fileName) {
+      $fileName = $this->getFileName();
+    }
+    mkdir($destPath, 0777, true);
+    rename($this->getFile(), $destPath. $fileName);
   }
 }
