@@ -57,27 +57,29 @@ class GroupCallScheduleController extends JController
 	{
 		$this->validate($request);
 		$this->service->valideCallPlanMaxLimit(session("choice"));
+		$StartCalledNumber = $request->input("StartCalledNumber");
+		$CalledCount = $request->input("CalledCount");
 		if ($request->input("NumberMode") == self::LIST) {
 			$list = $this->service->getListAndValide();
 			$StartCalledNumber = $list[0];
 			$CalledCount = count($list);
 		} else if ($request->input("NumberMode") == self::VALID) {
-			$list = $this->service->getValidListAndValide($request->input("StartCalledNumber"), $request->input("CalledCount"));
+			$list = $this->service->getValidListAndValide($StartCalledNumber, $CalledCount);
 			$StartCalledNumber = $list[0];
 		}
 
-		$this->service->valideCallOnceLimit($request->input("CalledCount"));
+		$this->service->valideCallOnceLimit($CalledCount);
 		$callOutID = DB::table("CallPlan")->select(DB::raw("max(CallOutID)+1 as count"))->first()->count ?? "1";
 		switch ($request->input("NumberMode")) {
 			case self::RANGE:
-				$numberCollection = $this->service->buildRangeNumberList($callOutID, $request->input("StartCalledNumber"), $request->input("CalledCount"));
+				$numberCollection = $this->service->buildRangeNumberList($callOutID, $StartCalledNumber, $CalledCount);
 				break;
 			case self::LIST:
 			case self::VALID:
 				$numberCollection = $this->service->buildListNumberList($callOutID, $list);
 				break;
 			case self::SAME:
-				$numberCollection = $this->service->buildSameNumberList($callOutID, $request->input("StartCalledNumber"), $request->input("CalledCount"));
+				$numberCollection = $this->service->buildSameNumberList($callOutID, $StartCalledNumber, $CalledCount);
 				break;
 		}
 		if ($request->input("random")) {
