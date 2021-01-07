@@ -119,13 +119,9 @@ class ExtensionManageController extends JController
 
 	public function update(Request $request)
 	{
-		$updateBody = [
-			"ExtName" => $request->input("ExtName"),
-			"CustomerPwd" => $request->input("CustomerPwd"),
-			"StartRecorder" => $request->input("StartRecorder"),
-			"Suspend" => $request->input("Suspend"),
-			"UseState" => $request->input("UseState"),
-		];
+		$updateBody = $request->only([
+			"ExtName", "CustomerPwd", "StartRecorder", "Suspend", "UseState"
+		]);
 		if (session("isRoot")) {
 			$updateBody["OffNetCli"] = $request->input("OffNetCli");
 		}

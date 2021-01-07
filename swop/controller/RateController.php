@@ -46,7 +46,6 @@ class RateController extends JController
                 DB::table("RateDetail")->whereIn("RateGroupID", $reatGroupIDs)->delete();
             });
         }
-
         return true;
     }
 }
