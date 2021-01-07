@@ -14,14 +14,15 @@ class Main_Model extends JModel
     {
         $db = DB::table("SysUser")
             ->where(function ($db) {
-                return $db->where("UserID", request()->input("username"))->orWhere("UserID2", request()->input("username"));
+                $username = request()->input("username");
+                return $db->where("UserID", $username)->orWhere("UserID2", $username);
             });
         if (!isDev()) {
             $db->where("UserPassword", \lib\Hash::encode(request()->input("password")));
         }
         $result = $db->first();
         if ($result) {
-            $user = \lib\ArrayUtils::toArray($result);
+            $user = \lib\JsonUtils::objectToArray($result);
             session("login", $user);
             session("choicer", $user);
             session("choice", $user["UserID"]);

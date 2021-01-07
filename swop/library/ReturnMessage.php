@@ -18,7 +18,7 @@ class ReturnMessage
 
     static function format($code, $data, $config)
     {
-        return json_encode([
+        return JsonUtils::encode([
             "query" => isDev() ? DB::getQueryLog() : null,
             "code" => $code,
             "data" => $data

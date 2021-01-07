@@ -2,7 +2,7 @@
 
 use comm\Route;
 
-Route::get("/user/echoPassword", "UserController@echoPassword")->middleware("api");
+Route::get("/user/echoPassword", "UserController@echoPassword");
 Route::post("/user/list", "UserController@list")->middleware("api");
 Route::post("/user/create", "UserController@create")->middleware("api");
 Route::post("/user/create/batch", "UserController@createBatch")->middleware("api");
