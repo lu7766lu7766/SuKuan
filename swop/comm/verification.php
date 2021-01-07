@@ -1,5 +1,6 @@
 <?php
 
+namespace comm;
 class Verification
 {
     private $code;
@@ -63,5 +64,3 @@ class Verification
         return $this;
     }
 }
-
-?>

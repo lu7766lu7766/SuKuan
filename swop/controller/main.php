@@ -29,8 +29,7 @@ class Main_Controller extends Controller
 
     public function code_login()
     {
-        require_once config("comm_dir") . "Verification.php";;
-        $vert = new Verification(4);
+        $vert = new \comm\Verification(4);
         $_SESSION["code_login"] = $vert->getCode();
         $vert->draw();
     }
