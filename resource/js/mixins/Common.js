@@ -6,8 +6,5 @@ export default {
 		isRoot() {
 			return isRoot
 		},
-		current_sub_emp() {
-			return current_sub_emp
-		},
 	},
 }

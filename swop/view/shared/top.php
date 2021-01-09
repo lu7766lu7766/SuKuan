@@ -27,7 +27,6 @@
 		var choice = "<?php echo session("choice") ?>";
 		var isRoot = <?php echo session("isRoot") ? 'true' : 'false' ?>;
 		var permission = <?php echo session("permission_control") ?>;
-		var current_sub_emp = <?php echo json_encode(session("current_sub_emp")) ?>;
 		var isDev = <?php echo isDev() ? "true" : "false" ?>;
 
 		function callApi() {
@@ -189,8 +188,8 @@
 						?>
 					</div>
 					<ul class="nav navbar-nav navbar-left">
-						<li><a href="<?php echo config("folder") . "index/index" ?>">首頁</a></li>
-						<!--<li><a href="<?php echo config("folder") . "index/service" ?>">服務</a></li>-->
+						<li><a href="<?php echo url("index/index") ?>">首頁</a></li>
+						<!--<li><a href="<?php echo url("index/service") ?>">服務</a></li>-->
 						<?php if (session("isRoot")) { ?>
 						<li><a class="shotdown_btn" href="javascript:;">關機</a>
 						<?php } ?>
@@ -198,8 +197,8 @@
 						<?php if (session("isRoot")) { ?>
 						<li><a class="reboot_btn" href="javascript:;">重啟</a>
 						<?php } ?>
-						<li><a href="<?php echo config("folder") . "index/password" ?>">密碼</a></li>
-						<li><a href="<?php echo config("folder") . "index/logout" ?>">登出</a></li>
+						<li><a href="<?php echo url("index/password") ?>">密碼</a></li>
+						<li><a href="<?php echo url("index/logout") ?>">登出</a></li>
 					</ul>
 				</div>
 

@@ -1,7 +1,7 @@
 <?php
 Bundle::addLink("vue");
 $this->partialView($top_view_path);
-$choice_id = $model->session["choice"];
+$choice_id = session("choice");
 ?>
 <h3 id="title"><?php echo $this->menu->currentName ?></h3>
 <!--<input id="switch" class="bootstrap-switch" type="checkbox" checked data-size="mini" data-off-color="danger">-->
@@ -48,7 +48,7 @@ if ($model->result && count($model->result)) {
 
 
     <input type="button" class="btn btn-danger delete_btn" value="Delete">
-    <a href="<?php echo config("folder") ?>communicationHistory/downloadBlackList" target="_blank" class="btn btn-default">下載</a>
+    <a href="<?php echo url("communicationHistory/downloadBlackList") ?>" target="_blank" class="btn btn-default">下載</a>
 
     <div class="table-responsive">
         <table class="table table-h table-pointer table-striped table-hover">

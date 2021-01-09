@@ -23,7 +23,7 @@ class JController extends Controller
             "name"     => "userSelet",
             "class"    => "",
             "option"   => [],
-            "selected" => $model->session["choice"]
+            "selected" => session("choice")
         ];
         //print_r($model->subEmp);
         $model->empSelect["option"][] = [

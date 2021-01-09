@@ -234,7 +234,6 @@ class Router
             $store_pos--;
         }
 
-        $context["submit_link"] = config("folder") . $controller . "/" . $action;
         $context["controller"] = $controller;
         $context["action"] = $action;
         $context["top_layout"] = "shared/top.php";

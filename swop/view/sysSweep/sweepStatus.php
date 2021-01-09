@@ -4,7 +4,7 @@ Bundle::addLink("datetime");
 $this->partialView($top_view_path);
 ?>
 
-<input type="hidden" name="choice" id="choice" value="<?php echo $model->session["choice"] ?>"/>
+<input type="hidden" name="choice" id="choice" value="<?php echo session("choice") ?>"/>
 <h3 id="title"><?php echo $this->menu->currentName ?></h3>
 <!--<input id="switch" class="bootstrap-switch" type="checkbox" checked data-size="mini" data-off-color="danger">-->
 <div class="form-inline">
@@ -15,7 +15,7 @@ $this->partialView($top_view_path);
     <div class="form-group">
         <label>總路由線路數:</label>
         <input type="text" size="5"
-               class="form-control num-only <?php echo !$model->session["isRoot"] ? "readonly" : "" ?>"
+               class="form-control num-only <?php echo session("isRoot") ? "readonly" : "" ?>"
                id="maxRoutingCalls"
                value="<?php echo $model->maxRoutingCalls ?>">
     </div>

@@ -8,7 +8,7 @@ Bundle::echoLink("default");
 
 $top_view_path = "";
 $this->partialView($top_view_path);
-$imageUrl = config("folder") . "main/code_login";
+$imageUri = url("main/code_login");
 ?>
 
 <body class="container-fluid" style="background-color: #666">
@@ -16,10 +16,8 @@ $imageUrl = config("folder") . "main/code_login";
 		<div class="login-box col-xs-12 col-md-offset-4 col-md-4" style="border-radius: 10px;">
 			<div class="login-logo">
 				<div class="h2 form-signin-heading">ZH行銷</ㄎ>
-					<!--<img src="/admin/upload/company/images/logo.png" alt="KenKo" s="" clear="" beauty'=""> -->
 				</div>
 				<p class="login-box-msg" style="letter-spacing:3px;"><b></b></p>
-				<!--<form action="<?php echo $this->submit_link; ?>" method="post">-->
 				<?php echo Html::form() ?>
 				<div class="form-group has-feedback">
 					<input class="form-control eye-protector-processed" placeholder="輸入帳號" name="username" type="text" style="border-color: rgba(0, 0, 0, 0.34902);">
@@ -32,7 +30,7 @@ $imageUrl = config("folder") . "main/code_login";
 				<div class="form-group row">
 					<span class="col-xs-5 control-label">
 						<label class="sr-only">驗證圖片</label>
-						<img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $imageUrl; ?>" onclick="javascript:this.src='<?php echo $imageUrl; ?>?n='+Math.random();" width="130" height="50" />
+						<img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $imageUri; ?>" onclick="javascript:this.src='<?php echo $imageUri; ?>?n='+Math.random();" width="130" height="50" />
 					</span>
 					<div class="col-xs-7">
 						<input style="height:34px;border-color:#DCDDDD" class="form-control" placeholder="輸入驗證碼" name="captcha" type="text">

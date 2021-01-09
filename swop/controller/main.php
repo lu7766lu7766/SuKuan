@@ -6,15 +6,14 @@ class Main_Controller extends Controller
     {
         $model = $this->model;
         if ($model->submit) {
-            //            if(true)
-            if (strtolower($model->captcha) == strtolower($_SESSION["code_login"]) || isDev()) {
+            if (strtolower($model->captcha) == strtolower(session("code_login")) || isDev()) {
                 if ($model->login_in()) {
                     $this->redirect("index/index");
                 } else {
                     $model->errorMsg = "帳號或密碼錯誤";
                 }
             } else {
-                if (!$_SESSION["code_login"] || !$model->captcha) {
+                if (!$this->model->session["code_login"] || !$model->captcha) {
                     $model->errorMsg = "伺服器錯誤";
                     $model->dba->server_restart();
                     header("Refresh:0");
@@ -30,7 +29,7 @@ class Main_Controller extends Controller
     public function code_login()
     {
         $vert = new \comm\Verification(4);
-        $_SESSION["code_login"] = $vert->getCode();
+        session("code_login", $vert->getCode());
         $vert->draw();
     }
 

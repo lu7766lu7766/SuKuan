@@ -27,7 +27,7 @@ class Verification
 
     public function draw($width = 130, $height = 50, $fontsize = 20)
     {
-        $font = config("comm_dir") . "/elephant.ttf";
+        $font = config("setting_dir") . "/elephant.ttf";
 
         //繪製背景
         $img = imagecreatetruecolor($width, $height);

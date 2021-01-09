@@ -7,8 +7,6 @@ Bundle::addLink("lodash");
 //echo "<pre>";print_r($this);
 $this->partialView($top_view_path);
 
-$choice_id = $model->session["choice"];
-
 if(isset($model->ID)){
     $btn_name = "更新";
     $id = "update_btn";

@@ -76,8 +76,8 @@ class UserInfo_Controller extends JController
         foreach ($model->empSelect2["option"] as $i => $option) {
             if (
                 $option["value"] != "" &&
-                $option["value"] != $model->session["choice"] &&
-                !in_array($option["value"], $model->session["current_sub_emp"])
+                $option["value"] != session("choice") &&
+                !in_array($option["value"], session("current_sub_emp"))
             ) {
                 unset($model->empSelect2["option"][$i]);
             }

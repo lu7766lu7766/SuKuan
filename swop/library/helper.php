@@ -53,6 +53,16 @@ function request()
     return Request::getInstance();
 }
 
+function url(string $uri): string
+{
+    return config("folder") . $uri;
+}
+
+function public_path(string $uri): string
+{
+    return config("folder") . "public/" . $uri;
+}
+
 function GUID(): String
 {
     if (function_exists('com_create_guid') === true) {

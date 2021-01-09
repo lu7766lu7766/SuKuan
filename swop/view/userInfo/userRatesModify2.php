@@ -52,17 +52,14 @@ $this->partialView($top_view_path);
         var key_field = ["PrefixCode"];
 
     </script>
-<script type="text/jsx" src="<?php echo config("folder") ?>public/jsx/editView.jsx"></script>
+<script type="text/jsx" src="<?php echo public_path("jsx/editView.jsx") ?>"></script>
 <script type="text/jsx">
     React.render(
-            <View edit_field={edit_field} />,
-            document.getElementById('container')
-        );
-    </script>
-<!--    <script type="text/jsx" src="--><?php //echo config("folder")
-                                        ?>
-<!--public/jsx/userRatesModify.jsx"></script>-->
-<script type="text/javascript" src="<?php echo config("folder") ?>public/jsx/editView.js"></script>
+        <View edit_field={edit_field} />,
+        document.getElementById('container')
+    );
+</script>
+<script type="text/javascript" src="<?php echo public_path("jsx/editView.js") ?>"></script>
 <script>
     react.ready(function() {
         $("form").validate({
