@@ -11,7 +11,8 @@ class Middleware
   }
 
   private $map = [
-    "api" => \middleware\Api::class
+    "api" => \middleware\Api::class,
+    "auth" => \middleware\Auth::class,
   ];
 
   function use($key): void
@@ -20,7 +21,7 @@ class Middleware
       $this->next = $key;
     } else {
       $next = $this->next;
-      $this->next = function () use ($key, $next) {
+      $this->next = function () use ($key, $next) {  
         return (new $this->map[$key])->handle($next);
       };
     }

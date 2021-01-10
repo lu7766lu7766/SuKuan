@@ -189,12 +189,8 @@
 					</div>
 					<ul class="nav navbar-nav navbar-left">
 						<li><a href="<?php echo url("index/index") ?>">首頁</a></li>
-						<!--<li><a href="<?php echo url("index/service") ?>">服務</a></li>-->
 						<?php if (session("isRoot")) { ?>
 						<li><a class="shotdown_btn" href="javascript:;">關機</a>
-						<?php } ?>
-						<!-- -->
-						<?php if (session("isRoot")) { ?>
 						<li><a class="reboot_btn" href="javascript:;">重啟</a>
 						<?php } ?>
 						<li><a href="<?php echo url("index/password") ?>">密碼</a></li>

@@ -82,10 +82,10 @@ class Controller
         }
     }
 
-    public function getModel($controller)
+    public function getModel($model)
     {
-        include_once config("model_dir") . $controller . ".php";
-        $model_name = $controller . "_Model";
+        include_once config("model_dir") . $model . ".php";
+        $model_name = $model . "_Model";
         return new $model_name();
     }
 

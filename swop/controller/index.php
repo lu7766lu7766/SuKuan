@@ -10,11 +10,6 @@ class Index_Controller extends JController
         return parent::render();
     }
 
-    public function service()
-    {
-        return parent::render();
-    }
-
     public function password()
     {
         return parent::render();
