@@ -66,16 +66,17 @@ class CommunicationHistory_Controller extends JController
 
     public function effectiveNumberUpload()
     {
+        $this->model->doEffectiveNumberUpload();
         return parent::render();
     }
 
     public function checkCalledNumber()
     {
+        echo $this->model->doCheckCalledNumber();
     }
 
     public function downloadBlackList()
     {
-
         $this->model->getDownloadBlackList();
         $this->fileDownload($this->model->filePath);
     }

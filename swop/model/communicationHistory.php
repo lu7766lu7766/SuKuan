@@ -1,5 +1,7 @@
 <?php
-use comm\DB;
+
+use Illuminate\Database\Capsule\Manager as DB;
+use lib\ReturnMessage;
 
 class CommunicationHistory_Model extends JModel
 {
@@ -45,61 +47,6 @@ class CommunicationHistory_Model extends JModel
         }
         $pastMonth = date("Y-m", strtotime('-2 month'));
         $this->delTreePrefix(config("communicationSearch"), $pastMonth);
-    }
-
-    public function getRecordDownload()
-    {
-        $emps = [session("choice")];
-        $sub_emp = $this->getSubEmp(session("choice"));
-        foreach ($sub_emp as $user) {
-            $emps[] = $user["UserID"];
-        }
-        $db = DB::table('CallOutCDR')->select('UserID', 'CallStartBillingDate', 'RecordFile');
-        $db->whereBetween(
-            'cast(CallStartBillingDate as datetime)',
-            [$this->callStartBillingDate, $this->callStopBillingDate]
-        );
-        //        $db->andWhere('RecordFile', '<>', '');
-        $db->addRaw("and RecordFile <> ''");
-        $db->whereIn('UserID', $emps);
-        if (!empty($this->extensionNo)) {
-            $db->andWhere('ExtensionNo', $this->extensionNo);
-        }
-        if (!empty($this->orgCalledID)) {
-            $db->andWhere('OrgCalledID', $this->orgCalledID);
-        }
-        if (!empty($this->callDuration)) {
-            $db->andWhere('CallDuration', $this->durationCondition == "within" ? "<=" : ">", $this->callDuration);
-        }
-        $result = $db->get();
-        if (!count($result)) {
-            $this->warning = "條件範圍，找不到任何資料！！"; //$dba->mergeSQL($sql,$params).
-            return;
-        }
-        
-        $this->targetFile = session("choice") . "RecordFile.zip";
-        $zip = new ZipArchive();
-        if ($zip->open($this->targetFile, ZIPARCHIVE::CREATE) !== true) {
-            throw new \Exception("Cannot open <$this->targetFile>\n", 500);
-        }
-        $file_count = 0;
-        foreach ($result as $data) {
-            $userId = $data["UserID"];
-            $connectDate = date("Ymd", strtotime($data["CallStartBillingDate"]));
-            $fileName = $data["RecordFile"];
-            $filePath = "D:\\Recording\\{$userId}\\{$connectDate}\\{$fileName}";
-            if (file_exists($filePath) && !is_dir($filePath)) {
-                //copy($filePath,$tmpFolder.$fileName);
-                //$zip->addFile($tmpFolder.$fileName, basename($fileName));
-                $zip->addFile($filePath, basename($fileName));
-                //				$zip->setCompressionIndex($file_count, ZipArchive::CM_STORE); // 不壓縮，但時間好像沒什麼差
-                $file_count++;
-            }
-        }
-        $zip->close();
-        @mkdir(config("record"));
-        $this->targetPath = config("record") . $this->targetFile;
-        rename(config("root_folder") . $this->targetFile, $this->targetPath);
     }
 
     public function getBlackList()
@@ -173,24 +120,7 @@ class CommunicationHistory_Model extends JModel
                 $this->result[] = $number["CalledNumber"];
             }
         }
-        //        $sql = "";
-        //        $times = 0;
-        //        $sql_limit = 100;
-        //        $params = [];
-        //        while ($len-- > 0) {
-        //            $number = array_shift($result);
-        //            if (in_array($number, $this->result) || empty($number)) {
-        //                continue;
-        //            }
-        //            $sql .= "insert into Blacklist (UserID,CalledNumber) values (?,?);";
-        //            $params[] = $userID;
-        //            $params[] = $number;
-        //            if (++$times % $sql_limit == 0) {
-        //                $this->dba->exec($sql, $params);
-        //                $sql = "";
-        //                $params = [];
-        //            }
-        //        }
+
         $body = [];
         while ($len-- > 0) {
             $number = array_shift($result);
@@ -203,10 +133,7 @@ class CommunicationHistory_Model extends JModel
             ];
         }
         $this->chunkInsertDB2('Blacklist', $body, 300);
-        //$sql .= "update Blacklist set CalledNumber=REPLACE(CalledNumber,'?','') where CalledNumber like '?%';";
-        //$sql .= "delete from Blacklist where CalledNumber like '?%';";
-        //return false;
-        //echo $sql;
+
         if (!empty($sql)) {
             $this->dba->exec($sql);
         }
@@ -244,59 +171,42 @@ class CommunicationHistory_Model extends JModel
         }
     }
 
-    public function effectiveNumberUpload()
+    public function doEffectiveNumberUpload()
     {
-        //$userID = session("choice");
-        $this->result = [];
-        $result = $this->readUploadList();
-        if (!$result) {
+        $collection = collect($this->readUploadList() ?? []);
+        if (!$collection->count()) {
             return;
         }
-        $len = count($result);
-        if (!is_array($result) || !$len || empty($result)) {
-            return;
-        }
-        $dba2 = new comm\DBA();
-        $dba2->dbHost = "125.227.84.247";
-        $dba2->dbName = "NumberCollector";
-        $dba2->connect();
-        $sql = "";
-        $times = 0;
-        $sql_limit = 100;
-        $params = [];
-        $now = date("Y/m/d H:i:s", time());
-        while ($len-- > 0) {
-            $number = array_shift($result);
-            if (in_array($number, $this->result) || empty($number)) {
-                continue;
-            }
-            //            $sql .= "insert into AllNumberList (CalledNumber, CallDateTime, CallResult) values (?, ?, ?);";
-            $sql .= "insert into AllNumberList (CalledNumber, CallDateTime, CallResult) select '$number', '$now', '3' where not exists(select 1 from AllNumberList where CalledNumber=?) ;";
-            $params[] = $number;
-            //            $params[] = $now;
-            //            $params[] = "3";
-            if (++$times % $sql_limit == 0) {
-                $dba2->exec($sql, $params);
-                $sql = "";
-                $params = [];
-            }
-        }
-        if (!empty($sql)) {
-            $dba2->exec($sql, $params);
-        }
+
+        DB::transaction(function () use ($collection) {
+            $now = date("Y/m/d H:i:s", time());
+            $db = DB::connection("effectDB");
+            $collection->chunck(100)->each(function ($numbers) use ($db, $now) {
+                $sql = collect($numbers)->map(function ($number, $now) {
+                    return "
+                        insert into AllNumberList 
+                            (CalledNumber, CallDateTime, CallResult) 
+                        select '$number', '$now', '3' 
+                            where not exists(
+                                select 1 from AllNumberList where CalledNumber = ?
+                            )
+                        ";
+                })->join(";");
+                $db->insert($sql, $numbers);
+            });
+        });
+
         $this->warning = "新增成功";
     }
 
-    public function checkCalledNumber()
+    public function doCheckCalledNumber()
     {
-        $result = $this->dba->getAll(
-            "select 1 from Blacklist with (nolock) where UserID=? and CalledNumber=?",
-            [session("choice"), $this->number]
+        return ReturnMessage::success(
+            DB::table("Blacklist")
+                ->where("UserID", session("choice"))
+                ->where("CalledNumber", $this->number)
+                ->count()
         );
-        echo json_encode([
-            "status" => count($result),
-            //"sql"=>$this->dba->mergeSQL("select 1 from Blacklist where UserID=? and CalledNumber=?",[$this->session[choice],$this->number])
-        ]);
     }
 
     private function delete_files($target)

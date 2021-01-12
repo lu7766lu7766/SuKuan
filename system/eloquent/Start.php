@@ -22,6 +22,17 @@ $validDB = [
   'collation' => 'utf8_unicode_ci'
 ];
 
+$effectDB = [
+  'driver' => 'sqlsrv',
+  'host' => getenv2("EFFECT_IP"),
+  'database' => getenv2("EFFECT_NAME"),
+  'username' => getenv2("DB_USER"),
+  'password' => getenv2("DB_PASSWORD"),
+  'port' => getenv2("DB_PORT"),
+  'charset' => 'utf8',
+  'collation' => 'utf8_unicode_ci'
+];
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 $capsule = new Capsule;
@@ -29,6 +40,7 @@ $capsule = new Capsule;
 // 创建链接
 $capsule->addConnection($database);
 $capsule->addConnection($validDB, "validDB");
+$capsule->addConnection($effectDB, "effectDB");
 
 // 设置全局静态可访问DB
 $capsule->setAsGlobal();

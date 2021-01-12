@@ -92,9 +92,9 @@ echo Html::formEnd();
             checkNumberExists: function(number) {
                 $.post(folder + "communicationHistory/checkCalledNumber", {
                     number: number
-                }, function(data) {
-                    vm.is_exists = data.status > 0
-                    vm.checkResult = data.status > 0 ? "此號碼已存在" : "此號碼不存在";
+                }, function(res) {
+                    vm.is_exists = res.data > 0
+                    vm.checkResult = res.data > 0 ? "此號碼已存在" : "此號碼不存在";
                 }, "json")
             }
         },

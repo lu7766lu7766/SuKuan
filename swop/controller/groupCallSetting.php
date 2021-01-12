@@ -13,12 +13,12 @@ class GroupCallSetting_Controller extends JController
     }
 
     public function effectiveNumber(){
-        return parent::render("effectiveNumber2");
+        return parent::render();
     }
 
-    public function getEffectiveNumber(){}
-
-    public function getEffectiveNumber2(){}
+    public function ajax_getEffectiveNumber(){
+        echo $this->model->getEffectiveNumber();
+    }
 
     public function addDefaultSchedule(){
         $this->model->postDefaultSchedule($this->model->list);
