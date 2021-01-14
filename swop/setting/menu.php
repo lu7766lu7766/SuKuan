@@ -65,7 +65,7 @@ class Menu
 			"communication_search" => array(
 				"icon" => "fas fa-search",
 				"name" => "通聯查詢",
-				"url" => "communicationHistory/communicationSearch_vue"
+				"url" => "communicationHistory/communicationSearch"
 			),
 			"task_ranking" => array(
 				"icon" => "fas fa-sort-amount-down-alt",
@@ -86,11 +86,6 @@ class Menu
 				"icon" => "fas fa-ban",
 				"name" => "黑名單管理",
 				"url" => "communicationHistory/blackList"
-			),
-			"effective_number_upload" => array(
-				"icon" => "fas fa-upload",
-				"name" => "有效號上傳",
-				"url" => "communicationHistory/effectiveNumberUpload"
 			)
 		),
 		"group_call_setting" => array(
@@ -100,11 +95,6 @@ class Menu
 				"name" => "新增群呼",
 				"url" => "groupCallSetting/groupCallSchedule",
 				"sub_url" => array("groupCallSetting/groupCallScheduleModify")
-			),
-			"effective_number" => array(
-				"icon" => "fas fa-headset",
-				"name" => "有效號新增群呼",
-				"url" => "groupCallSetting/effectiveNumber"
 			)
 		),
 		"sys_lookout" => array(

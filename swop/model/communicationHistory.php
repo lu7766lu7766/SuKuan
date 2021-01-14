@@ -171,34 +171,6 @@ class CommunicationHistory_Model extends JModel
         }
     }
 
-    public function doEffectiveNumberUpload()
-    {
-        $collection = collect($this->readUploadList() ?? []);
-        if (!$collection->count()) {
-            return;
-        }
-
-        DB::transaction(function () use ($collection) {
-            $now = date("Y/m/d H:i:s", time());
-            $db = DB::connection("effectDB");
-            $collection->chunck(100)->each(function ($numbers) use ($db, $now) {
-                $sql = collect($numbers)->map(function ($number, $now) {
-                    return "
-                        insert into AllNumberList 
-                            (CalledNumber, CallDateTime, CallResult) 
-                        select '$number', '$now', '3' 
-                            where not exists(
-                                select 1 from AllNumberList where CalledNumber = ?
-                            )
-                        ";
-                })->join(";");
-                $db->insert($sql, $numbers);
-            });
-        });
-
-        $this->warning = "新增成功";
-    }
-
     public function doCheckCalledNumber()
     {
         return ReturnMessage::success(

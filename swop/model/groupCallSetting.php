@@ -43,33 +43,4 @@ class GroupCallSetting_Model extends JModel
             ]);
         }
     }
-
-    public function getEffectiveNumber()
-    {
-        $this->searchNumber = preg_replace("/\?/", "_", $this->searchNumber);
-        if ($this->countryCode == "0") // taiwan
-        {
-            $result = DB::table("CalloutCDR")
-                ->select("OrgCalledId as number")
-                ->where("CallBill", "1")
-                ->where("OrgCalledId", "like", $this->searchNumber)
-                ->distinct()
-                ->get(); 
-        } else {
-            if ($this->countryCode == "1") //china
-            {
-                $result = DB::connection("effectDB")
-                    ->table("AllNumberList")
-                    ->select("CalledNumber as number")
-                    ->where("CalledNumber", "like", $this->searchNumber)
-                    ->whereIn("CallResult", ["2", "3"])
-                    ->distinct()
-                    ->get();
-            }
-        }
-        if (count($result) > $this->phone_limit) {
-            return ReturnMessage::error(-1);
-        }
-        return ReturnMessage::error($result);
-    }
 }

@@ -2,7 +2,6 @@
 
 use comm\Request;
 use Illuminate\Database\Capsule\Manager as DB;
-use Tightenco\Collect\Support\Collection;
 
 class CallStatusController extends JController
 {

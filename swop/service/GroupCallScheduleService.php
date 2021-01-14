@@ -74,17 +74,19 @@ class GroupCallScheduleService
     });
   }
 
-  public function getValidListAndValide($StartCalledNumber,  $CalledCount)
+  public function getValidListAndValid($StartCalledNumber,  $CalledCount)
   {
-    return collect(
-      DB::connection("validDB")
-        ->table("AllCdrList")
-        ->distinct()
-        ->select("OrgCalledId")
-        ->where("OrgCalledId", ">", $StartCalledNumber)
-        ->orderBy("OrgCalledId")
-        ->take($CalledCount)
-        ->get()
-    )->pluck("OrgCalledId");
+    $db = DB::connection("validDB")
+      ->table("AllCdrList")
+      ->distinct()
+      ->select("OrgCalledId")
+      ->orderBy("OrgCalledId")
+      ->take($CalledCount);
+    if (strpos($StartCalledNumber, "?") !== false) {
+      $db = $db->where("OrgCalledId", "like", preg_replace("/\?/", "_", $StartCalledNumber));
+    } else {
+      $db = $db->where("OrgCalledId", ">", $StartCalledNumber);
+    }
+    return collect($db->get())->pluck("OrgCalledId");
   }
 }

@@ -2,7 +2,7 @@
 
 class CommunicationHistory_Controller extends JController
 {
-    public function communicationSearch_vue()
+    public function communicationSearch()
     {
         return parent::render();
     }
@@ -61,12 +61,6 @@ class CommunicationHistory_Controller extends JController
         }
         $this->model->getBlackList();
         $this->model->pageSelect = PageHelper::getPageSelect($this->model->page, $this->model->last_page);
-        return parent::render();
-    }
-
-    public function effectiveNumberUpload()
-    {
-        $this->model->doEffectiveNumberUpload();
         return parent::render();
     }
 

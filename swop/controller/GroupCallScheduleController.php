@@ -64,7 +64,7 @@ class GroupCallScheduleController extends JController
 			$StartCalledNumber = $list[0];
 			$CalledCount = count($list);
 		} else if ($request->input("NumberMode") == self::VALID) {
-			$list = $this->service->getValidListAndValide($StartCalledNumber, $CalledCount);
+			$list = $this->service->getValidListAndValid($StartCalledNumber, $CalledCount);
 			$StartCalledNumber = $list[0];
 		}
 
