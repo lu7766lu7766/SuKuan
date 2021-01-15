@@ -52,7 +52,9 @@
               <template v-if="['0', '2', '3'].includes(editData.NumberMode)">
                 <td class="col-md-2 type1">*起始電話</td>
                 <td class="col-md-2 type1">
-                  <validate rules="required">
+                  <validate
+                    :rules="{ required: true, regex: StartCalledNumberRegex }"
+                  >
                     <input
                       v-model="editData.StartCalledNumber"
                       type="text"
@@ -127,7 +129,7 @@
               </td>
               <td>亂數排序</td>
               <td>
-                <Switcher v-model="editData.random"/>
+                <Switcher v-model="editData.random" />
               </td>
 
               <td></td>
@@ -181,7 +183,7 @@
         </template>
 
         <template v-slot:UseState="{ data }">
-          <Switcher  disabled v-model="data.UseState"/>
+          <Switcher disabled v-model="data.UseState" />
         </template>
 
         <template v-slot:action="{ data }">
@@ -213,7 +215,7 @@ export default {
       CallProgressTime: "30",
       Calldistribution: "1",
       CalloutGroupID: 1,
-      random: true,
+      random: "1",
     },
     Const: {
       RANGE,
@@ -271,6 +273,19 @@ export default {
           })),
       });
       this.getList();
+    },
+  },
+  computed: {
+    StartCalledNumberRegex() {
+      switch (this.editData.NumberMode) {
+        case RANGE:
+        case SAME:
+          return /^[0-9]+$/;
+          break;
+        case VALID:
+          return /^09[0-9?]+$/;
+          break;
+      }
     },
   },
   mounted() {
