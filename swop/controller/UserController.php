@@ -36,7 +36,7 @@ class UserController extends JController
 		$db = DB::table("SysUser")
 			->select(
 				...collect($fields)
-					->concat(
+					->push(
 						DB::raw("count(1) as ExtensionCount")
 					)
 					->toArray()
