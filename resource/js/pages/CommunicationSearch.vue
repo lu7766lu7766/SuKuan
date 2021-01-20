@@ -125,6 +125,7 @@
           { key: 'CallDuration', name: '時間', sortable: true },
           { key: 'BillValue', name: '費用', sortable: true },
           { key: 'CustomerLevel', name: '按鍵', sortable: true },
+          { key: 'CallDisconnetString', name: '掛斷說明', show: isRoot },
           { key: 'RecordDownload', name: '錄音下載' },
         ]"
         :trStyle="
@@ -163,6 +164,7 @@
             <td>{{ totalData.totalTime }}</td>
             <td>{{ totalData.totalMoney }}</td>
             <td></td>
+            <td v-if="isRoot"></td>
             <td></td>
           </tr>
           <tr>
@@ -173,6 +175,7 @@
             <td>{{ allData.totalTime }}</td>
             <td>{{ allData.totalMoney }}</td>
             <td></td>
+            <td v-if="isRoot"></td>
             <td></td>
           </tr>
         </template>
