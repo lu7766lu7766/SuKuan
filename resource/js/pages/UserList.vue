@@ -30,7 +30,7 @@
         { key: 'UseState', name: '狀態', sortable: true, width: 80 },
         { key: 'Distributor', name: '經銷商', sortable: true, width: 120 },
         { key: 'ExtensionCount', name: '分機數', sortable: true, width: 110 },
-        { key: 'RateGroupID', name: '費率', sortable: true, width: 100 },
+        { key: 'RateGroupName', name: '費率', sortable: true, width: 100 },
         { key: 'Balance', name: '剩餘點數', sortable: true, width: 120 },
         { key: 'UserName', name: '用戶名稱', sortable: true },
         { key: 'NoteText', name: '用戶備註' },

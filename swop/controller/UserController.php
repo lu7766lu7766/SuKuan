@@ -23,17 +23,27 @@ class UserController extends JController
 	 */
 	public function list(Request $request)
 	{
+		$fields = [
+			"SysUser.UserID",
+			"SysUser.UseState",
+			"SysUser.RateGroupID",
+			"RateGroup.RateGroupName",
+			"SysUser.Balance",
+			"SysUser.UserName",
+			"SysUser.Distributor",
+			"SysUser.NoteText"
+		];
 		$db = DB::table("SysUser")
 			->select(
-				"UserID",
-				"UseState",
-				"RateGroupID",
-				"Balance",
-				"UserName",
-				"Distributor",
-				"NoteText",
-				DB::raw("(select count(1) from CustomerLists where UserID = SysUser.UserID) as ExtensionCount")
-			);
+				...collect($fields)
+					->concat(
+						DB::raw("count(1) as ExtensionCount")
+					)
+					->toArray()
+			)
+			->leftJoin("RateGroup", "RateGroup.RateGroupID", "=", "SysUser.RateGroupID")
+			->leftJoin("CustomerLists", "CustomerLists.UserID", "=", "SysUser.UserID")
+			->groupBy(...$fields);
 		if (!session("isRoot")) {
 			$db = $db->whereIn("UserID", session("current_sub_emp"));
 		}
