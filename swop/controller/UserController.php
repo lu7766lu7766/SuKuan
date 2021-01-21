@@ -45,7 +45,7 @@ class UserController extends JController
 			->leftJoin("CustomerLists", "CustomerLists.UserID", "=", "SysUser.UserID")
 			->groupBy(...$fields);
 		if (!session("isRoot")) {
-			$db = $db->whereIn("UserID", session("current_sub_emp"));
+			$db = $db->whereIn("SysUser.UserID", session("current_sub_emp"));
 		}
 		return $db->get();
 	}
