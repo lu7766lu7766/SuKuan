@@ -91,7 +91,7 @@ class GroupCallScheduleController extends JController
 				"UserID"            => session("choice"),
 				"PlanName"          => $request->input("PlanName"),
 				"StartCalledNumber" => $StartCalledNumber,
-				'EndCalledNumber'   => $numberCollection->last()["CalledNumber"],
+				'EndCalledNumber'   => $numberCollection->max("CalledNumber"),
 				"CalledCount"       => $CalledCount,
 				"CallerPresent"     => 1,
 				"CallerID"          => "",
