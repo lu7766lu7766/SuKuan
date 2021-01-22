@@ -281,16 +281,20 @@ export default {
     },
     exportCSV() {
       this.fileFunc.exportCSV(
-        this.fileFunc.buildCSVContext(this.datas, [
-          { key: "UserID", name: "用戶" },
-          { key: "ExtensionNo", name: "分機" },
-          { key: "OrgCalledId", name: "撥打號碼" },
-          { key: "CallStartBillingDate", name: "開始時間" },
-          { key: "CallDuration", name: "時間" },
-          { key: "BillValue", name: "費用" },
-          { key: "CustomerLevel", name: "按鍵" },
-          { key: "CallDisconnetString", name: "掛斷說明" },
-        ]),
+        this.fileFunc.buildCSVContext(
+          this.datas,
+          [
+            { key: "UserID", name: "用戶" },
+            { key: "ExtensionNo", name: "分機" },
+            { key: "OrgCalledId", name: "撥打號碼" },
+            { key: "CallStartBillingDate", name: "開始時間" },
+            { key: "CallDuration", name: "時間" },
+            { key: "BillValue", name: "費用" },
+            { key: "CustomerLevel", name: "按鍵" },
+          ].concat(
+            isRoot ? { key: "CallDisconnetString", name: "掛斷說明" } : {}
+          )
+        ),
         "通聯紀錄.csv"
       );
     },
