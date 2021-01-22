@@ -113,6 +113,12 @@
         :per_page="paginate.per_page"
         @change="(page) => changePage(page)"
       />
+      <button type="button" class="btn btn-danger" @click="doDelete()">
+        Delete
+      </button>
+      <button type="button" class="btn btn-default" @click="exportCSV()">
+        下載
+      </button>
       <data-table
         allChecked
         :startIndex="startIndex"
@@ -190,9 +196,10 @@ import ListMixins from "mixins/List";
 import EmpMixins from "mixins/Emp";
 import OrderBy from "mixins/OrderBy";
 import DateTimePicker from "../components/DateTimePicker";
+import LibraryMixins from "mixins/Library";
 
 export default {
-  mixins: [CommonMixins, ListMixins, EmpMixins, OrderBy],
+  mixins: [CommonMixins, ListMixins, EmpMixins, OrderBy, LibraryMixins],
   components: {
     DateTimePicker,
   },
@@ -257,11 +264,11 @@ export default {
     },
     doDelete() {
       $.callApi
-        .post("api/communication/common", {
+        .post("api/communication/delete", {
           id: this.datas.filter((x) => x.checked).map((x) => x.LogID),
         })
         .then(() => {
-          this.doSearch();
+          this.getList();
           alertify.alert("刪除成功!");
         })
         .catch(() => {
@@ -271,6 +278,21 @@ export default {
     apiChangeSort(key) {
       this.changeSort(key);
       this.getList();
+    },
+    exportCSV() {
+      this.fileFunc.exportCSV(
+        this.fileFunc.buildCSVContext(this.datas, [
+          { key: "UserID", name: "用戶" },
+          { key: "ExtensionNo", name: "分機" },
+          { key: "OrgCalledId", name: "撥打號碼" },
+          { key: "CallStartBillingDate", name: "開始時間" },
+          { key: "CallDuration", name: "時間" },
+          { key: "BillValue", name: "費用" },
+          { key: "CustomerLevel", name: "按鍵" },
+          { key: "CallDisconnetString", name: "掛斷說明" },
+        ]),
+        "通聯紀錄.csv"
+      );
     },
   },
   computed: {

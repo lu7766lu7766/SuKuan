@@ -7,26 +7,6 @@ class CommunicationHistory_Controller extends JController
         return parent::render();
     }
 
-    public function communicationSearchDownload()
-    {
-        $model = $this->model;
-        $model->getCommunicationSearchDownload();
-        $fileName = $model->fileName;
-        $filePath = config("communicationSearch") . $fileName;
-        $newFileName = str_replace(".txt" . session("login")["UserID"], ".txt", $fileName);
-        $fileSize = filesize($filePath);
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Last-Modified: ' . gmdate('D, d M Y H:i ') . ' GMT');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Cache-Control: private', false);
-        header('Content-Type: application/octet-stream');
-        header('Content-Length: ' . $fileSize);
-        header('Content-Disposition: attachment; filename="' . $newFileName . '";');
-        header('Content-Transfer-Encoding: binary');
-        readfile($filePath);
-    }
-
     public function taskRanking()
     {
         return parent::render();

@@ -12,11 +12,6 @@ class CommunicationHistory_Model extends JModel
         $this->black_list_once_limit = getenv2("BLACK_LIST_ONCE_LIMIT", 10000);
     }
 
-    public function getCommunicationSearchDownload()
-    {
-        $this->writeCommunicationSearch($this->dba->getAll(session("tmp_sql")));
-    }
-
     private function writeCommunicationSearch($datas)
     {
         $content = "";
