@@ -73,7 +73,7 @@
       </div>
       <div class="form-group">
         <label>剩餘點數:</label>
-        <label id="balance" v-text="subData.balance"></label>
+        <label id="balance" class="text-danger">{{ subData.balance }}</label>
       </div>
     </div>
     <br />
@@ -81,7 +81,7 @@
     <div class="col-md-12 col-xs-12">
       <div class="panel panel-info">
         <div class="panel-heading text-center">
-          執行中(<span v-text="subData.data1.length"></span>)
+          執行中({{ subData.data1.length }})
         </div>
         <div style="height: 300px; overflow: auto">
           <table class="table table-h table-striped panel-footer">
