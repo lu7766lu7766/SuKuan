@@ -73,7 +73,7 @@
       </div>
       <div class="form-group">
         <label>剩餘點數:</label>
-        <label id="balance" class="text-danger">{{ subData.balance }}</label>
+        <label id="balance" class="text-red">{{ subData.balance }}</label>
       </div>
     </div>
     <br />
