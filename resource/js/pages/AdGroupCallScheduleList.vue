@@ -325,7 +325,7 @@ export default {
       CallProgressTime: 20,
       ConcurrentCalls: 10,
       WaitDTMF: 0,
-      random: "1",
+      random: "0",
     },
     Const: {
       RANGE,
