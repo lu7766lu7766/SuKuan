@@ -36,5 +36,7 @@ new Vue({
 		BulletinBoard: () => import('pages/BulletinBoard'),
 		ExtensionManage: () => import('pages/ExtensionManage'),
 		ExtensionDetail: () => import('pages/ExtensionDetail'),
+		AdGroupCallScheduleList: () => import('pages/AdGroupCallScheduleList'),
+		AdGroupCallScheduleDetail: () => import('pages/AdGroupCallScheduleDetail'),
 	},
 }).$mount('#app')

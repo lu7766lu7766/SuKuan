@@ -16,8 +16,6 @@ class GroupCallScheduleController extends JController
 	function __construct()
 	{
 		$this->service = new GroupCallScheduleService();
-		$this->PHONE_LIMIT = getenv2("GROUP_CALL_PHONE_LIMIT", 200000);
-		$this->LIST_LIMIT = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
 	}
 
 	public function list()
@@ -56,7 +54,8 @@ class GroupCallScheduleController extends JController
 	public function create(Request $request)
 	{
 		$this->validate($request);
-		$this->service->valideCallPlanMaxLimit(session("choice"));
+		$listCount = DB::table('CallPlan')->where('UserID', session("choice"))->count();
+		$this->service->valideCallPlanMaxLimit($listCount);
 		$StartCalledNumber = $request->input("StartCalledNumber");
 		$CalledCount = $request->input("CalledCount");
 		if ($request->input("NumberMode") == self::LIST) {

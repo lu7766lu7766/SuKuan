@@ -8,18 +8,15 @@ class AdCallSetting_Controller extends JController
      */
     public function adCallSchedule()
     {
+        return parent::render();
+    }
 
-        $model = $this->model;
-        if ($model->submit) {
-            if ($model->status == "delete") {
-                $model->deleteAdCallSchedule();
-            } else {
-                $model->postAdCallSchedule();
-            }
-        }
-        $model->getAdCallSchedule();
-        $this->getConcurrentCallsSelect();
-        $this->voiceFileList = $this->getVoiceFileList();
+    /**
+     * 新增廣告群乎單筆修改
+     * @return $this|void
+     */
+    public function adCallScheduleModify()
+    {
         return parent::render();
     }
 
@@ -30,25 +27,7 @@ class AdCallSetting_Controller extends JController
     private function getVoiceFileList()
     {
         return lib\VoiceRecord::getFilesName(session("choice"));
-    }
-
-    /**
-     * 新增廣告群乎單筆修改
-     * @return $this|void
-     */
-    public function adCallScheduleModify()
-    {
-        $model = $this->model;
-        if ($model->submit) {
-            if ($model->updateAdCallScheduleDetail()) {
-                parent::redirect("adCallSetting/adCallSchedule");
-            }
-        }
-        $model->getAdCallScheduleDetail();
-        $this->getConcurrentCallsSelect();
-        $this->voiceFileList = $this->getVoiceFileList();
-        return parent::render();
-    }
+    }    
 
     /**
      * 廣告群乎音檔管理

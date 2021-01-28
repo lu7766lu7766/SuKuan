@@ -7,17 +7,14 @@ use Illuminate\Database\Capsule\Manager as DB;
 
 class GroupCallScheduleService
 {
-
-
   function __construct()
   {
     $this->PHONE_LIMIT = getenv2("GROUP_CALL_PHONE_LIMIT", 200000);
     $this->LIST_LIMIT = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
   }
 
-  public function valideCallPlanMaxLimit($UserID)
+  public function valideCallPlanMaxLimit(int $count)
   {
-    $count = DB::table('CallPlan')->where('UserID', $UserID)->count();
     if ($count + 1 > $this->LIST_LIMIT) {
       throw new Exception("排程不得超過{$this->LIST_LIMIT}筆");
     }

@@ -75,3 +75,11 @@ Route::post("/api/extensionManage/delete", "ExtensionManageController@delete")->
 Route::post("/api/extensionManage/detail", "ExtensionManageController@detail")->middleware("api", "auth");
 Route::post("/api/extensionManage/create", "ExtensionManageController@create")->middleware("api", "auth");
 Route::post("/api/extensionManage/update", "ExtensionManageController@update")->middleware("api", "auth");
+
+// ad group call schedule
+Route::post("/api/adGroupCallSchedule/options", "ADGroupCallScheduleController@options")->middleware("api", "auth");
+Route::post("/api/adGroupCallSchedule/list", "ADGroupCallScheduleController@list")->middleware("api", "auth");
+Route::post("/api/adGroupCallSchedule/detail", "ADGroupCallScheduleController@detail")->middleware("api", "auth");
+Route::post("/api/adGroupCallSchedule/create", "ADGroupCallScheduleController@create")->middleware("api", "auth");
+Route::post("/api/adGroupCallSchedule/update", "ADGroupCallScheduleController@update")->middleware("api", "auth");
+Route::post("/api/adGroupCallSchedule/delete", "ADGroupCallScheduleController@delete")->middleware("api", "auth");
