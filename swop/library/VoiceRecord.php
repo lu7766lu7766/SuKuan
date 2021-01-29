@@ -21,50 +21,26 @@ class VoiceRecord
 		if (file_exists($_FILES[$fieldName]["error"])) return -1;
 		if (!file_exists($_FILES[$fieldName]["tmp_name"])) return false;
 
-		if ($fieldName == "voiceFile") {
-			return self::uploadLocal($userID, $fieldName);
-		} else if ($fieldName == "voiceFile2") {
-			return self::uploadByApi($userID, $fieldName);
-		}
+		return self::uploadLocal($userID, $fieldName);
 	}
 
 	static private function uploadLocal($userID, $fieldName)
 	{
-		$target_folder = config("voiceManage") . $userID . "/";
-		@mkdir($target_folder, 0777, true);
+		// $target_folder = config("voiceManage") . $userID . "/";
+		// @mkdir($target_folder, 0777, true);
 
 		$fileName = iconv("utf-8", "big5", $_FILES[$fieldName]["name"]);
-		$filePath = $target_folder . $fileName;
+		// $filePath = $target_folder . $fileName;
 		$convertFilePath = self::$sourceFolder . $fileName;
-		move_uploaded_file($_FILES[$fieldName]["tmp_name"], $filePath);
+		// move_uploaded_file($_FILES[$fieldName]["tmp_name"], $filePath);
 		// for david to convert
 		@mkdir(self::$sourceFolder, 0777, true);
-		copy($filePath, $convertFilePath);
+		move_uploaded_file($_FILES[$fieldName]["tmp_name"], $convertFilePath);
+		// copy($filePath, $convertFilePath);
 
 		$url = "http://127.0.0.1:60/ConvertFile.atp?User={$userID}&File={$fileName}";
 		\comm\Http::get($url);
 		@unlink($convertFilePath);
-		return $fileName;
-	}
-
-	static private function uploadByApi($userID, $fieldName)
-	{
-		$fileName = iconv("utf-8", "big5", $_FILES[$fieldName]["name"]);
-
-		$url = "http://sms.nuage.asia/putwavfile.php";
-		ob_start();
-		$fileData = file_get_contents($_FILES[$fieldName]["tmp_name"]);
-		//		$fileData = ob_get_contents();
-		ob_end_clean();
-
-		$data = [
-			"name"   => $fileName,
-			"owner"  => $userID,
-			"string" => base64_encode($fileData)
-		];
-
-		\comm\Http::post($url, $data);
-
 		return $fileName;
 	}
 
@@ -103,12 +79,12 @@ class VoiceRecord
 		$fileName = self::getFileNameWithoutExt($fileName);
 		$big5fileName = iconv("utf-8", "big5", $fileName);
 		$davidFile = $big5fileName . self::$davidExt;
-		$jacFile = $big5fileName . self::$sourceExt;
+		// $jacFile = $big5fileName . self::$sourceExt;
 
 		$delFilePath = self::getCurrentPath($userID) . $davidFile;
 		unlink($delFilePath);
 
-		$targetPath = config("voiceManage") . $userID . "/" . $jacFile;
-		@unlink($targetPath);
+		// $targetPath = config("voiceManage") . $userID . "/" . $jacFile;
+		// @unlink($targetPath);
 	}
 }

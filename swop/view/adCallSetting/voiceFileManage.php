@@ -15,15 +15,8 @@ echo Html::form();
     <h3>請選擇其中一種方式進行上傳</h3>
 
     <div class="form-group">
-        <label>上傳方式1:</label>
         <input type="file" name="voiceFile"/>
         <span class="help-block">只支援Wav格式, 8Khz, 16-bit,Mono(檔名請勿含有中文)</span>
-    </div>
-
-    <div class="form-group">
-        <label>上傳方式2:</label>
-        <input type="file" name="voiceFile2"/>
-        <span class="help-block">只支援Wav格式(檔名請勿含有中文)(限59.120.75.13機器使用)</span>
     </div>
 
     <button type="submit" id="file" class="btn btn-default">上傳</button>
@@ -137,22 +130,6 @@ echo Html::form();
                     }
                     this.modifyName = 'voiceFile'
 //					this.base64 = ''
-                }
-            }.bind(this))
-            $("input[name='voiceFile2']").change(function (evt) {
-                for (var i = 0, f; f = evt.target.files[i]; i++) {
-                    if (_.find(this.datas, {fileName: f.name})) {
-                        alert("檔案已存在");
-                        return
-                    }
-                    if (!f.type.match('audio/wav')) {
-                        $("input[name='voiceFile2']").val('');
-                        alert("檔案格式不符，請上傳wav檔");
-                        return
-                    }
-
-                    this.modifyName = 'voiceFile2'
-//					this.getBase64(f)
                 }
             }.bind(this))
         }
