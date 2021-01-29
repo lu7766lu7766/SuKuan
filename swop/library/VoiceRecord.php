@@ -103,7 +103,7 @@ class VoiceRecord
 		$fileName = self::getFileNameWithoutExt($fileName);
 		$big5fileName = iconv("utf-8", "big5", $fileName);
 		$davidFile = $big5fileName . self::$davidExt;
-		$jacFile = $big5fileName . "." . self::$sourceExt;
+		$jacFile = $fileName . "." . self::$sourceExt;
 
 		$delFilePath = self::getCurrentPath($userID) . $davidFile;
 		unlink($delFilePath);
