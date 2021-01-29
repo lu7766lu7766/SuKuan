@@ -108,7 +108,7 @@ class VoiceRecord
 		$delFilePath = self::getCurrentPath($userID) . $davidFile;
 		unlink($delFilePath);
 
-		$targetPath = config("voiceManage") . $userID . "/" . $jacFile;
+		$targetPath = config("voiceManage") . $userID . "\\" . $jacFile;
 		@unlink($targetPath);
 	}
 }
