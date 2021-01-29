@@ -28,14 +28,13 @@ class VoiceRecord
 	{
 		$target_folder = config("voiceManage") . $userID . "/";
 		@mkdir($target_folder, 0777, true);
+		@mkdir(self::$sourceFolder, 0777, true);
 
 		$fileName = iconv("utf-8", "big5", $_FILES[$fieldName]["name"]);
 		$filePath = $target_folder . $fileName;
 		$convertFilePath = self::$sourceFolder . $fileName;
 		move_uploaded_file($_FILES[$fieldName]["tmp_name"], $filePath);
 		// for david to convert
-		@mkdir(self::$sourceFolder, 0777, true);
-		// move_uploaded_file($_FILES[$fieldName]["tmp_name"], $convertFilePath);
 		copy($filePath, $convertFilePath);
 
 		$url = "http://127.0.0.1:60/ConvertFile.atp?User={$userID}&File={$fileName}";

@@ -87,6 +87,7 @@ class ADGroupCallScheduleController extends JController
 				"UserID"            => session("choice"),
 				"PlanName"          => $request->input("PlanName"),
 				"StartCalledNumber" => $StartCalledNumber,
+				"CalledCount" 			=> $CalledCount,
 				"ConcurrentCalls"   => $request->input("ConcurrentCalls"),
 				"UseState"          => 0,
 				"NumberMode"        => $request->input("NumberMode"),
@@ -107,7 +108,7 @@ class ADGroupCallScheduleController extends JController
 				"WaitDTMF"          => $request->input("WaitDTMF")
 			]);
 			$numberCollection->chunk(100)->each(function ($chunk) {
-				DB::table("NumberList")->insert($chunk->toArray());
+				DB::table("AdNumberList")->insert($chunk->toArray());
 			});
 		});
 		return true;
