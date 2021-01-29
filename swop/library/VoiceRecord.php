@@ -6,53 +6,55 @@
  * Date: 2018/2/8
  * Time: 下午12:47
  */
+
 namespace lib;
 
 class VoiceRecord
 {
 	static public $sourceExt = ".wav";
 	static public $davidExt = ".g729";
-	static public $fileRoot = "C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
+	static public $davidAdFolder = "C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
+	static public $sourceFolder = "C:\\xampp\\htdocs\\aurora02\\download\\";
 
-	static public function uploadFile ($userID, $fieldName)
+	static public function uploadFile($userID, $fieldName)
 	{
-		if (file_exists($_FILES[ $fieldName ][ "error" ])) return -1;
-		if (!file_exists($_FILES[ $fieldName ][ "tmp_name" ])) return false;
+		if (file_exists($_FILES[$fieldName]["error"])) return -1;
+		if (!file_exists($_FILES[$fieldName]["tmp_name"])) return false;
 
 		if ($fieldName == "voiceFile") {
 			return self::uploadLocal($userID, $fieldName);
 		} else if ($fieldName == "voiceFile2") {
 			return self::uploadByApi($userID, $fieldName);
 		}
-
 	}
 
-	static private function uploadLocal ($userID, $fieldName)
+	static private function uploadLocal($userID, $fieldName)
 	{
-		$dir = config("download");
-		@mkdir($dir, 0777);
-		@mkdir(config("voiceManage"), 0777);
 		$target_folder = config("voiceManage") . $userID . "/";
-		@mkdir($target_folder, 0777);
+		@mkdir($target_folder, 0777, true);
 
-		$fileName = iconv("utf-8", "big5", $_FILES[ $fieldName ][ "name" ]);
-		move_uploaded_file($_FILES[ $fieldName ][ "tmp_name" ], $target_folder . $fileName);
-		// rename($dir . $fileName, $target_folder . $fileName);
+		$fileName = iconv("utf-8", "big5", $_FILES[$fieldName]["name"]);
+		$filePath = $target_folder . $fileName;
+		$convertFilePath = self::$sourceFolder . $fileName;
+		move_uploaded_file($_FILES[$fieldName]["tmp_name"], $filePath);
+		// for david to convert
+		@mkdir(self::$sourceFolder, 0777, true);
+		copy($filePath, $convertFilePath);
 
 		$url = "http://127.0.0.1:60/ConvertFile.atp?User={$userID}&File={$fileName}";
 		\comm\Http::get($url);
-
+		@unlink($convertFilePath);
 		return $fileName;
 	}
 
-	static private function uploadByApi ($userID, $fieldName)
+	static private function uploadByApi($userID, $fieldName)
 	{
-		$fileName = iconv("utf-8", "big5", $_FILES[ $fieldName ][ "name" ]);
+		$fileName = iconv("utf-8", "big5", $_FILES[$fieldName]["name"]);
 
 		$url = "http://sms.nuage.asia/putwavfile.php";
 		ob_start();
-		$fileData = file_get_contents($_FILES[ $fieldName ][ "tmp_name" ]);
-//		$fileData = ob_get_contents();
+		$fileData = file_get_contents($_FILES[$fieldName]["tmp_name"]);
+		//		$fileData = ob_get_contents();
 		ob_end_clean();
 
 		$data = [
@@ -66,9 +68,9 @@ class VoiceRecord
 		return $fileName;
 	}
 
-	static public function getFilesName ($userID)
+	static public function getFilesName($userID)
 	{
-		$res = [ ];
+		$res = [];
 		$files = self::getFiles($userID);
 		foreach ($files as $file) {
 			if (substr($file, -1) == "/")
@@ -80,23 +82,23 @@ class VoiceRecord
 		return $res;
 	}
 
-	static private function getFiles ($userID)
+	static private function getFiles($userID)
 	{
 		return glob(self::getCurrentPath($userID) . "*", GLOB_MARK);
 	}
 
-	static private function getCurrentPath ($userID)
+	static private function getCurrentPath($userID)
 	{
-		return self::$fileRoot . $userID . "\\";
+		return self::$davidAdFolder . $userID . "\\";
 	}
 
 
-	static private function getFileNameWithoutExt ($fileName)
+	static private function getFileNameWithoutExt($fileName)
 	{
-		return strtr($fileName, [ self::$davidExt => "", self::$sourceExt => "" ]);
+		return strtr($fileName, [self::$davidExt => "", self::$sourceExt => ""]);
 	}
 
-	static public function delFile ($userID, $fileName)
+	static public function delFile($userID, $fileName)
 	{
 		$fileName = self::getFileNameWithoutExt($fileName);
 		$big5fileName = iconv("utf-8", "big5", $fileName);
