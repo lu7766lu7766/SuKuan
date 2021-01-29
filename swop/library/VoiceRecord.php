@@ -36,8 +36,8 @@ class VoiceRecord
 		@mkdir($target_folder, 0777);
 
 		$fileName = iconv("utf-8", "big5", $_FILES[ $fieldName ][ "name" ]);
-		move_uploaded_file($_FILES[ $fieldName ][ "tmp_name" ], $dir . $fileName);
-		copy($dir . $fileName, $target_folder . $fileName);
+		move_uploaded_file($_FILES[ $fieldName ][ "tmp_name" ], $target_folder . $fileName);
+		// rename($dir . $fileName, $target_folder . $fileName);
 
 		$url = "http://127.0.0.1:60/ConvertFile.atp?User={$userID}&File={$fileName}";
 		\comm\Http::get($url);
