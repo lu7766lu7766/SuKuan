@@ -12,8 +12,6 @@ echo Html::form();
 
     <input type="hidden" name="modifyName" :value="modifyName"/>
 
-    <h3>請選擇其中一種方式進行上傳</h3>
-
     <div class="form-group">
         <input type="file" name="voiceFile"/>
         <span class="help-block">只支援Wav格式, 8Khz, 16-bit,Mono(檔名請勿含有中文)</span>
