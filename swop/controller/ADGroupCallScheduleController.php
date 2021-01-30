@@ -68,7 +68,7 @@ class ADGroupCallScheduleController extends JController
 			$CalledCount = count($list);
 		}
 
-		$this->service->valideCallOnceLimit($CalledCount);
+		$this->service->valideAdCallOnceLimit($CalledCount);
 		$callOutID = DB::table("AdPlan")->select(DB::raw("max(CallOutID)+1 as count"))->first()->count ?? "1";
 		switch ($request->input("NumberMode")) {
 			case self::RANGE:

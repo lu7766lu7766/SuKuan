@@ -9,8 +9,9 @@ class GroupCallScheduleService
 {
   function __construct()
   {
-    $this->PHONE_LIMIT = getenv2("GROUP_CALL_PHONE_LIMIT", 200000);
     $this->LIST_LIMIT = getenv2("GROUP_CALL_LIST_LIMIT", 99999);
+    $this->PHONE_LIMIT = getenv2("GROUP_CALL_PHONE_LIMIT", 200000);
+    $this->AD_CALL_LIMIT = getenv2("AD_CALL_PHONE_LIMIT", 1000000);
   }
 
   public function valideCallPlanMaxLimit(int $count)
@@ -24,6 +25,13 @@ class GroupCallScheduleService
   {
     if ($CalledCount > $this->PHONE_LIMIT) {
       throw new Exception("筆數不得超過{$this->PHONE_LIMIT}筆");
+    }
+  }
+
+  public function valideAdCallOnceLimit(int $count)
+  {
+    if ($count + 1 > $this->AD_CALL_LIMIT) {
+      throw new Exception("筆數不得超過{$this->AD_CALL_LIMIT}筆");
     }
   }
 
