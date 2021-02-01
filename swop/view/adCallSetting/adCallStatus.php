@@ -114,12 +114,6 @@ $this->partialView($top_view_path);
                 <td><a target='_blank' :href="data.downloadUnRecieveWaitCall">{{data.UnRecieveWaitCall}}</a></td>
                 <!--未接通-->
                 <td>
-                    <!--                    <select v-model="data.ConcurrentCalls"-->
-                    <!--                            @change="chg_concurrentCalls(data.ConcurrentCalls,data.CallOutID)"-->
-                    <!--                            @focus="stop_update"-->
-                    <!--                            @blur="start_update">-->
-                    <!--                        <option v-for="value in _.range(10,101)" :value="value">每１秒{{value}}通</option>-->
-                    <!--                    </select>-->
                     <concurrent-calls :values="_.concat([3, 5, 7], _.range(10,101), [125, 150, 175, 200])"
                                       :calloutid="data.CallOutID"
                                       @change="chg_concurrentCalls"
@@ -197,10 +191,11 @@ $this->partialView($top_view_path);
                         alert(this.alert_txt);
                     }
                     else {
-                        this.ajax_request(folder + "sysLookout/ajaxMaxRoutingCalls", {
-                            userId: this.choice,
-                            maxRoutingCalls: this.maxRoutingCalls//e.target.value
-                        });
+                        $.callApi.post("api/callStatus/update/maxRoutingCalls", {
+                            MaxRoutingCalls: this.maxRoutingCalls//e.target.value
+                        }).then(function() {
+                            alertify.alert('已成功修改!')
+                        })
                     }
                 },
                 chg_maxCalls: function (e) {
@@ -209,16 +204,18 @@ $this->partialView($top_view_path);
                         alert(this.alert_txt);
                     }
                     else {
-                        this.ajax_request(folder + "sysLookout/ajaxMaxCalls", {
-                            userId: this.choice,
-                            maxCalls: e.target.value
+                        $.callApi.post("api/callStatus/update/maxCalls", {
+                            MaxCalls: e.target.value,
+                        }).then(function() {
+                            alertify.alert('已成功修改!')
                         });
                     }
                 },
                 chg_planDistribution: function (e) {
-                    this.ajax_request(folder + "sysLookout/ajaxcPlanDistribution", {
-                        userId: this.choice,
-                        planDistribution: e.target.value
+                    $.callApi.post("api/callStatus/update/planDistribution", {
+                        PlanDistribution: e.target.value,
+                    }).then(function() {
+                        alertify.alert('已成功修改!')
                     });
                 },
                 chg_adNote: function (e) {

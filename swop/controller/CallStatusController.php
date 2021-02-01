@@ -47,10 +47,17 @@ class CallStatusController extends JController
     return DB::table("SysUser")->where("UserID", $userID);
   }
 
-  public function switchSuspend(Request $request)
+  public function switchSuspend()
   {
     return $this->buildUserWhere(session("choice"))->update([
       "Suspend" => DB::raw("abs(Suspend-1)")
+    ]);
+  }
+
+  public function updateMaxRoutingCalls(Request $request)
+  {
+    return $this->buildUserWhere(session("choice"))->update([
+      "MaxRoutingCalls" => $request->input("MaxRoutingCalls")
     ]);
   }
 
