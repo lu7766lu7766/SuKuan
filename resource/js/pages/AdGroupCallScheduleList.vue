@@ -390,8 +390,8 @@ export default {
   },
   mounted() {
     this.getOptions();
-    const timer = setInterval(this.getList, 10000)
-    this.$once("hook:destroyed", () => clearInterval(timer))
+    // const timer = setInterval(this.getList, 10000)
+    // this.$once("hook:destroyed", () => clearInterval(timer))
     this.getList();
   },
 };
