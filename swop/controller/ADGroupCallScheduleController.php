@@ -26,11 +26,11 @@ class ADGroupCallScheduleController extends JController
 		return DB::table("AdPlan")
 			->where("UserID", session("choice"))
 			->orderBy("CallOutID", "desc")
-			->get()
-			->map(function ($data) {
-				$data->Count = DB::table("AdNumberList")->where("CallOutID", $data->CallOutID)->count();
-				return $data;
-			});
+			->get();
+			// ->map(function ($data) {
+			// 	$data->Count = DB::table("AdNumberList")->where("CallOutID", $data->CallOutID)->count();
+			// 	return $data;
+			// });
 	}
 
 	public function detail(Request $request)
