@@ -29,9 +29,9 @@ foreach ($files as $file) {
     $collection->chunk(100)->each(function ($chunk) {
       DB::table("AdNumberList")->insert($chunk->toArray());
     });
-    DB::table("AdPlan")
-      ->where("CallOutID", $callOutID)
-      ->update(["Batch" => 1]);
+    // DB::table("AdPlan")
+    //   ->where("CallOutID", $callOutID)
+    //   ->update(["Batch" => 1]);
     @unlink($filePath);
   });
 }
