@@ -1,6 +1,8 @@
 <?php
 require(dirname(__DIR__) . "/vendor/autoload.php");
 
+// not work for window
+
 use GO\Scheduler;
 
 $scriptFolder = "/script/";
