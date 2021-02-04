@@ -111,6 +111,7 @@ class ADGroupCallScheduleController extends JController
 				"StopOnConCount"    => $request->input("StopOnConCount"),
 				"WaitDTMF"          => $request->input("WaitDTMF")
 			]);
+			@mkdir(config("ad"), 0777, true);
 			file_put_contents(config("ad") . "_{$callOutID}.txt", $numberCollection->pluck("CalledNumber")->implode(PHP_EOL));
 			// $numberCollection->chunk(100)->each(function ($chunk) {
 			// 	DB::table("AdNumberList")->insert($chunk->toArray());
