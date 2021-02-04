@@ -26,7 +26,11 @@ class ADGroupCallScheduleController extends JController
 		return DB::table("AdPlan")
 			->where("UserID", session("choice"))
 			->orderBy("CallOutID", "desc")
-			->get();
+			->get()
+			->map(function ($data) {
+				$data->Count = DB::table("AdNumberList")->where("CallOutID", $data->CallOutID)->count();
+				return $data;
+			});
 	}
 
 	public function detail(Request $request)
@@ -107,9 +111,10 @@ class ADGroupCallScheduleController extends JController
 				"StopOnConCount"    => $request->input("StopOnConCount"),
 				"WaitDTMF"          => $request->input("WaitDTMF")
 			]);
-			$numberCollection->chunk(100)->each(function ($chunk) {
-				DB::table("AdNumberList")->insert($chunk->toArray());
-			});
+			file_put_contents(config("ad") . "_{$callOutID}.txt", $numberCollection->pluck("CalledNumber")->implode(PHP_EOL));
+			// $numberCollection->chunk(100)->each(function ($chunk) {
+			// 	DB::table("AdNumberList")->insert($chunk->toArray());
+			// });
 		});
 		return true;
 	}

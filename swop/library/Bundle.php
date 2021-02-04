@@ -1,7 +1,5 @@
 <?php
 
-use setting\Config;
-
 class Bundle
 {
 

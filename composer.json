@@ -13,7 +13,8 @@
 		"voku/anti-xss": "^4.1",
 		"illuminate/database": "^5.5",
 		"tightenco/collect": "^8.18",
-		"rakit/validation": "^1.4"
+		"rakit/validation": "^1.4",
+		"peppeocchi/php-cron-scheduler": "^3.1"
 	},
 	"autoload": {
 		"classmap": [

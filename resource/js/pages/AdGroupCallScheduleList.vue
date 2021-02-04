@@ -267,6 +267,11 @@
           { key: 'UseState', name: '啟用' },
           { key: 'action', name: '操作', width: 100 },
         ]"
+        :trStyle="
+          (data) => ({
+            'background-color': !data.Count ? '#ffbbbb' : '',
+          })
+        "
       >
         <template v-slot:allChecked>
           <input type="checkbox" class="checkAll" v-model="isAllChecked" />
@@ -384,7 +389,9 @@ export default {
     },
   },
   mounted() {
-    this.getOptions()
+    this.getOptions();
+    const timer = setInterval(this.getList, 10000)
+    this.$once("hook:destroyed", () => clearInterval(timer))
     this.getList();
   },
 };

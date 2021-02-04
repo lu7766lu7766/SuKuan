@@ -51,6 +51,7 @@ class Config
         $base["communicationSearch"] = $base["download"] . "communicationSearch/";
         $base["callStatus"] = $base["download"] . "callStatus/";
         $base["sweep"] = $base["download"] . "sweep/";
+        $base["ad"] = $base["download"] . "ad/";
         $base["voiceManage"] = $base["download"] . "voiceManage/";
         $base["cn_phone_rule"] = $base["setting_dir"] . "cn_phone_rule.json";
         $base["tw_phone_rule"] = $base["setting_dir"] . "tw_phone_rule.json";
