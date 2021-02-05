@@ -1,0 +1,18 @@
+{
+	"exclude": ["node_modules"],
+	"include": ["resource/js/**/*"],
+	"compileOptions": {
+    "target": "es6",
+		"baseUrl": ".",
+		"paths": {
+			"~": "resource/js/node_modules",
+			"@": "/resource/js/components",
+			"pages": "/resource/js/pages",
+			"mixins": "/resource/js/mixins",
+			"config": "/resource/js/config",
+			"lib": "/resource/js/lib",
+			"constants": "/resource/js/constants",
+			"store": "/resource/js/store"
+		}
+	}
+}
