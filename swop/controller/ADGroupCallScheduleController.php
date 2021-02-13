@@ -91,6 +91,7 @@ class ADGroupCallScheduleController extends JController
 				"UserID"            => session("choice"),
 				"PlanName"          => $request->input("PlanName"),
 				"StartCalledNumber" => $StartCalledNumber,
+				"CallProgressTime"	=> $request->input("CallProgressTime"),
 				"CalledCount" 			=> $CalledCount,
 				"ConcurrentCalls"   => $request->input("ConcurrentCalls"),
 				"UseState"          => 0,
