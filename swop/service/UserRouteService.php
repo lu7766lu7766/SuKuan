@@ -57,7 +57,7 @@ class UserRouteService
       "TrunkIP" => $request->input("TrunkIP"),
       "TrunkPort" => $request->input("TrunkPort"),
       "RouteName" => $request->input("RouteName"),
-      "SubNum" => $request->input("SubNum")
+      "SubNum" => $request->input("SubNum") ?? 0
     ]);
   }
 
@@ -75,7 +75,7 @@ class UserRouteService
         "TrunkIP" => $request->input("TrunkIP"),
         "TrunkPort" => $request->input("TrunkPort"),
         "RouteName" => $request->input("RouteName"),
-        "SubNum" => $request->input("SubNum")
+        "SubNum" => $request->input("SubNum") ?? 0
       ]);
   }
 

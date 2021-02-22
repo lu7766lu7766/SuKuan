@@ -10,6 +10,11 @@ use Tightenco\Collect\Support\Collection;
 
 class UserController extends JController
 {
+
+	public function __construct()
+	{
+		$this->repo = new UserRepostory();
+	}
 	public function echoPassword(Request $request)
 	{
 		return ReturnMessage::success([
@@ -73,18 +78,17 @@ class UserController extends JController
 	public function create(Request $request)
 	{
 		$this->validate($request);
-		$repo = new UserRepostory();
-		if ($repo->checkExists([$request->input("UserID")])) {
+		if ($this->repo->checkExists([$request->input("UserID")])) {
 			throw new Exception("登入帳號已存在，無法新增。");
 		} else {
-			DB::transaction(function () use ($repo, $request) {
-				$repo->create(
+			DB::transaction(function () use ($request) {
+				$this->repo->create(
 					$request->input("UserID"),
 					$request->input("UseState") ? 1 : 0,
 					$request->input("UserName"),
 					$request->input("NoteText"),
 					$request->input("RateGroupID"),
-					$request->input("AddBalance"),
+					$request->input("AddBalance") ?? 0,
 					$request->input("StartTime"),
 					$request->input("StopTime"),
 					$request->input("CallWaitingTime"),
@@ -108,7 +112,7 @@ class UserController extends JController
 					$request->input("CanSwitchExtension") ? 1 : 0
 				);
 				if ($request->input("AddBalance") && $request->input("AddBalance") != 0) {
-					$repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
+					$this->repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 			return true;
@@ -117,8 +121,7 @@ class UserController extends JController
 
 	public function createBatch(Request $request)
 	{
-		$repo = new UserRepostory();
-		if ($repo->checkExists(array_column($request->input("datas"), "UserID"))) {
+		if ($this->repo->checkExists(array_column($request->input("datas"), "UserID"))) {
 			throw new Exception("帳號有重複，無法新增。");
 		}
 		if (count($request->input("datas")) > 100) {
@@ -133,7 +136,7 @@ class UserController extends JController
 						"UserName" => $x["UserName"],
 						"UseState" => $x["UseState"],
 						"RateGroupID" => $x["RateGroupID"],
-						"Balance" => $x["Balance"],
+						"Balance" => $x["Balance"] ?? 0,
 						"NoteText" => $x["NoteText"],
 						"ParentID" => session("choice"),
 						"StartTime" => "08:00",
@@ -156,16 +159,16 @@ class UserController extends JController
 	public function update(Request $request)
 	{
 		$this->validate($request);
-		$repo = new UserRepostory();
+		$this->repo = new UserRepostory();
 		if (session("isRoot")) {
-			DB::transaction(function () use ($repo, $request) {
-				$repo->update(
+			DB::transaction(function () use ($request) {
+				$this->repo->update(
 					$request->input("UserID"),
 					$request->input("UseState") ? 1 : 0,
 					$request->input("UserName"),
 					$request->input("NoteText"),
 					$request->input("RateGroupID"),
-					floor($request->input("Balance")) + floor($request->input("AddBalance")),
+					floor($request->input("AddBalance") ?? 0),
 					$request->input("StartTime"),
 					$request->input("StopTime"),
 					$request->input("CallWaitingTime"),
@@ -189,11 +192,11 @@ class UserController extends JController
 					$request->input("CanSwitchExtension") ? 1 : 0
 				);
 				if ($request->input("AddBalance") && $request->input("AddBalance") != 0) {
-					$repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
+					$this->repo->createChargeLog($request->input("UserID"), $request->input("AddBalance"), date("Y-m-d H:i:s", time()), session("choice"));
 				}
 			});
 		} else {
-			$repo->updateMenuList($request->input("UserID"), join(",", $request->input("MenuList")));
+			$this->repo->updateMenuList($request->input("UserID"), join(",", $request->input("MenuList")));
 		}
 		return true;
 	}

@@ -108,14 +108,16 @@ class UserRepostory
     $UserID2,
     $CanSwitchExtension
   ) {
-    return DB::table("SysUser")
-      ->where("UserID", $UserID)
+    $userDB = DB::table("SysUser")
+      ->where("UserID", $UserID);
+    $newBalance = $userDB->select("Balance")->first()->Balance + $Balance;
+    return $userDB
       ->update([
         "UseState" => $UseState,
         "UserName" => $UserName,
         "NoteText" => $NoteText,
         "RateGroupID" => $RateGroupID,
-        "Balance" => $Balance,
+        "Balance" => $newBalance,
         "StartTime" => $StartTime,
         "StopTime" => $StopTime,
         "CallWaitingTime" => $CallWaitingTime,
