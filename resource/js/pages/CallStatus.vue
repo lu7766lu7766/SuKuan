@@ -387,7 +387,7 @@ export default {
           ...x,
           status: !x.ExtensionNo ? this.Const.DIALING : this.Const.TALKING,
         }))
-        .orderBy("status")
+        .orderBy(["ExtensionNo", "status"], ["desc", "asc"])
         .value();
       res.data3.forEach(function (x) {
         var WaitCall = x.CalledCount - x.CalloutCount;

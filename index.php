@@ -1,13 +1,14 @@
 <?php
-//ini_set('session.cookie_lifetime', 1);
-//ini_set('session.gc_maxlifetime', 1);
+require("swop/library/helper.php");
+require("system/Session.php");
+
 date_default_timezone_set("Asia/Taipei");
 set_time_limit(0);
-session_start();
+
 ini_set("display_errors", "On");
 error_reporting(E_ALL & ~E_NOTICE);
 require("vendor/autoload.php");
-require("swop/library/helper.php");
+
 require("Route.php");
 require("system/eloquent/Start.php");
 

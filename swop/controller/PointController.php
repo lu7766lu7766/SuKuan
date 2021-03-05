@@ -18,7 +18,7 @@ class PointController extends JController
         $db = DB::table("RechargeLog");
         $db = $this->buildWhere($db, $request);
         $db = (new PaginateService)->proccess($db, $request->input("page"), $request->input("per_page"));
-        return $db->get();
+        return $db->orderBy("AddTime", "desc")->get();
     }
 
     public function buildWhere($db, $request)

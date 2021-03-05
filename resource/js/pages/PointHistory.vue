@@ -64,10 +64,10 @@
       :startIndex="startIndex"
       :datas="datas"
       :columns="[
-        { key: 'SaveUserID', name: '儲值者' },
-        { key: 'UserID', name: '儲值對象' },
-        { key: 'AddValue', name: '儲值金額' },
-        { key: 'AddTime', name: '儲值時間' },
+        { key: 'SaveUserID', name: '儲值者', className: 'text-center' },
+        { key: 'UserID', name: '儲值對象', className: 'text-center' },
+        { key: 'AddValue', name: '儲值金額', className: 'text-center' },
+        { key: 'AddTime', name: '儲值時間', className: 'text-center' },
         { key: 'Memo', name: '備註' },
       ]"
     >
