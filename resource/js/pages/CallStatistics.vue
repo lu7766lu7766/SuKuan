@@ -28,6 +28,9 @@ export default {
   },
   mounted() {
     this.getList();
+    const GET_DATA_INTERVAL = 5000;
+    const timer = setInterval(this.getList, GET_DATA_INTERVAL);
+    this.$once("hook:destoryed", () => clearInterval(timer));
   },
 };
 </script>
