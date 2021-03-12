@@ -2,11 +2,14 @@ import VueBus from 'vue-bus'
 import VueSweetalert2 from 'vue-sweetalert2'
 import { ValidationObserver } from 'vee-validate'
 import './validation'
+import numeral from 'numeral';
+import numFormat from 'vue-filter-number-format'
 
 export default {
 	install: (Vue) => {
 		Vue.use(VueBus)
 		Vue.use(VueSweetalert2)
+		Vue.filter('point', (val) => numFormat(numeral)(val, '0.00'))
 		Vue.prototype._ = _
 		Vue.prototype.$upload = async function(options) {
 			return new Promise((resolve) => {

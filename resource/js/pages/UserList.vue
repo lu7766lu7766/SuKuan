@@ -53,6 +53,9 @@
       <template v-slot:UseState="{ data }">
         <Switcher disabled v-model="data.UseState" />
       </template>
+      <template v-slot:Balance="{ data }">
+        {{ data.Balance | point }}
+      </template>
       <template v-slot:action="{ data }">
         <button
           type="button"

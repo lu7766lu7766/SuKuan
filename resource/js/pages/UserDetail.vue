@@ -116,7 +116,7 @@
           <td>
             <div class="form-inline">
               <div class="form-group">
-                <span>現有</span><span>{{ editData.Balance || 0 }}</span
+                <span>現有</span><span>{{ (editData.Balance || 0) | point }}</span
                 ><span>點</span>
               </div>
             </div>

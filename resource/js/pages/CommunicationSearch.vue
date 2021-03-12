@@ -179,7 +179,7 @@
             <td></td>
             <td></td>
             <td>{{ allData.totalTime }}</td>
-            <td>{{ allData.totalMoney }}</td>
+            <td>{{ allData.totalMoney | point }}</td>
             <td></td>
             <td v-if="isRoot"></td>
             <td></td>
