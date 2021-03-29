@@ -279,10 +279,15 @@ export default {
       this.changeSort(key);
       this.getList();
     },
-    exportCSV() {
+    async exportCSV() {
+      $("body").loading();
+      const res = await $.callApi.post("api/communication/list", {
+        ...this.requestBody,
+        page: 0,
+      });
       this.fileFunc.exportCSV(
         this.fileFunc.buildCSVContext(
-          this.datas,
+          res.data,
           [
             { key: "UserID", name: "用戶" },
             { key: "ExtensionNo", name: "分機" },
@@ -297,6 +302,7 @@ export default {
         ),
         "通聯紀錄.csv"
       );
+      $("body").loading("stop");
     },
   },
   computed: {

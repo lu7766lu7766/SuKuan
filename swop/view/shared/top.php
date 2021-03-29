@@ -47,7 +47,7 @@
 							}
 						},
 						error(xhr, errorType, error) {
-							!isDev && alert("系統錯誤，請稍後在試，或聯繫管理員。") 
+							!isDev && alert("系統錯誤，請稍後在試，或聯繫管理員。")
 							reject(error)
 						}
 					}
@@ -93,6 +93,25 @@
 
 			this.go = function(uri, data) {
 				return requestWithoutCode('POST', apiUrl + uri, data)
+			}
+
+			this.download = function(uri, data) {
+				return new Promise((resolve, reject) => {
+					request('POST', folder + uri, data)
+						.then(resp => resp.blob())
+						.then(blob => {
+							const url = window.URL.createObjectURL(blob)
+							const a = document.createElement('a')
+							a.style.display = 'none'
+							a.href = url
+							a.download = 'todo-1.json'
+							document.body.appendChild(a)
+							a.click()
+							document.body.removeChild(a)
+							window.URL.revokeObjectURL(url)
+						})
+						.catch(() => reject('download faild!'))
+				})
 			}
 		}
 		$.callApi = new callApi()
@@ -190,11 +209,11 @@
 					<ul class="nav navbar-nav navbar-left">
 						<li><a href="<?php echo url("index/index") ?>">首頁</a></li>
 						<?php if (session("isRoot")) { ?>
-						<li><a class="shotdown_btn" href="javascript:;">關機</a>
-						<li><a class="reboot_btn" href="javascript:;">重啟</a>
-						<?php } ?>
-						<li><a href="<?php echo url("index/password") ?>">密碼</a></li>
-						<li><a href="<?php echo url("index/logout") ?>">登出</a></li>
+							<li><a class="shotdown_btn" href="javascript:;">關機</a>
+							<li><a class="reboot_btn" href="javascript:;">重啟</a>
+							<?php } ?>
+							<li><a href="<?php echo url("index/password") ?>">密碼</a></li>
+							<li><a href="<?php echo url("index/logout") ?>">登出</a></li>
 					</ul>
 				</div>
 
