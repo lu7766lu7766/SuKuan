@@ -149,6 +149,6 @@ class CallStatusController extends JController
 
   public function callStatistics()
   {
-    return DB::table("CallState")->select(DB::raw("UserID, count(1) as Count"))->groupBy("UserID")->get();
+    return DB::table("CallState")->select(DB::raw("UserID, count(1) as Count, (select count(1) from CustomerLists where Suspend = 0 and UserID=CallState.UserID) as StatusCount"))->groupBy("UserID")->get();
   }
 }

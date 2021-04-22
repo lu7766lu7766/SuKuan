@@ -4,6 +4,7 @@
       :datas="sortDatas"
       :columns="[
         { key: 'UserID', name: '登入帳號(編輯)', sortable: true },
+        { key: 'StatusCount', name: '狀態', sortable: true },
         { key: 'Count', name: '線數', sortable: true },
       ]"
       :sort="sort"

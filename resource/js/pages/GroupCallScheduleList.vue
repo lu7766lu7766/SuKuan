@@ -212,7 +212,7 @@ export default {
       NumberMode: "0",
       StartCalledNumber: "",
       ExtProgressTime: "15",
-      CallProgressTime: "30",
+      CallProgressTime: "22",
       Calldistribution: "1",
       CalloutGroupID: 1,
       random: "1",
