@@ -10,6 +10,13 @@
       :sort="sort"
       @changeSort="(key) => changeSort(key)"
     >
+      <template v-slot:tfoot>
+          <tr>
+            <td>合計</td>
+            <td>{{ totalData.StatusCount }}</td>
+            <td>{{ totalData.Count }}</td>
+          </tr>
+        </template>
     </data-table>
   </div>
 </template>
@@ -26,6 +33,14 @@ export default {
       const res = await $.callApi.post("api/callStatus/callStatistics");
       this.datas = res.data;
     },
+  },
+  computed: {
+    totalData() {
+      return {
+        StatusCount: _.sumBy(this.datas, x => +x.StatusCount),
+        Count: _.sumBy(this.datas, x => +x.Count)
+      }
+    }
   },
   mounted() {
     this.getList();
