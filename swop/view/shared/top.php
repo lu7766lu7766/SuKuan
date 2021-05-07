@@ -15,7 +15,6 @@
 	Bundle::echoLink("bootstrap");
 	Bundle::echoLink("default");
 	echo Bundle::$allLink;
-
 	?>
 
 	<script>
@@ -28,6 +27,8 @@
 		var isRoot = <?php echo session("isRoot") ? 'true' : 'false' ?>;
 		var permission = <?php echo session("permission_control") ?>;
 		var isDev = <?php echo isDev() ? "true" : "false" ?>;
+
+		$.ajaxSetup({ cache: false })
 
 		function callApi() {
 
