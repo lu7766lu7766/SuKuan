@@ -14,11 +14,11 @@ function start_session($expire = 0)
     }
 
     if (empty($_COOKIE['PHPSESSID'])) {
-        session_set_cookie_params($expire);
+        session_set_cookie_params($expire, "/");
         session_start();
     } else {
         session_start();
-        setcookie('PHPSESSID', session_id(), time() + $expire);
+        setcookie('PHPSESSID', $_COOKIE['PHPSESSID'], time() + $expire, "/");
     }
 }
 

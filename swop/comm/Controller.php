@@ -2,8 +2,6 @@
 
 class Controller
 {
-    public $checkLogin = true;
-
     public function __construct()
     {
         $this->defaultUrl = config("default_controller") . "/" . config("default_action");
@@ -42,12 +40,13 @@ class Controller
             }
             $this->post = null;
         }
-        //            $this->redirect(config("default_controller")."/".config("default_action"));
+        // dd($_COOKIE['PHPSESSID'], config("folder"), !session("login"), session("login"), $_SESSION);
         if ($controller != config("default_controller")) {
-            if ($this->checkLogin && !session("login")) {
+            if (!session("login")) {
                 $this->redirect($this->defaultUrl);
             }
         }
+        
         if (is_array(session("model"))) {
             foreach (session("model") as $key => $val) {
                 if (isset($key) && isset($val)) {
