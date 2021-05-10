@@ -114,7 +114,7 @@ $this->partialView($top_view_path);
                 <td><a target='_blank' :href="data.downloadUnRecieveWaitCall">{{data.UnRecieveWaitCall}}</a></td>
                 <!--未接通-->
                 <td>
-                    <concurrent-calls :values="_.concat([3, 5, 7], _.range(10,101), [125, 150, 175, 200])"
+                    <concurrent-calls :values="_.concat([_.range(1,101), [125, 150, 175, 200])"
                                       :calloutid="data.CallOutID"
                                       @change="chg_concurrentCalls"
                                       @focus="stop_update"
