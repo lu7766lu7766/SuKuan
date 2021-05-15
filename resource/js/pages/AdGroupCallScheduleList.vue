@@ -85,7 +85,7 @@
               <td>
                 <select class="form-control" v-model="editData.ConcurrentCalls">
                   <option
-                    v-for="call in _.concat([3, 5, 7], _.range(10, 101), [
+                    v-for="call in _.concat(_.range(1, 101), [
                       125,
                       150,
                       175,
