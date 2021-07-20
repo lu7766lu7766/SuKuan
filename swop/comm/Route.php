@@ -93,7 +93,6 @@ class Router
         return $this;
     }
 
-    /** 尚未有功能 */
     public function middleware(...$keys)
     {
         foreach ($keys as $key) {
