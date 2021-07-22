@@ -29,8 +29,8 @@ class CallStatusController extends JController
   public function deleteCallPlan(Request $request)
   {
     DB::transaction(function () use ($request) {
-      $this->buildCallPlanWhere(session("choice"), $request->input("CallOutID"))->delete();
-      DB::table("NumberList")->where("CallOutID", $request->input("CallOutID"))->delete();
+      $delRows = $this->buildCallPlanWhere(session("choice"), $request->input("CallOutID"))->delete();
+      $delRows && DB::table("NumberList")->where("CallOutID", $request->input("CallOutID"))->delete();
     });
     return true;
   }

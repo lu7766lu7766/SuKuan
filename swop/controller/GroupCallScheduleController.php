@@ -131,8 +131,8 @@ class GroupCallScheduleController extends JController
 	{
 		DB::transaction(function () use ($request) {
 			foreach ($request->input("datas") as $data) {
-				DB::table("CallPlan")->where("UserID", $data["UserID"])->where("CallOutID", $data["CallOutID"])->delete();
-				DB::table("NumberList")->where("CallOutID", $data["CallOutID"])->delete();
+				$delRows = DB::table("CallPlan")->where("UserID", $data["UserID"])->where("CallOutID", $data["CallOutID"])->delete();
+				$delRows && DB::table("NumberList")->where("CallOutID", $data["CallOutID"])->delete();
 			}
 		});
 		return true;
