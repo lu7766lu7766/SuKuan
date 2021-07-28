@@ -143,13 +143,7 @@
             <th style="width: 80px">開關</th>
             <th>刪除</th>
           </tr>
-          <tr
-            v-for="(data, index) in subData.data3"
-            :key="index"
-            :style="{
-              'background-color': parseFloat(data.CallConCount_txt) <= 20 ? '#bdf0a8' : false,
-            }"
-          >
+          <tr v-for="(data, index) in subData.data3" :key="index">
             <td>{{ index + 1 }}</td>
             <!--編號-->
             <td>{{ data.PlanName }}</td>
@@ -208,7 +202,9 @@
               >
             </td>
             <!--接聽數-->
-            <td>{{ data.CallConCount_txt }}%</td>
+            <td :class="{
+              'text-success': parseFloat(data.CallConCount_txt) < 20
+            }">{{ data.CallConCount_txt }}%</td>
             <!--接通率-->
             <td>
               <a
