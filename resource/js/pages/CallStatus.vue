@@ -143,7 +143,13 @@
             <th style="width: 80px">開關</th>
             <th>刪除</th>
           </tr>
-          <tr v-for="(data, index) in subData.data3" :key="index">
+          <tr
+            v-for="(data, index) in subData.data3"
+            :key="index"
+            :style="{
+              'background-color': parseFloat(data.CallConCount_txt) <= 20 ? '#bdf0a8' : false,
+            }"
+          >
             <td>{{ index + 1 }}</td>
             <!--編號-->
             <td>{{ data.PlanName }}</td>
@@ -202,7 +208,7 @@
               >
             </td>
             <!--接聽數-->
-            <td>{{ data.CallConCount_txt }}</td>
+            <td>{{ data.CallConCount_txt }}%</td>
             <!--接通率-->
             <td>
               <a
@@ -412,8 +418,8 @@ export default {
 
         x.CallConCount_txt =
           x.CallConCount == 0
-            ? "0%"
-            : ((x.CallConCount / x.CalloutCount) * 100).toFixed(2) + "%";
+            ? "0"
+            : ((x.CallConCount / x.CalloutCount) * 100).toFixed(2);
       });
       res.totalCalledCount = _.sumBy(res.data3, "CalledCount");
       res.totalWaitCall = _.sumBy(res.data3, "WaitCall");
