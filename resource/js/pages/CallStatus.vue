@@ -202,9 +202,14 @@
               >
             </td>
             <!--接聽數-->
-            <td :class="{
-              'text-success': parseFloat(data.CallConCount_txt) < 20
-            }">{{ data.CallConCount_txt }}%</td>
+            <td
+              :style="{
+                color:
+                  parseFloat(data.CallConCount_txt) < 20 ? ' #8CEA00' : false,
+              }"
+            >
+              {{ data.CallConCount_txt }}%
+            </td>
             <!--接通率-->
             <td>
               <a
