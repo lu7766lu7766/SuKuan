@@ -205,7 +205,7 @@
             <td
               :style="{
                 color:
-                  parseFloat(data.CallConCount_txt) < 20 ? ' #8CEA00' : false,
+                  parseFloat(data.CallConCount_txt) < 20 ? '#64A600' : false,
               }"
             >
               {{ data.CallConCount_txt }}%
