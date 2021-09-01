@@ -23,6 +23,7 @@ new Vue({
 		// Test: () => import('pages/Test'),
 		RateManage: () => import('pages/RateManage'),
 		TaskRanking: () => import('pages/TaskRanking'),
+		DailyReport: () => import('pages/DailyReport'),
 		UserList: () => import('pages/UserList'),
 		UserDetail: () => import('pages/UserDetail'),
 		CommunicationSearch: () => import('pages/CommunicationSearch'),

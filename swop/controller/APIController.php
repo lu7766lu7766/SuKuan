@@ -49,4 +49,30 @@ class APIController extends JController
                 break;
         }
     }
+
+    public function getDailyReportList(Request $request)
+    {
+        $query = DB::table("CallOutCDR")
+            ->leftJoin("SysUser", "CallOutCDR.UserID", "=", "SysUser.UserID")
+            ->where("CallOutCDR.UserID", $request->input("userID"));
+            
+        
+        if (!empty($request->input("callStopBillingDate"))) {
+            $query->where("CallOutCDR.CallStartBillingDate", "<=" , $request->input("callStopBillingDate"));
+        }
+        if (!empty($request->input("callStartBillingDate"))) {
+            $query->where("CallOutCDR.CallStopBillingDate", ">=", $request->input("callStartBillingDate"));
+        }
+
+        return $query
+            ->select("CallOutCDR.CallStopBillingDate as Date", "CallOutCDR.UserID", "SysUser.UserName", DB::raw("
+                sum(cast(CallOutCDR.CallDuration as float)) as CallDuration,
+                COUNT(1) as Count,
+                sum(cast(BillValue as float)) as BillValue,
+                sum(cast(BillCost as float)) as BillCost"))
+            ->groupBy("CallOutCDR.CallStopBillingDate", "CallOutCDR.UserID", "SysUser.UserName")
+            ->orderBy("CallOutCDR.CallStopBillingDate")
+            ->get();
+        
+    }
 }

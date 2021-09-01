@@ -20,6 +20,7 @@ Route::post("/rate/delete", "RateController@delete")->middleware("api", "auth");
 
 //task ranking
 Route::post("/api/taskReanking/list", "APIController@getTaskRankingList")->middleware("api", "auth");
+Route::post("/api/dailyReport/list", "APIController@getDailyReportList")->middleware("api", "auth");
 
 //communication
 Route::post("/api/communication/list", "CommunicationController@list")->middleware("api", "auth");

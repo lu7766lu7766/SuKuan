@@ -12,6 +12,11 @@ class CommunicationHistory_Controller extends JController
         return parent::render();
     }
 
+    public function dailyReport()
+    {
+        return parent::render();
+    }
+
     public function pointHistory()
     {
         return parent::render();

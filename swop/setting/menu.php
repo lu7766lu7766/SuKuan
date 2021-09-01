@@ -72,6 +72,11 @@ class Menu
 				"name" => "話務排行",
 				"url" => "communicationHistory/taskRanking"
 			),
+			"daily_report" => array(
+				"icon" => "far fa-file-alt",
+				"name" => "日報表查詢",
+				"url" => "communicationHistory/dailyReport"
+			),
 			"point_history" => array(
 				"icon" => "fas fa-piggy-bank",
 				"name" => "儲值紀錄",
