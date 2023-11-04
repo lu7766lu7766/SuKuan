@@ -27,7 +27,7 @@ class AdCallSetting_Controller extends JController
     private function getVoiceFileList()
     {
         return lib\VoiceRecord::getFilesName(session("choice"));
-    }    
+    }
 
     /**
      * 廣告群乎音檔管理
@@ -242,7 +242,7 @@ class AdCallSetting_Controller extends JController
                             $data['CallStartBillingDateTime'],
                             $data['CallLeaveDateTime'],
                             $data['CallDuration'],
-                            $data['RecvDTMF'],
+                            preg_replace('/[\w]/', '=', $data['RecvDTMF']),
                             $data['FaxCall'] ? '是' : '否'
                         ]
                     )
