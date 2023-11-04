@@ -242,7 +242,7 @@ class AdCallSetting_Controller extends JController
                             $data['CallStartBillingDateTime'],
                             $data['CallLeaveDateTime'],
                             $data['CallDuration'],
-                            preg_replace('/[\w]/', '=', $data['RecvDTMF']),
+                            preg_replace('/[a-zA-Z]/', '', $data['RecvDTMF']),
                             $data['FaxCall'] ? '是' : '否'
                         ]
                     )
