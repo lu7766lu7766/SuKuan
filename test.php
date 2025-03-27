@@ -12,7 +12,7 @@ use voku\helper\AntiXSS;
 //var_dump(file_exists(__DIR__ . '/vendor/autoload.php'));
 //var_dump(new AntiXSS());
 //print_r(new Dotenv());
-print_r(getApiUrl());
+print_r(getApiUrl(""));
 print_r(DB::table('SysUser')->select('UserID')->where('UserID', 'root')->orderBy('UserID', 'asc')->limit(10)->get());
 //print_r(
 //    DB::table('CallOutCDR a')
