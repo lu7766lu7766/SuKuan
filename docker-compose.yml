@@ -1,6 +1,14 @@
 version: "3"
 
 services:
+  apache:
+    image: lu7766lu7766/jac-php-mssql-apache:latest
+    ports:
+      - 8088:80
+    volumes:
+      - ./:/var/www/html/ZHCC
+    environment:
+      - VIRTUAL_HOST=127.0.0.1
   # php:
   #   # image: lu7766lu7766/jac-php-mssql-apache:latest
   #   image: namoshek/php-mssql:7.3-fpm
@@ -15,19 +23,19 @@ services:
   #     - PHP_ENV=development # 可根據需要調整環境變數
   #   networks:
   #     - app-network
-  apache:
-    build:
-      context: .
-      dockerfile: Dockerfile # 使用自定義 Dockerfile
-    container_name: apache-php
-    volumes:
-      - ./:/var/www/html/ZHCC # 專案目錄掛載
-    ports:
-      - "8080:80" # Apache 監聽 80，映射到主機 8080
-    environment:
-      - PHP_ENV=development
-    networks:
-      - app-network
+  # apache:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile # 使用自定義 Dockerfile
+  #   container_name: apache-php
+  #   volumes:
+  #     - ./:/var/www/html/ZHCC # 專案目錄掛載
+  #   ports:
+  #     - "8080:80" # Apache 監聽 80，映射到主機 8080
+  #   environment:
+  #     - PHP_ENV=development
+  #   networks:
+  #     - app-network
 
   nginx:
     image: nginx:latest
