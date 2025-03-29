@@ -1,10 +1,13 @@
 # 使用 php:7.3-apache 作為基礎鏡像
 FROM php:7.3-apache
 
-# 安裝必要的依賴
+# 安裝必要的依賴並添加 Sury 存儲庫
 RUN apt-get update && apt-get install -y \
   gnupg2 \
   apt-transport-https \
+  && curl -sS https://packages.sury.org/php/apt.gpg | apt-key add - \
+  && echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php.list \
+  && apt-get update && apt-get install -y \
   build-essential \
   libpq-dev \
   unixodbc-dev \
@@ -19,7 +22,6 @@ RUN apt-get update && apt-get install -y \
 RUN pecl install sqlsrv-5.9.0 \
   && pecl install pdo_sqlsrv-5.9.0 \
   && docker-php-ext-enable sqlsrv pdo_sqlsrv
-
 # 啟用 Apache 的 rewrite 模組（可選，根據專案需求）
 RUN a2enmod rewrite
 
