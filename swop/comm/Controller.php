@@ -14,13 +14,23 @@ class Controller
         }
         $controller = $this->controller;
         $model_url = config("model_dir") . $controller . ".php";
+       
         if (file_exists($model_url)) {
             require_once $model_url;
-            $model_class = $controller . "_Model";
-            $this->model = new $model_class();
+            
+            $model_class = ucwords($controller) . "_Model";
+            try {
+                $reflection = new ReflectionClass($model_class);
+                $this->model = $reflection->newInstance();
+            } catch (Exception $e) {
+                dd($e->getMessage());
+            }
+            
+            // dd($model_url,file_exists($model_url),$model_class,$this->model);
         } else {
             $this->model = new JModel();
         }
+        
         if (is_array($this->get)) {
             foreach ($this->get as $key => $val) {
                 if (isset($key) && isset($val)) {

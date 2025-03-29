@@ -38,10 +38,10 @@ class DBA
 //            sleep(1);
 //            shell_exec('schtasks /Delete /TN "temp" /F');
 //            sleep(3);
-            shell_exec('schtasks /Create /RU "' . $login_id . '" /RP "' . $login_pwd . '" /SC ONSTART /TR "' . $restart_command . '" /TN "temp"');
-            shell_exec('schtasks /Run /TN "temp"');
-            sleep(1);
-            shell_exec('schtasks /Delete /TN "temp" /F');
+            // shell_exec('schtasks /Create /RU "' . $login_id . '" /RP "' . $login_pwd . '" /SC ONSTART /TR "' . $restart_command . '" /TN "temp"');
+            // shell_exec('schtasks /Run /TN "temp"');
+            // sleep(1);
+            // shell_exec('schtasks /Delete /TN "temp" /F');
             DBA::$reconnect++;
             //sleep(1);
             $this->connect();
@@ -59,12 +59,13 @@ class DBA
         $dbPwd = $this->dbPwd ? $this->dbPwd : getenv2('DB_PASSWORD');
         $dbPort = $this->dbPort ? $this->dbPort : getenv2('DB_PORT');
         $connectionInfo = ["Database" => $dbName, "UID" => $dbUser, "PWD" => $dbPwd, "CharacterSet" => "UTF-8"];
+        // dd("$dbHost, $dbPort", $connectionInfo);
         $this->conn = sqlsrv_connect("$dbHost, $dbPort", $connectionInfo);
 //        die(print_r([$this->conn, $dbHost, $dbPort, $connectionInfo]));
         if (!$this->conn) {
-            if ($this->server_restart()) {
-                return;
-            }
+            // if ($this->server_restart()) {
+            //     return;
+            // }
             echo "資料庫連線失敗，請<a href='javascript:history.go(-1)'>回到上一頁</a>，並確定資料是否已異動<br />";
             die(print_r(sqlsrv_errors(), true));
         } else {
