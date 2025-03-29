@@ -8,14 +8,16 @@ Bundle::echoLink("default");
 
 $top_view_path = "";
 $this->partialView($top_view_path);
-$imageUri = url("main/code_login");
+// $imageUri = url("main/code_login");
+
 ?>
+
 
 <body class="container-fluid" style="background-color: #666">
 	<div class="row">
 		<div class="login-box col-xs-12 col-md-offset-4 col-md-4" style="border-radius: 10px;">
 			<div class="login-logo">
-				<div class="h2 form-signin-heading">ZH行銷</ㄎ>
+				<div class="h2 form-signin-heading">ZH行銷</div>
 				</div>
 				<p class="login-box-msg" style="letter-spacing:3px;"><b></b></p>
 				<?php echo Html::form() ?>
@@ -29,8 +31,9 @@ $imageUri = url("main/code_login");
 				</div>
 				<div class="form-group row">
 					<span class="col-xs-5 control-label">
-						<label class="sr-only">驗證圖片</label>
-						<img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $imageUri; ?>" onclick="javascript:this.src='<?php echo $imageUri; ?>?n='+Math.random();" width="130" height="50" />
+						<label class="sr-only">驗證</label>
+						<div id="vert" style="height: 50px; width: 100%; text-align: center; font-size: 18px;"></div>
+						<!-- <img width="100%" id='verification_img' alt="點擊換圖" title="點擊換圖" src="<?php echo $imageUri; ?>" onclick="javascript:this.src='<?php echo $imageUri; ?>?n='+Math.random();" width="130" height="50" /> -->
 					</span>
 					<div class="col-xs-7">
 						<input style="height:34px;border-color:#DCDDDD" class="form-control" placeholder="輸入驗證碼" name="captcha" type="text">
@@ -67,5 +70,18 @@ $imageUri = url("main/code_login");
 			$this->partialView($bottom_view_path);
 			?>
 </body>
+<script>
+(async() => {
+	var folder = "<?php echo config("folder") ?>";
+	var $vert = $("#vert")
+	var refreshQuestion = async function() {
+		const question = await $.get(`${folder}main/code_login?` + new Date())
+		$vert.text(question)
+	}
+	refreshQuestion()
+	$vert.on("click", refreshQuestion)
+})()
+console.log("work")
 
+</script>
 </html>

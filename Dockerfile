@@ -1,7 +1,8 @@
 FROM namoshek/php-mssql:7.3-fpm
 
 # 安裝 GD 擴展所需的依賴
-RUN apt-get update && apt-get install -y php-gd
+# RUN apt-get update --fix-missing
+RUN apt-get install -y php-gd
 # RUN apt-get install -y libfreetype6-dev 
 # RUN apt-get install -y libpng-dev 
 # RUN apt-get install -y libjpeg62-turbo-dev \

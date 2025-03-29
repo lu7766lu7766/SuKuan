@@ -28,9 +28,10 @@ class Main_Controller extends Controller
 
     public function code_login()
     {
-        $vert = new \comm\Verification(4);
+        $vert = new \comm\Verification();
         session("code_login", $vert->getCode());
-        $vert->draw();
+        // $vert->draw();
+        echo $vert->getQuestion();
     }
 
     public function server_restart()
