@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM namoshek/php-mssql:7.3-fpm
 
 # 安裝 GD 擴展所需的依賴
 RUN apt-get update && apt-get install -y \
