@@ -38,7 +38,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # 自定義 Nginx 配置
     depends_on:
-      - php
+      - apache
     networks:
       - app-network
 
