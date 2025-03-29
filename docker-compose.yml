@@ -21,7 +21,7 @@ services:
     container_name: apache-server
     volumes:
       - ./:/usr/local/apache2/htdocs/ZHCC # Apache 的預設根目錄
-      - ./server_config:/usr/local/apache2/conf # 自定義 Apache 配置
+      - ./server_config/httpd.conf:/usr/local/apache2/conf/httpd.conf # 自定義 Apache 配置
     ports:
       - "8080:80" # Apache 監聽 80，映射到主機 8080
     depends_on:
@@ -36,7 +36,7 @@ services:
       - "80:80" # HTTP 端口
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./server_config:/etc/nginx/conf.d # 自定義 Nginx 配置
+      - ./server_config/default.conf:/etc/nginx/conf.d/default.conf # 自定義 Nginx 配置
     depends_on:
       - php
     networks:
