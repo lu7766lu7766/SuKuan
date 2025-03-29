@@ -1,31 +1,31 @@
 version: "3"
 
 services:
-  php:
-    # image: lu7766lu7766/jac-php-mssql-apache:latest
-    image: namoshek/php-mssql:7.3-fpm
-    # image: namoshek/php-mssql:8.4-fpm-alpine-swoole
-    container_name: php-fpm
-    volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
-    ports:
-      - "9000:9000" # PHP-FPM 預設端口
-    environment:
-      - PHP_ENV=development # 可根據需要調整環境變數
-    networks:
-      - app-network
-
+  # php:
+  #   # image: lu7766lu7766/jac-php-mssql-apache:latest
+  #   image: namoshek/php-mssql:7.3-fpm
+  #   # image: namoshek/php-mssql:8.4-fpm-alpine-swoole
+  #   container_name: php-fpm
+  #   volumes:
+  #     - ./:/var/www/html
+  #   working_dir: /var/www/html
+  #   ports:
+  #     - "9000:9000" # PHP-FPM 預設端口
+  #   environment:
+  #     - PHP_ENV=development # 可根據需要調整環境變數
+  #   networks:
+  #     - app-network
   apache:
-    image: httpd:2.4 # 使用官方 Apache 鏡像
-    container_name: apache-server
+    build:
+      context: .
+      dockerfile: Dockerfile # 使用自定義 Dockerfile
+    container_name: apache-php
     volumes:
-      - ./:/usr/local/apache2/htdocs/ZHCC # Apache 的預設根目錄
-      - ./server_config/httpd.conf:/usr/local/apache2/conf/httpd.conf # 自定義 Apache 配置
+      - ./:/var/www/html/ZHCC # 專案目錄掛載
     ports:
       - "8080:80" # Apache 監聽 80，映射到主機 8080
-    depends_on:
-      - php
+    environment:
+      - PHP_ENV=development
     networks:
       - app-network
 
@@ -36,21 +36,21 @@ services:
       - "80:80" # HTTP 端口
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./server_config/default.conf:/etc/nginx/conf.d/default.conf # 自定義 Nginx 配置
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # 自定義 Nginx 配置
     depends_on:
       - php
     networks:
       - app-network
 
-  nodejs:
-    image: node:16-buster-slim
-    container_name: nodejs
-    volumes:
-      - .:/app
-    working_dir: /app
-    command: ["tail", "-f", "/dev/null"]
-    networks:
-      - app-network
+  # nodejs:
+  #   image: node:16-buster-slim
+  #   container_name: nodejs
+  #   volumes:
+  #     - .:/app
+  #   working_dir: /app
+  #   command: ["tail", "-f", "/dev/null"]
+  #   networks:
+  #     - app-network
 
 networks:
   app-network:
