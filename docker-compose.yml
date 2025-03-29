@@ -14,8 +14,11 @@ services:
   #     - app-network
   php:
     # image: lu7766lu7766/jac-php-mssql-apache:latest
-    image: namoshek/php-mssql:7.3-fpm
+    # image: namoshek/php-mssql:7.3-fpm
     # image: namoshek/php-mssql:8.4-fpm-alpine-swoole
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: php
     volumes:
       - ./:/var/www/html/ZHCC
