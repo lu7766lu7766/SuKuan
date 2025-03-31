@@ -21,7 +21,7 @@ mix.webpackConfig({
 		},
 	},
 	output: {
-		path: path.resolve(__dirname, 'public/vue'),
+		path: path.resolve(base_folder + 'public/vue'),
 		publicPath: base_folder + 'public/vue/',
 		chunkFilename: 'vendor/[name].js',
 	},
