@@ -91,7 +91,8 @@ class CallStatusController extends JController
 
   public function callRelease(Request $request)
   {
-    $url = "http://127.0.0.1:60/CallRelease.atp?Seat=" . $request->input("Seat") . "&CalledID=" . $request->input("CalledID");
+    $ip = getenv2("DB_IP");
+    $url = "http://{$ip}:60/CallRelease.atp?Seat=" . $request->input("Seat") . "&CalledID=" . $request->input("CalledID");
     comm\Http::get($url);
     return true;
   }

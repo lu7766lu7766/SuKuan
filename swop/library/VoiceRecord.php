@@ -36,8 +36,8 @@ class VoiceRecord
 		move_uploaded_file($_FILES[$fieldName]["tmp_name"], $filePath);
 		// for david to convert
 		copy($filePath, $convertFilePath);
-
-		$url = "http://127.0.0.1:60/ConvertFile.atp?User={$userID}&File={$fileName}";
+		$ip = getenv2("DB_IP");
+		$url = "http://{$ip}:60/ConvertFile.atp?User={$userID}&File={$fileName}";
 		\comm\Http::get($url);
 		@unlink($convertFilePath);
 		return $fileName;

@@ -52,7 +52,8 @@ class Index_Controller extends JController
      */
     public function shotdown()
     {
-        $url = "http://127.0.0.1:60/SHUTDOWN.atp";
+        $ip = getenv2("DB_IP");
+        $url = "http://{$ip}:60/SHUTDOWN.atp";
         comm\Http::get($url);
         $this->redirect("main/main");
     }
@@ -62,7 +63,8 @@ class Index_Controller extends JController
      */
     public function reboot()
     {
-        $url = "http://127.0.0.1:60/REBOOT.atp";
+        $ip = getenv2("DB_IP");
+        $url = "http://{$ip}:60/REBOOT.atp";
         comm\Http::get($url);
         $this->redirect("main/main");
     }
