@@ -13,8 +13,8 @@ class VoiceRecord
 {
 	static public $sourceExt = ".wav";
 	static public $davidExt = ".g729";
-	static public $davidAdFolder = "C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
-	static public $sourceFolder = "C:\\xampp\\htdocs\\aurora02\\download\\";
+	static public $davidAdFolder = "/var/www/html/ad"; //"C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
+	static public $sourceFolder = "/var/www/html/download"; //"C:\\xampp\\htdocs\\aurora02\\download\\";
 
 	static public function uploadFile($userID, $fieldName)
 	{

@@ -23,6 +23,8 @@ services:
     container_name: php
     volumes:
       - ./:/var/www/html/ZHCC
+      - C:\Program Files (x86)\AssistorCore\VoiceFiles\Ad:/var/www/html/ad
+      - C:\xampp\htdocs\aurora02\download:/var/www/html/download
     working_dir: /var/www/html
     ports:
       - "9000:9000" # PHP-FPM 預設端口
