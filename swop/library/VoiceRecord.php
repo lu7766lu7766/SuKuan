@@ -13,8 +13,8 @@ class VoiceRecord
 {
 	static public $sourceExt = ".wav";
 	static public $davidExt = ".g729";
-	static public $davidAdFolder = "/var/www/html/ad"; //"C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
-	static public $sourceFolder = "/var/www/html/download"; //"C:\\xampp\\htdocs\\aurora02\\download\\";
+	static public $davidAdFolder = "/var/www/html/ad/"; //"C:\\Program Files (x86)\\AssistorCore\\VoiceFiles\\Ad\\";
+	static public $sourceFolder = "/var/www/html/download/"; //"C:\\xampp\\htdocs\\aurora02\\download\\";
 
 	static public function uploadFile($userID, $fieldName)
 	{
@@ -38,6 +38,7 @@ class VoiceRecord
 		copy($filePath, $convertFilePath);
 		$ip = getenv2("DB_IP");
 		$url = "http://{$ip}:60/ConvertFile.atp?User={$userID}&File={$fileName}";
+		// dd($url);
 		\comm\Http::get($url);
 		@unlink($convertFilePath);
 		return $fileName;
@@ -47,6 +48,7 @@ class VoiceRecord
 	{
 		$res = [];
 		$files = self::getFiles($userID);
+		// dd($files);
 		foreach ($files as $file) {
 			if (substr($file, -1) == "/")
 				return;
@@ -59,12 +61,13 @@ class VoiceRecord
 
 	static private function getFiles($userID)
 	{
+		// dd(self::getCurrentPath($userID));
 		return glob(self::getCurrentPath($userID) . "*", GLOB_MARK);
 	}
 
 	static private function getCurrentPath($userID)
 	{
-		return self::$davidAdFolder . $userID . "\\";
+		return self::$davidAdFolder . $userID . DIRECTORY_SEPARATOR; //"/";
 	}
 
 
