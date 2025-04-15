@@ -6,6 +6,7 @@ date_default_timezone_set("Asia/Taipei");
 set_time_limit(0);
 
 ini_set("display_errors", "On");
+ini_set("memory_limit", -1);
 error_reporting(E_ALL & ~E_NOTICE);
 require("vendor/autoload.php");
 
